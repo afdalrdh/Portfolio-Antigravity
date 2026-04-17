@@ -1,0 +1,155 @@
+.navbar {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--nav-border);
+    width: max-content;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    gap: 48px;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        width: 100%;
+        top: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+    }
+
+    .nav-content {
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
+.nav-logo {
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--text-primary);
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: var(--icon-bg);
+    color: var(--icon-color);
+    transition: all var(--transition-normal);
+    border: 1px solid var(--nav-border);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+    background: var(--nav-border);
+    color: var(--text-primary);
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desktop-only {
+    display: flex;
+}
+
+.mobile-only {
+    display: none;
+}
+
+/* Mobile Fullscreen Overlay */
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-primary);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-overlay-header {
+    height: 72px;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--nav-border);
+}
+
+.mobile-nav-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 24px;
+    gap: 24px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.mobile-nav-links a {
+    color: var(--text-secondary);
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--nav-border);
+}
+
+.mobile-nav-links a.active {
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        display: flex;
+    }
+}

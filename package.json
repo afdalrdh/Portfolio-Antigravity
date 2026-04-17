@@ -1,0 +1,14 @@
+{
+    "name": "portfolio-antigravity",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "dev:web": "npm run dev --workspace=web",
+        "dev:api": "npm run dev --workspace=api",
+        "build:web": "npm run build --workspace=web",
+        "db:push": "npx drizzle-kit push --config=apps/api/drizzle.config.ts",
+        "db:seed": "npm run db:seed --workspace=api"
+    }
+}

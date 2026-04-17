@@ -1,0 +1,244 @@
+.admin-project-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.editor-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+}
+
+.btn-back:hover {
+    background: #f1f1f1;
+    color: #111;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #eaeaea;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    color: #444;
+}
+
+.btn-outline:hover {
+    background: #fcfcfc;
+    border-color: #ddd;
+}
+
+.editor-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .editor-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.editor-panel {
+    background: white;
+    border: 1px solid #eaeaea;
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 24px;
+}
+
+.panel-title {
+    margin-bottom: 24px;
+    font-size: 1.15rem;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 12px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-input {
+    padding: 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    color: #111;
+    transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(46, 131, 251, 0.1);
+}
+
+.text-lg {
+    font-size: 1.15rem;
+    font-weight: 500;
+    padding: 12px 14px;
+}
+
+.form-group-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.blocks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.editor-block {
+    border: 1px solid #eaeaea;
+    border-radius: var(--radius-md);
+    background: #fbfbfb;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.editor-block:hover {
+    border-color: #ddd;
+}
+
+.block-header {
+    padding: 12px 16px;
+    background: #f3f3f3;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.block-type-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #666;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    color: #888;
+}
+
+.btn-icon:hover {
+    color: #dc2626;
+}
+
+.block-body {
+    padding: 20px 16px;
+}
+
+.color-swatch-inputs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.color-input {
+    width: 100px;
+    font-family: monospace;
+}
+
+.btn-outline-sm {
+    background: transparent;
+    border: 1px dashed #d0d0d0;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    color: #666;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-outline-sm:hover {
+    background: #f5f5f5;
+    border-color: #aaa;
+}
+
+.add-block-panel {
+    background: #fdfdfd;
+    border: 1px dashed #d0d0d0;
+    border-radius: var(--radius-md);
+    padding: 24px;
+    text-align: center;
+}
+
+.add-block-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+.add-block-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-add-block {
+    background: white;
+    border: 1px solid #e0e0e0;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+.btn-add-block:hover {
+    border-color: #bbb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+}

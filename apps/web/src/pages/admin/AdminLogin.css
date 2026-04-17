@@ -1,0 +1,72 @@
+.admin-login-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+}
+
+.admin-login-card {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+}
+
+.admin-login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.admin-login-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.admin-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-actions {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
+    justify-content: center;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.btn-link:hover {
+    color: #111;
+}
+
+.reset-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.5;
+    text-align: center;
+}
