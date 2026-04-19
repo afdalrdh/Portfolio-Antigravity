@@ -12,4 +12,7 @@ export const auth = betterAuth({
         enabled: true,
     },
     trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:5173'],
+    advanced: {
+        crossOrigin: true,
+    }
 });
