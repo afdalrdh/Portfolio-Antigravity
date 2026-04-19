@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { bearer } from 'better-auth/plugins';
 import { db } from '../db/index.js';
 import * as schema from '../db/schema/index.js';
 
@@ -21,5 +22,8 @@ export const auth = betterAuth({
             sameSite: "none",
             secure: true,
         },
-    }
+    },
+    plugins: [
+        bearer()
+    ]
 });
