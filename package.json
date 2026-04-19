@@ -12,6 +12,6 @@
         "db:seed": "npm run db:seed --workspace=api"
     },
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=22.12.0"
     }
 }
