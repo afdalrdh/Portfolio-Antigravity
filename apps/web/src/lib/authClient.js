@@ -1,12 +1,11 @@
 const AUTH_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api/auth';
 
-const getHeaders = (headers = {}) => {
+// Helper: get stored token for Authorization header
+const getAuthHeaders = (extra = {}) => {
     const token = localStorage.getItem('auth_token');
-    return {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        ...headers
-    };
+    const headers = { 'Content-Type': 'application/json', ...extra };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    return headers;
 };
 
 export const authClient = {
@@ -21,12 +20,21 @@ export const authClient = {
             const error = await res.json().catch(() => ({ message: 'Login failed' }));
             throw new Error(error.message || 'Login failed');
         }
-        const data = await res.json();
-        // If the server returns a token in the body (bearer plugin), or we can get it from headers
-        // Better Auth bearer plugin returns it as `token` in the response body of sign-in
-        if (data.token) {
-            localStorage.setItem('auth_token', data.token);
+
+        // Better Auth bearer plugin returns token in 'set-auth-token' response header
+        const authToken = res.headers.get('set-auth-token');
+        if (authToken) {
+            localStorage.setItem('auth_token', authToken);
         }
+
+        const data = await res.json();
+
+        // Fallback: also check response body for token
+        const bodyToken = data?.token || data?.session?.token;
+        if (bodyToken && !authToken) {
+            localStorage.setItem('auth_token', bodyToken);
+        }
+
         return data;
     },
 
@@ -34,7 +42,7 @@ export const authClient = {
         await fetch(`${AUTH_BASE}/sign-out`, {
             method: 'POST',
             credentials: 'include',
-            headers: getHeaders(),
+            headers: getAuthHeaders(),
         });
         localStorage.removeItem('auth_token');
     },
@@ -43,13 +51,18 @@ export const authClient = {
         try {
             const res = await fetch(`${AUTH_BASE}/get-session`, {
                 credentials: 'include',
-                headers: getHeaders(),
+                headers: getAuthHeaders(),
             });
             if (!res.ok) {
                 localStorage.removeItem('auth_token');
                 return null;
             }
-            return res.json();
+            const data = await res.json();
+            if (!data || !data.session) {
+                localStorage.removeItem('auth_token');
+                return null;
+            }
+            return data;
         } catch {
             return null;
         }

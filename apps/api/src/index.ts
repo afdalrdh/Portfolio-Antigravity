@@ -16,6 +16,7 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Better-Auth-Token'],
+    exposedHeaders: ['set-auth-token'],
 }));
 
 // Better Auth handler — must be before express.json() as it handles its own body parsing
