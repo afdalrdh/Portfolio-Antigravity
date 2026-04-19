@@ -13,6 +13,9 @@ export const auth = betterAuth({
     },
     trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:5173'],
     advanced: {
-        useCrossOrigin: true,
+        cookieOptions: {
+            sameSite: "none",
+            secure: true,
+        },
     }
 });
