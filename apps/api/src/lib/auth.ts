@@ -3,8 +3,11 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '../db/index.js';
 import * as schema from '../db/schema/index.js';
 
+const authBase = process.env.BETTER_AUTH_URL || '';
+const baseURL = authBase.endsWith('/api/auth') ? authBase : `${authBase}/api/auth`;
+
 export const auth = betterAuth({
-    baseURL: process.env.BETTER_AUTH_URL,
+    baseURL,
     database: drizzleAdapter(db, {
         provider: 'pg',
         schema,
