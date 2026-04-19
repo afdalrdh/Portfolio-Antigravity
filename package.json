@@ -10,5 +10,8 @@
         "build:web": "npm run build --workspace=web",
         "db:push": "npx drizzle-kit push --config=apps/api/drizzle.config.ts",
         "db:seed": "npm run db:seed --workspace=api"
+    },
+    "engines": {
+        "node": ">=22.0.0"
     }
 }
