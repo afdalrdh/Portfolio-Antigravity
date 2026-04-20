@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { db } from './index.js';
 import { homePage, socialLinks } from './schema/home.js';
-import { aboutPage, experiences, certifications, galleryImages } from './schema/about.js';
+import { aboutPage, aboutTools, experiences, certifications, galleryImages } from './schema/about.js';
 import { contactPage } from './schema/contact.js';
 import { projects, projectBlocks } from './schema/project.js';
 import { auth } from '../lib/auth.js';
@@ -53,6 +53,7 @@ async function seed() {
     await db.delete(galleryImages);
     await db.delete(certifications);
     await db.delete(experiences);
+    await db.delete(aboutTools);
     await db.delete(aboutPage);
 
     await db.insert(aboutPage).values({
@@ -62,21 +63,29 @@ async function seed() {
 <p>Other things I love: clean typography, minimal interfaces, creative collaboration, outdoor adventures, and learning how design can improve lives. Please reach out and say hi (<a href="mailto:afdalramdan@email.com" class="text-accent underline">afdalramdan@email.com</a>)!</p>`,
     });
 
+    await db.insert(aboutTools).values([
+        { name: 'Figma', iconCode: 'FiFigma', sortOrder: 0 },
+        { name: 'Photoshop', iconCode: 'SiAdobephotoshop', sortOrder: 1 },
+        { name: 'Illustrator', iconCode: 'SiAdobeillustrator', sortOrder: 2 },
+        { name: 'LottieFiles', iconCode: 'SiLottiefiles', sortOrder: 3 },
+        { name: 'WordPress', iconCode: 'FaWordpress', sortOrder: 4 },
+    ]);
+
     await db.insert(experiences).values([
-        { initials: 'eD', jobTitle: 'UI/UX Designer', company: 'eDOT', dateRange: 'Jan 2024 - Present', contractType: 'Contract', sortOrder: 0 },
-        { initials: 'PT', jobTitle: 'UI/UX Designer', company: 'Padepokan Tujuh Sembilan', dateRange: 'Dec 2023 - Present', contractType: 'Contract', sortOrder: 1 },
-        { initials: '99', jobTitle: 'UI/UX Designer', company: '99 Group', dateRange: 'Jul 2023 - Jan 2024', contractType: 'Internship', sortOrder: 2 },
-        { initials: 'RG', jobTitle: 'Frontend Engineer', company: 'Rolling Glory', dateRange: 'Jul 2022 - Oct 2022', contractType: 'Internship', sortOrder: 3 },
-        { initials: 'CB', jobTitle: 'Web Designer and Developer', company: 'Cibiru', dateRange: 'May 2022 - Sep 2022', contractType: 'Contract', sortOrder: 4 },
-        { initials: 'CA', jobTitle: 'Design and Technology', company: 'CAGRI', dateRange: 'Sep 2021 - Feb 2022', contractType: 'Contract', sortOrder: 5 },
-        { initials: 'LA', jobTitle: 'Web Developer', company: 'Lintasarta', dateRange: 'Jul 2018 - Nov 2018', contractType: 'Internship', sortOrder: 6 },
+        { logoUrl: '', title: 'UI/UX Designer', company: 'eDOT', dateStart: 'Jan 2024', dateEnd: 'Present', contractType: 'Contract', sortOrder: 0 },
+        { logoUrl: '', title: 'UI/UX Designer', company: 'Padepokan Tujuh Sembilan', dateStart: 'Dec 2023', dateEnd: 'Present', contractType: 'Contract', sortOrder: 1 },
+        { logoUrl: '', title: 'UI/UX Designer', company: '99 Group', dateStart: 'Jul 2023', dateEnd: 'Jan 2024', contractType: 'Internship', sortOrder: 2 },
+        { logoUrl: '', title: 'Frontend Engineer', company: 'Rolling Glory', dateStart: 'Jul 2022', dateEnd: 'Oct 2022', contractType: 'Internship', sortOrder: 3 },
+        { logoUrl: '', title: 'Web Designer and Developer', company: 'Cibiru', dateStart: 'May 2022', dateEnd: 'Sep 2022', contractType: 'Contract', sortOrder: 4 },
+        { logoUrl: '', title: 'Design and Technology', company: 'CAGRI', dateStart: 'Sep 2021', dateEnd: 'Feb 2022', contractType: 'Contract', sortOrder: 5 },
+        { logoUrl: '', title: 'Web Developer', company: 'Lintasarta', dateStart: 'Jul 2018', dateEnd: 'Nov 2018', contractType: 'Internship', sortOrder: 6 },
     ]);
 
     await db.insert(certifications).values([
-        { initials: 'G', name: 'Google UX Design', issuer: 'Google', issueDate: 'Jul 2024', sortOrder: 0 },
-        { initials: 'M', name: 'UI/UX Research and Design', issuer: 'MySkill', issueDate: 'Nov 2023', sortOrder: 1 },
-        { initials: 'B', name: 'Proses Design Thinking dalam UI/UX', issuer: 'Binar Academy', issueDate: 'Jun 2023', sortOrder: 2 },
-        { initials: 'B', name: 'UI/UX Fundamental', issuer: 'Binar Academy', issueDate: 'Jun 2023', sortOrder: 3 },
+        { logoUrl: '', title: 'Google UX Design', issuer: 'Google', dateStart: 'Jul 2024', dateEnd: '', sortOrder: 0 },
+        { logoUrl: '', title: 'UI/UX Research and Design', issuer: 'MySkill', dateStart: 'Nov 2023', dateEnd: '', sortOrder: 1 },
+        { logoUrl: '', title: 'Proses Design Thinking dalam UI/UX', issuer: 'Binar Academy', dateStart: 'Jun 2023', dateEnd: '', sortOrder: 2 },
+        { logoUrl: '', title: 'UI/UX Fundamental', issuer: 'Binar Academy', dateStart: 'Jun 2023', dateEnd: '', sortOrder: 3 },
     ]);
 
     await db.insert(galleryImages).values([

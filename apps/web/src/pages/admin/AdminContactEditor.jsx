@@ -50,7 +50,7 @@ export default function AdminContactEditor() {
             </div>
 
             <div className="editor-layout" style={{ gridTemplateColumns: '1fr' }}>
-                <div className="editor-panel container-fade-in">
+                <div className="editor-panel animate-fade-in">
                     <h4 className="panel-title">WhatsApp Settings</h4>
                     <p className="text-secondary" style={{ marginBottom: '24px', fontSize: '0.9rem' }}>Configure the phone number and default message for the WhatsApp contact button.</p>
 

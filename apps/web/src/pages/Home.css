@@ -139,7 +139,7 @@
 @media (max-width: 768px) {
     .home-hero {
         flex-direction: column;
-        padding: 48px 0 32px 0;
+        padding: 120px 0 32px 0;
         gap: 32px;
     }
 

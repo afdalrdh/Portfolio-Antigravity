@@ -6,22 +6,31 @@ export const aboutPage = pgTable('about_page', {
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+export const aboutTools = pgTable('about_tools', {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    iconCode: text('icon_code').notNull(),
+    sortOrder: integer('sort_order').notNull().default(0),
+});
+
 export const experiences = pgTable('experiences', {
     id: serial('id').primaryKey(),
-    initials: text('initials').notNull(),
-    jobTitle: text('job_title').notNull(),
+    logoUrl: text('logo_url').default(''),
+    title: text('title').notNull(),
     company: text('company').notNull(),
-    dateRange: text('date_range').notNull(),
+    dateStart: text('date_start').notNull(),
+    dateEnd: text('date_end').notNull().default('Present'),
     contractType: text('contract_type').notNull(),
     sortOrder: integer('sort_order').notNull().default(0),
 });
 
 export const certifications = pgTable('certifications', {
     id: serial('id').primaryKey(),
-    initials: text('initials').notNull(),
-    name: text('name').notNull(),
+    logoUrl: text('logo_url').default(''),
+    title: text('title').notNull(),
     issuer: text('issuer').notNull(),
-    issueDate: text('issue_date').notNull(),
+    dateStart: text('date_start').notNull(),
+    dateEnd: text('date_end').default(''),
     sortOrder: integer('sort_order').notNull().default(0),
 });
 

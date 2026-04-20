@@ -74,7 +74,7 @@ export default function AdminHomeEditor() {
             </div>
 
             <div className="editor-layout" style={{ gridTemplateColumns: '1fr' }}>
-                <div className="editor-panel container-fade-in">
+                <div className="editor-panel animate-fade-in">
                     <h4 className="panel-title">Hero Profile</h4>
                     <div className="form-group" style={{ marginBottom: '24px' }}>
                         <label>Profile Picture URL</label>
@@ -96,7 +96,7 @@ export default function AdminHomeEditor() {
                     </div>
                 </div>
 
-                <div className="editor-panel container-fade-in delay-100">
+                <div className="editor-panel animate-fade-in delay-100">
                     <h4 className="panel-title">Social Media Icons</h4>
                     <p className="text-secondary" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Used to map the exact icons and links displayed under your Hero section.</p>
                     <div className="blocks-list">
@@ -108,8 +108,8 @@ export default function AdminHomeEditor() {
                                 </div>
                                 <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px' }}>
                                     <div className="form-group">
-                                        <label>Platform Name / Icon</label>
-                                        <input type="text" className="form-input" value={social.name} onChange={(e) => updateSocial(index, 'name', e.target.value)} placeholder="e.g. LinkedIn" />
+                                        <label>Platform Name (or React-Icon code)</label>
+                                        <input type="text" className="form-input" value={social.name} onChange={(e) => updateSocial(index, 'name', e.target.value)} placeholder="e.g. LinkedIn or SiLinkedin" />
                                     </div>
                                     <div className="form-group">
                                         <label>Target URL</label>

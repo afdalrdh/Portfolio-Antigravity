@@ -4,6 +4,7 @@ import './AdminProjectEditor.css';
 
 export default function AdminAboutEditor() {
     const [bioDescription, setBioDescription] = useState('');
+    const [tools, setTools] = useState([]);
     const [experiences, setExperiences] = useState([]);
     const [licenses, setLicenses] = useState([]);
     const [activities, setActivities] = useState([]);
@@ -14,36 +15,64 @@ export default function AdminAboutEditor() {
     useEffect(() => {
         adminApi.getAbout()
             .then((data) => {
-                setBioDescription(data.page?.bioDescription || '');
+                if (data.page) {
+                    setBioDescription(data.page.bioDescription || '');
+                }
+                setTools(data.tools || []);
                 setExperiences(data.experiences || []);
-                setLicenses(data.certifications || []);
-                setActivities(data.galleryImages || []);
+                setLicenses(data.certifications || []); // Using certifications from API to match public API
+                setActivities(data.galleryImages || []); // Using galleryImages to match public API
             })
             .catch(console.error)
             .finally(() => setLoading(false));
     }, []);
 
-    const addExperience = () => setExperiences([...experiences, { id: Date.now(), initials: '', jobTitle: '', company: '', dateRange: '', contractType: '' }]);
+    // Tool helpers
+    const addTool = () => setTools([...tools, { id: Date.now().toString(), name: '', iconCode: '' }]);
+    const removeTool = (index) => setTools(tools.filter((_, i) => i !== index));
+    const updateTool = (index, field, value) => {
+        const updated = [...tools];
+        updated[index] = { ...updated[index], [field]: value };
+        setTools(updated);
+    };
+
+    // Experience helpers
+    const addExperience = () => setExperiences([...experiences, { id: Date.now().toString(), logoUrl: '', title: '', company: '', dateStart: '', dateEnd: '', type: '' }]);
     const removeExperience = (index) => setExperiences(experiences.filter((_, i) => i !== index));
-    const updateExperience = (index, field, value) => { const u = [...experiences]; u[index] = { ...u[index], [field]: value }; setExperiences(u); };
+    const updateExperience = (index, field, value) => {
+        const updated = [...experiences];
+        updated[index] = { ...updated[index], [field]: value };
+        setExperiences(updated);
+    };
 
-    const addLicense = () => setLicenses([...licenses, { id: Date.now(), initials: '', name: '', issuer: '', issueDate: '' }]);
+    // License helpers
+    const addLicense = () => setLicenses([...licenses, { id: Date.now().toString(), logoUrl: '', title: '', issuer: '', dateStart: '', dateEnd: '' }]);
     const removeLicense = (index) => setLicenses(licenses.filter((_, i) => i !== index));
-    const updateLicense = (index, field, value) => { const u = [...licenses]; u[index] = { ...u[index], [field]: value }; setLicenses(u); };
+    const updateLicense = (index, field, value) => {
+        const updated = [...licenses];
+        updated[index] = { ...updated[index], [field]: value };
+        setLicenses(updated);
+    };
 
-    const addActivity = () => setActivities([...activities, { id: Date.now(), imageUrl: '' }]);
+    // Activity helpers
+    const addActivity = () => setActivities([...activities, { id: Date.now().toString(), imageUrl: '', url: '' }]);
     const removeActivity = (index) => setActivities(activities.filter((_, i) => i !== index));
-    const updateActivity = (index, value) => { const u = [...activities]; u[index] = { ...u[index], imageUrl: value }; setActivities(u); };
+    const updateActivity = (index, field, value) => {
+        const updated = [...activities];
+        updated[index] = { ...updated[index], [field]: value, url: value }; // Keep both imageUrl and url consistent
+        setActivities(updated);
+    };
 
     const handleSave = async () => {
         setSaving(true);
         setMessage('');
         try {
             await adminApi.updateAbout({
-                bioDescription,
-                experiences: experiences.map(e => ({ initials: e.initials, jobTitle: e.jobTitle, company: e.company, dateRange: e.dateRange, contractType: e.contractType })),
-                certifications: licenses.map(l => ({ initials: l.initials, name: l.name, issuer: l.issuer, issueDate: l.issueDate })),
-                galleryImages: activities.map(a => ({ imageUrl: a.imageUrl })),
+                page: { bioDescription },
+                tools,
+                experiences,
+                certifications: licenses,
+                galleryImages: activities
             });
             setMessage('✅ Saved successfully!');
             setTimeout(() => setMessage(''), 3000);
@@ -54,7 +83,9 @@ export default function AdminAboutEditor() {
         }
     };
 
-    if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}><p className="text-secondary">Loading...</p></div>;
+    if (loading) {
+        return <div style={{ padding: '40px', textAlign: 'center' }}><p className="text-secondary">Loading...</p></div>;
+    }
 
     return (
         <div className="admin-project-editor">
@@ -64,20 +95,48 @@ export default function AdminAboutEditor() {
                     {message && <span style={{ marginLeft: '16px', fontSize: '0.9rem' }}>{message}</span>}
                 </div>
                 <div className="header-actions">
-                    <button className="btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
+                    <button className="btn-primary" onClick={handleSave} disabled={saving}>
+                        {saving ? 'Saving...' : 'Save Changes'}
+                    </button>
                 </div>
             </div>
 
             <div className="editor-layout" style={{ gridTemplateColumns: '1fr' }}>
-                <div className="editor-panel container-fade-in">
+                <div className="editor-panel animate-fade-in">
                     <h4 className="panel-title">Overview Description</h4>
                     <div className="form-group">
                         <label>About Description (HTML supported)</label>
-                        <textarea className="form-input" rows="8" value={bioDescription} onChange={(e) => setBioDescription(e.target.value)} />
+                        <textarea className="form-input" rows="5" value={bioDescription} onChange={(e) => setBioDescription(e.target.value)} placeholder="I research user behaviors and design intuitive digital experiences..."></textarea>
                     </div>
                 </div>
 
-                <div className="editor-panel container-fade-in delay-100">
+                <div className="editor-panel animate-fade-in delay-100">
+                    <h4 className="panel-title">Tools & Skills Icons</h4>
+                    <p className="text-secondary" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Use typical React-Icons codes (e.g. 'SiFigma', 'FaWordpress'). Refer to react-icons directory.</p>
+                    <div className="blocks-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                        {tools.map((tool, index) => (
+                            <div key={tool.id || index} className="editor-block">
+                                <div className="block-header">
+                                    <span className="block-type-badge">Tool {index + 1}</span>
+                                    <button type="button" onClick={() => removeTool(index)} className="btn-icon text-danger">&times;</button>
+                                </div>
+                                <div className="block-body">
+                                    <div className="form-group">
+                                        <label>Tool Name</label>
+                                        <input type="text" className="form-input" value={tool.name} onChange={(e) => updateTool(index, 'name', e.target.value)} />
+                                    </div>
+                                    <div className="form-group" style={{ marginBottom: 0 }}>
+                                        <label>React-Icon Code</label>
+                                        <input type="text" className="form-input" value={tool.iconCode} onChange={(e) => updateTool(index, 'iconCode', e.target.value)} placeholder="SiFigma" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <button type="button" onClick={addTool} className="btn-outline" style={{ marginTop: '16px' }}>+ Add Tool Icon</button>
+                </div>
+
+                <div className="editor-panel animate-fade-in delay-100">
                     <h4 className="panel-title">Experience</h4>
                     <div className="blocks-list">
                         {experiences.map((exp, index) => (
@@ -86,12 +145,31 @@ export default function AdminAboutEditor() {
                                     <span className="block-type-badge">Experience {index + 1}</span>
                                     <button type="button" onClick={() => removeExperience(index)} className="btn-icon text-danger">&times;</button>
                                 </div>
-                                <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: '16px' }}>
-                                    <div className="form-group"><label>Initials</label><input type="text" className="form-input text-center" value={exp.initials} onChange={(e) => updateExperience(index, 'initials', e.target.value)} /></div>
-                                    <div className="form-group"><label>Job Title</label><input type="text" className="form-input" value={exp.jobTitle} onChange={(e) => updateExperience(index, 'jobTitle', e.target.value)} /></div>
-                                    <div className="form-group"><label>Company</label><input type="text" className="form-input" value={exp.company} onChange={(e) => updateExperience(index, 'company', e.target.value)} /></div>
-                                    <div className="form-group" style={{ gridColumn: '2 / 3' }}><label>Date Range</label><input type="text" className="form-input" value={exp.dateRange} onChange={(e) => updateExperience(index, 'dateRange', e.target.value)} /></div>
-                                    <div className="form-group"><label>Contract Type</label><input type="text" className="form-input" value={exp.contractType} onChange={(e) => updateExperience(index, 'contractType', e.target.value)} /></div>
+                                <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                        <label>Company Logo URL</label>
+                                        <input type="url" className="form-input" value={exp.logoUrl || ''} onChange={(e) => updateExperience(index, 'logoUrl', e.target.value)} placeholder="https://..." />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Job Title</label>
+                                        <input type="text" className="form-input" value={exp.title || exp.jobTitle || ''} onChange={(e) => updateExperience(index, 'title', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Company</label>
+                                        <input type="text" className="form-input" value={exp.company || ''} onChange={(e) => updateExperience(index, 'company', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Start Date</label>
+                                        <input type="text" className="form-input" value={exp.dateStart || ''} onChange={(e) => updateExperience(index, 'dateStart', e.target.value)} placeholder="Jan 2024" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>End Date</label>
+                                        <input type="text" className="form-input" value={exp.dateEnd || ''} onChange={(e) => updateExperience(index, 'dateEnd', e.target.value)} placeholder="Present" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Contract Type</label>
+                                        <input type="text" className="form-input" value={exp.type || exp.contractType || ''} onChange={(e) => updateExperience(index, 'type', e.target.value)} placeholder="Contract" />
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -99,7 +177,7 @@ export default function AdminAboutEditor() {
                     <button type="button" onClick={addExperience} className="btn-outline">+ Add Experience</button>
                 </div>
 
-                <div className="editor-panel container-fade-in delay-200">
+                <div className="editor-panel animate-fade-in delay-200">
                     <h4 className="panel-title">Licenses & Certifications</h4>
                     <div className="blocks-list">
                         {licenses.map((lic, index) => (
@@ -108,11 +186,27 @@ export default function AdminAboutEditor() {
                                     <span className="block-type-badge">License {index + 1}</span>
                                     <button type="button" onClick={() => removeLicense(index)} className="btn-icon text-danger">&times;</button>
                                 </div>
-                                <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: '16px' }}>
-                                    <div className="form-group"><label>Initials</label><input type="text" className="form-input text-center" value={lic.initials} onChange={(e) => updateLicense(index, 'initials', e.target.value)} /></div>
-                                    <div className="form-group"><label>Certification Name</label><input type="text" className="form-input" value={lic.name} onChange={(e) => updateLicense(index, 'name', e.target.value)} /></div>
-                                    <div className="form-group"><label>Issuer Organization</label><input type="text" className="form-input" value={lic.issuer} onChange={(e) => updateLicense(index, 'issuer', e.target.value)} /></div>
-                                    <div className="form-group" style={{ gridColumn: '2 / 3' }}><label>Issue Date</label><input type="text" className="form-input" value={lic.issueDate} onChange={(e) => updateLicense(index, 'issueDate', e.target.value)} /></div>
+                                <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                        <label>Institution Logo URL</label>
+                                        <input type="url" className="form-input" value={lic.logoUrl || ''} onChange={(e) => updateLicense(index, 'logoUrl', e.target.value)} placeholder="https://..." />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Certification Name</label>
+                                        <input type="text" className="form-input" value={lic.title || lic.name || ''} onChange={(e) => updateLicense(index, 'title', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Issuer Organization</label>
+                                        <input type="text" className="form-input" value={lic.issuer || ''} onChange={(e) => updateLicense(index, 'issuer', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Start/Issue Date</label>
+                                        <input type="text" className="form-input" value={lic.dateStart || lic.issueDate || ''} onChange={(e) => updateLicense(index, 'dateStart', e.target.value)} placeholder="Jul 2024" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Expiration Date</label>
+                                        <input type="text" className="form-input" value={lic.dateEnd || ''} onChange={(e) => updateLicense(index, 'dateEnd', e.target.value)} placeholder="(Optional)" />
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -120,9 +214,9 @@ export default function AdminAboutEditor() {
                     <button type="button" onClick={addLicense} className="btn-outline">+ Add License</button>
                 </div>
 
-                <div className="editor-panel container-fade-in delay-300">
+                <div className="editor-panel animate-fade-in delay-300">
                     <h4 className="panel-title">Activity Gallery</h4>
-                    <p className="text-secondary" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Images added here will be rendered as a horizontal scroll on the About page if there are more than 3 images.</p>
+                    <p className="text-secondary" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>These images will appear on the frontend as a sliding carousel with an image viewer lightbox.</p>
                     <div className="blocks-list">
                         {activities.map((act, index) => (
                             <div key={act.id || index} className="editor-block">
@@ -133,7 +227,7 @@ export default function AdminAboutEditor() {
                                 <div className="block-body">
                                     <div className="form-group" style={{ marginBottom: 0 }}>
                                         <label>Image URL</label>
-                                        <input type="url" className="form-input" value={act.imageUrl} onChange={(e) => updateActivity(index, e.target.value)} placeholder="https://..." />
+                                        <input type="url" className="form-input" value={act.imageUrl || act.url || ''} onChange={(e) => updateActivity(index, 'imageUrl', e.target.value)} placeholder="https://..." />
                                     </div>
                                 </div>
                             </div>

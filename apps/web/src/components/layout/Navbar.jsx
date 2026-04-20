@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { publicApi } from '../../lib/api'
 import './Navbar.css'
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [theme, setTheme] = useState('light')
+    const [contactData, setContactData] = useState(null)
     const location = useLocation()
 
     useEffect(() => {
@@ -18,6 +20,20 @@ export default function Navbar() {
     useEffect(() => {
         setIsMobileMenuOpen(false)
     }, [location])
+
+    // Load contact info
+    useEffect(() => {
+        publicApi.getContact()
+            .then(data => {
+                if (data && data.page) setContactData(data.page);
+                else setContactData(data); // Depends on how contact API returns data
+            })
+            .catch(console.error)
+    }, [])
+
+    const whatsappLink = contactData?.whatsappNumber
+        ? `https://wa.me/${contactData.whatsappNumber}?text=${encodeURIComponent(contactData.defaultMessage || '')}`
+        : 'https://wa.me/6281234567890?text=Halo%20Afdal,%20saya%20tertarik%20bekerja%20sama';
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light'
@@ -46,7 +62,7 @@ export default function Navbar() {
                     <div className="nav-links desktop-only">
                         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
                         <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
-                        <a href="https://wa.me/6281234567890?text=Halo%20Afdal,%20saya%20tertarik%20bekerja%20sama" target="_blank" rel="noreferrer" className="contact-link">Contact Me</a>
+                        <a href={whatsappLink} target="_blank" rel="noreferrer" className="contact-link">Contact Me</a>
                     </div>
 
                     <div className="nav-controls">
@@ -89,7 +105,7 @@ export default function Navbar() {
                     <div className="mobile-nav-links">
                         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
                         <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
-                        <a href="https://wa.me/6281234567890?text=Halo%20Afdal,%20saya%20tertarik%20bekerja%20sama" target="_blank" rel="noreferrer" className="contact-link">Contact Me</a>
+                        <a href={whatsappLink} target="_blank" rel="noreferrer" className="contact-link">Contact Me</a>
                     </div>
                 </div>
             )}
