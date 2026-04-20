@@ -116,7 +116,7 @@ export default function About() {
                     All designs on this website were created by Afdal Ramdan.
                 </p>
                 <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
-                    © {new Date().getFullYear()} Afdal Ramdan.<br />All rights reserved.
+                    © {new Date().getFullYear()} Afdal Ramdan. All rights reserved.
                 </p>
             </footer>
 
