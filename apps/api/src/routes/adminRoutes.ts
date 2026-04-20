@@ -14,7 +14,7 @@ router.get('/home', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching home page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error' });
     }
 });
 
@@ -36,7 +36,7 @@ router.get('/about', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching about page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error' });
     }
 });
 
@@ -46,7 +46,7 @@ router.put('/about', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error updating about page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error' });
     }
 });
 
@@ -58,7 +58,7 @@ router.get('/contact', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching contact page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error' });
     }
 });
 
