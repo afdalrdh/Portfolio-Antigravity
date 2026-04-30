@@ -46,6 +46,20 @@ export default function AdminProjectEditor() {
 
     const removeBlock = (index) => setBlocks(blocks.filter((_, i) => i !== index));
 
+    const moveBlockUp = (index) => {
+        if (index === 0) return;
+        const newBlocks = [...blocks];
+        [newBlocks[index - 1], newBlocks[index]] = [newBlocks[index], newBlocks[index - 1]];
+        setBlocks(newBlocks);
+    };
+
+    const moveBlockDown = (index) => {
+        if (index === blocks.length - 1) return;
+        const newBlocks = [...blocks];
+        [newBlocks[index + 1], newBlocks[index]] = [newBlocks[index], newBlocks[index + 1]];
+        setBlocks(newBlocks);
+    };
+
     const updateBlock = (index, field, value) => {
         const updated = [...blocks];
         updated[index] = { ...updated[index], [field]: value };
@@ -95,7 +109,11 @@ export default function AdminProjectEditor() {
         <div key={block.id || index} className="editor-block">
             <div className="block-header">
                 <span className="block-type-badge">{block.type.replace('_', ' ')}</span>
-                <button type="button" onClick={() => removeBlock(index)} className="btn-icon text-danger">&times;</button>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <button type="button" onClick={() => moveBlockUp(index)} disabled={index === 0} className="btn-icon" title="Move Up" style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                    <button type="button" onClick={() => moveBlockDown(index)} disabled={index === blocks.length - 1} className="btn-icon" title="Move Down" style={{ opacity: index === blocks.length - 1 ? 0.3 : 1, cursor: index === blocks.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                    <button type="button" onClick={() => removeBlock(index)} className="btn-icon text-danger" title="Remove">&times;</button>
+                </div>
             </div>
             <div className="block-body">
                 {block.type === 'narrative' && (
