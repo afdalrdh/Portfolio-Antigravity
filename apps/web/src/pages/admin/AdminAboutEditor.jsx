@@ -27,6 +27,20 @@ export default function AdminAboutEditor() {
             .finally(() => setLoading(false));
     }, []);
 
+    const moveItemUp = (arr, setArr, index) => {
+        if (index === 0) return;
+        const newArr = [...arr];
+        [newArr[index - 1], newArr[index]] = [newArr[index], newArr[index - 1]];
+        setArr(newArr);
+    };
+
+    const moveItemDown = (arr, setArr, index) => {
+        if (index === arr.length - 1) return;
+        const newArr = [...arr];
+        [newArr[index + 1], newArr[index]] = [newArr[index], newArr[index + 1]];
+        setArr(newArr);
+    };
+
     // Tool helpers
     const addTool = () => setTools([...tools, { id: Date.now().toString(), name: '', iconCode: '' }]);
     const removeTool = (index) => setTools(tools.filter((_, i) => i !== index));
@@ -118,7 +132,11 @@ export default function AdminAboutEditor() {
                             <div key={tool.id || index} className="editor-block">
                                 <div className="block-header">
                                     <span className="block-type-badge">Tool {index + 1}</span>
-                                    <button type="button" onClick={() => removeTool(index)} className="btn-icon text-danger">&times;</button>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <button type="button" onClick={() => moveItemUp(tools, setTools, index)} disabled={index === 0} className="btn-icon" title="Move Up" style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                                        <button type="button" onClick={() => moveItemDown(tools, setTools, index)} disabled={index === tools.length - 1} className="btn-icon" title="Move Down" style={{ opacity: index === tools.length - 1 ? 0.3 : 1, cursor: index === tools.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                                        <button type="button" onClick={() => removeTool(index)} className="btn-icon text-danger" title="Remove">&times;</button>
+                                    </div>
                                 </div>
                                 <div className="block-body">
                                     <div className="form-group">
@@ -143,7 +161,11 @@ export default function AdminAboutEditor() {
                             <div key={exp.id || index} className="editor-block">
                                 <div className="block-header">
                                     <span className="block-type-badge">Experience {index + 1}</span>
-                                    <button type="button" onClick={() => removeExperience(index)} className="btn-icon text-danger">&times;</button>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <button type="button" onClick={() => moveItemUp(experiences, setExperiences, index)} disabled={index === 0} className="btn-icon" title="Move Up" style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                                        <button type="button" onClick={() => moveItemDown(experiences, setExperiences, index)} disabled={index === experiences.length - 1} className="btn-icon" title="Move Down" style={{ opacity: index === experiences.length - 1 ? 0.3 : 1, cursor: index === experiences.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                                        <button type="button" onClick={() => removeExperience(index)} className="btn-icon text-danger" title="Remove">&times;</button>
+                                    </div>
                                 </div>
                                 <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
@@ -184,7 +206,11 @@ export default function AdminAboutEditor() {
                             <div key={lic.id || index} className="editor-block">
                                 <div className="block-header">
                                     <span className="block-type-badge">License {index + 1}</span>
-                                    <button type="button" onClick={() => removeLicense(index)} className="btn-icon text-danger">&times;</button>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <button type="button" onClick={() => moveItemUp(licenses, setLicenses, index)} disabled={index === 0} className="btn-icon" title="Move Up" style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                                        <button type="button" onClick={() => moveItemDown(licenses, setLicenses, index)} disabled={index === licenses.length - 1} className="btn-icon" title="Move Down" style={{ opacity: index === licenses.length - 1 ? 0.3 : 1, cursor: index === licenses.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                                        <button type="button" onClick={() => removeLicense(index)} className="btn-icon text-danger" title="Remove">&times;</button>
+                                    </div>
                                 </div>
                                 <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
@@ -222,7 +248,11 @@ export default function AdminAboutEditor() {
                             <div key={act.id || index} className="editor-block">
                                 <div className="block-header">
                                     <span className="block-type-badge">Image {index + 1}</span>
-                                    <button type="button" onClick={() => removeActivity(index)} className="btn-icon text-danger">&times;</button>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <button type="button" onClick={() => moveItemUp(activities, setActivities, index)} disabled={index === 0} className="btn-icon" title="Move Up" style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                                        <button type="button" onClick={() => moveItemDown(activities, setActivities, index)} disabled={index === activities.length - 1} className="btn-icon" title="Move Down" style={{ opacity: index === activities.length - 1 ? 0.3 : 1, cursor: index === activities.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                                        <button type="button" onClick={() => removeActivity(index)} className="btn-icon text-danger" title="Remove">&times;</button>
+                                    </div>
                                 </div>
                                 <div className="block-body">
                                     <div className="form-group" style={{ marginBottom: 0 }}>

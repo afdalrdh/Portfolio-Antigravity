@@ -27,6 +27,20 @@ export default function AdminHomeEditor() {
             .finally(() => setLoading(false));
     }, []);
 
+    const moveItemUp = (arr, setArr, index) => {
+        if (index === 0) return;
+        const newArr = [...arr];
+        [newArr[index - 1], newArr[index]] = [newArr[index], newArr[index - 1]];
+        setArr(newArr);
+    };
+
+    const moveItemDown = (arr, setArr, index) => {
+        if (index === arr.length - 1) return;
+        const newArr = [...arr];
+        [newArr[index + 1], newArr[index]] = [newArr[index], newArr[index + 1]];
+        setArr(newArr);
+    };
+
     const addSocial = () => setSocials([...socials, { id: Date.now(), name: '', url: '' }]);
     const removeSocial = (index) => setSocials(socials.filter((_, i) => i !== index));
     const updateSocial = (index, field, value) => {
@@ -104,7 +118,11 @@ export default function AdminHomeEditor() {
                             <div key={social.id || index} className="editor-block">
                                 <div className="block-header">
                                     <span className="block-type-badge">Social Link {index + 1}</span>
-                                    <button type="button" onClick={() => removeSocial(index)} className="btn-icon text-danger">&times;</button>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <button type="button" onClick={() => moveItemUp(socials, setSocials, index)} disabled={index === 0} className="btn-icon" title="Move Up" style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                                        <button type="button" onClick={() => moveItemDown(socials, setSocials, index)} disabled={index === socials.length - 1} className="btn-icon" title="Move Down" style={{ opacity: index === socials.length - 1 ? 0.3 : 1, cursor: index === socials.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                                        <button type="button" onClick={() => removeSocial(index)} className="btn-icon text-danger" title="Remove">&times;</button>
+                                    </div>
                                 </div>
                                 <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px' }}>
                                     <div className="form-group">
