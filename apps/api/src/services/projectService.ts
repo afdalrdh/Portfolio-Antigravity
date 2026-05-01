@@ -14,6 +14,7 @@ type BlockInput = {
 
 type ProjectInput = {
     title: string;
+    category?: string;
     slug: string;
     company?: string;
     year?: string;
@@ -48,6 +49,7 @@ export const projectService = {
     async createProject(data: ProjectInput) {
         const [project] = await db.insert(projects).values({
             title: data.title,
+            category: data.category,
             slug: data.slug,
             company: data.company,
             year: data.year,
@@ -81,6 +83,7 @@ export const projectService = {
 
         await db.update(projects).set({
             title: data.title ?? existing.title,
+            category: data.category ?? existing.category,
             slug: data.slug ?? existing.slug,
             company: data.company ?? existing.company,
             year: data.year ?? existing.year,

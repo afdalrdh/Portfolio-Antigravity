@@ -109,6 +109,18 @@ async function migrate() {
     await sql`ALTER TABLE certifications DROP COLUMN IF EXISTS name`;
     await sql`ALTER TABLE certifications DROP COLUMN IF EXISTS issue_date`;
 
+    // 4. Handle projects table column migration
+    const projCols = await sql`
+        SELECT column_name FROM information_schema.columns
+        WHERE table_name = 'projects'
+    `;
+    const projColNames = projCols.map((r: any) => r.column_name);
+
+    if (!projColNames.includes('category')) {
+        await sql`ALTER TABLE projects ADD COLUMN category TEXT`;
+        console.log('  ✓ Added category to projects');
+    }
+
     console.log('✅ V2 migration complete!');
     await sql.end();
 }

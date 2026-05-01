@@ -91,11 +91,10 @@
 }
 
 .pd-narrative-title {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 18px;
+    color: #a1a1aa;
     margin-bottom: 16px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pd-narrative-text {

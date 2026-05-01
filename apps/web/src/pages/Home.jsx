@@ -71,7 +71,10 @@ export default function Home() {
                     {projects.map((project, index) => (
                         <a href={`/project/${project.slug}`} key={project.id} className="project-card hover-lift" style={{ animationDelay: `${(index + 3) * 100}ms` }}>
                             <div className="project-title-wrapper">
-                                <h2 className="project-title">{project.title}</h2>
+                                <h2 className="project-title">
+                                    {project.title}
+                                    {project.category && <span style={{ color: 'var(--text-secondary)', fontWeight: 400, marginLeft: '6px' }}>{project.category}</span>}
+                                </h2>
                             </div>
                             <div className="project-image-wrapper">
                                 <img src={project.coverImageUrl} alt={project.title} loading="lazy" />

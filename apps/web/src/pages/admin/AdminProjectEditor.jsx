@@ -9,6 +9,7 @@ export default function AdminProjectEditor() {
     const isEditing = Boolean(id);
 
     const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
     const [slug, setSlug] = useState('');
     const [company, setCompany] = useState('');
     const [year, setYear] = useState('');
@@ -25,6 +26,7 @@ export default function AdminProjectEditor() {
             adminApi.getProject(id)
                 .then((project) => {
                     setTitle(project.title || '');
+                    setCategory(project.category || '');
                     setSlug(project.slug || '');
                     setCompany(project.company || '');
                     setYear(project.year || '');
@@ -71,6 +73,7 @@ export default function AdminProjectEditor() {
         setMessage('');
         const data = {
             title,
+            category,
             slug: slug || generateSlug(title),
             company,
             year,
@@ -184,9 +187,15 @@ export default function AdminProjectEditor() {
                 <div className="editor-main-col">
                     <div className="editor-panel container-fade-in">
                         <h4 className="panel-title">Basic Information</h4>
-                        <div className="form-group">
-                            <label>Project Title</label>
-                            <input type="text" className="form-input text-lg" value={title} onChange={(e) => { setTitle(e.target.value); if (!isEditing) setSlug(generateSlug(e.target.value)); }} />
+                        <div className="form-group-grid">
+                            <div className="form-group">
+                                <label>Project Title</label>
+                                <input type="text" className="form-input text-lg" value={title} onChange={(e) => { setTitle(e.target.value); if (!isEditing) setSlug(generateSlug(e.target.value)); }} />
+                            </div>
+                            <div className="form-group">
+                                <label>Category</label>
+                                <input type="text" className="form-input text-lg" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. Landing Page" />
+                            </div>
                         </div>
                         <div className="form-group-grid">
                             <div className="form-group">
