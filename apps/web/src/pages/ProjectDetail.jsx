@@ -119,6 +119,8 @@ export default function ProjectDetail() {
                         )}
                     </p>
                 </header>
+                
+                <hr className="pd-divider delay-100 animate-fade-in" />
 
                 {(project.blocks || []).map(renderBlock)}
 
