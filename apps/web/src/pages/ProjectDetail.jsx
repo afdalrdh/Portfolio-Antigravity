@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { publicApi } from '../lib/api'
+import LoadingSpinner from '../components/ui/LoadingSpinner'
 import './ProjectDetail.css'
 
 export default function ProjectDetail() {
@@ -27,7 +28,7 @@ export default function ProjectDetail() {
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
     if (loading) {
-        return <div className="container" style={{ paddingTop: '120px', textAlign: 'center' }}><p className="text-secondary">Loading...</p></div>
+        return <LoadingSpinner />
     }
 
     if (error || !project) {

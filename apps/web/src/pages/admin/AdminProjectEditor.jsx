@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import './AdminProjectEditor.css';
 
 export default function AdminProjectEditor() {
@@ -165,7 +166,7 @@ export default function AdminProjectEditor() {
         </div>
     );
 
-    if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}><p className="text-secondary">Loading...</p></div>;
+    if (loading) return <LoadingSpinner />;
 
     return (
         <div className="admin-project-editor">

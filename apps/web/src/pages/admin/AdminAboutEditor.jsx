@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { adminApi } from '../../lib/api';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import './AdminProjectEditor.css';
 
 export default function AdminAboutEditor() {
@@ -98,7 +99,7 @@ export default function AdminAboutEditor() {
     };
 
     if (loading) {
-        return <div style={{ padding: '40px', textAlign: 'center' }}><p className="text-secondary">Loading...</p></div>;
+        return <LoadingSpinner />;
     }
 
     return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { publicApi } from '../lib/api';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import * as SiIcons from 'react-icons/si';
 import * as FiIcons from 'react-icons/fi';
 import * as FaIcons from 'react-icons/fa';
@@ -39,7 +40,7 @@ export default function About() {
     }, [])
 
     if (loading) {
-        return <div className="container" style={{ paddingTop: '120px', textAlign: 'center' }}><p className="text-secondary">Loading...</p></div>
+        return <LoadingSpinner />
     }
 
     return (
