@@ -9,16 +9,16 @@
 .dot-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    width: 64px;
-    height: 64px;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
 }
 
 .dot {
-    width: 16px;
-    height: 16px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background-color: var(--text-secondary);
+    background-color: #6e6e77;
     opacity: 0.35;
     animation: dotPulse 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     animation-delay: calc(var(--i) * 0.15s);
@@ -34,14 +34,3 @@
         transform: scale(1);
     }
 }
-
-/* Vary dot shades for the muted gray/teal palette */
-.dot:nth-child(1) { background-color: #a2b5b9; }
-.dot:nth-child(2) { background-color: #7a9a9e; }
-.dot:nth-child(3) { background-color: #5a7e84; }
-.dot:nth-child(4) { background-color: #7a9a9e; }
-.dot:nth-child(5) { background-color: #5a7e84; }
-.dot:nth-child(6) { background-color: #a2b5b9; }
-.dot:nth-child(7) { background-color: #5a7e84; }
-.dot:nth-child(8) { background-color: #a2b5b9; }
-.dot:nth-child(9) { background-color: #7a9a9e; }

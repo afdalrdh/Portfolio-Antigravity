@@ -53,7 +53,7 @@ export default function Home() {
                 </div>
                 <div className="hero-content">
                     <h1 className="hero-text" dangerouslySetInnerHTML={{ __html: homeData?.page?.heroHeadline || '' }} />
-                    <a href={homeData?.page?.ctaUrl || '#'} target="_blank" rel="noreferrer" className="hero-cta text-accent font-medium hover-lift" style={{ width: 'fit-content' }}>
+                    <a href={homeData?.page?.ctaUrl || '#'} target="_blank" rel="noreferrer" className="hero-cta text-accent font-medium" style={{ width: 'fit-content' }}>
                         {homeData?.page?.ctaText || 'Contact me!'}
                     </a>
 
