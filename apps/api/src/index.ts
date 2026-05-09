@@ -37,6 +37,24 @@ app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Debug: inspect table structure (temporary)
+app.get('/api/debug/schema', async (_req, res) => {
+    try {
+        const { db } = await import('./db/index.js');
+        const { sql } = await import('drizzle-orm');
+        const result = await db.execute(sql`
+            SELECT table_name, column_name, data_type, is_nullable, column_default
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+            AND table_name IN ('experiences', 'certifications', 'about_tools', 'gallery_images', 'about_page')
+            ORDER BY table_name, ordinal_position
+        `);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: (error as any)?.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 API server running at http://localhost:${PORT}`);
     console.log(`📡 Auth endpoints at http://localhost:${PORT}/api/auth`);

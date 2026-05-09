@@ -46,7 +46,9 @@ router.put('/about', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error updating about page:', error);
-        res.status(500).json({ error: (error as any)?.message || 'Internal server error' });
+        const msg = (error as any)?.message || 'Internal server error';
+        const cause = (error as any)?.cause?.message || '';
+        res.status(500).json({ error: cause ? `${msg} | Cause: ${cause}` : msg });
     }
 });
 

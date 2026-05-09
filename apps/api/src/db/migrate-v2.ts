@@ -69,6 +69,7 @@ async function migrate() {
     // Drop old columns that are no longer needed
     await sql`ALTER TABLE experiences DROP COLUMN IF EXISTS initials`;
     await sql`ALTER TABLE experiences DROP COLUMN IF EXISTS job_title`;
+    await sql`ALTER TABLE experiences DROP COLUMN IF EXISTS date_range`;
 
     // 3. Handle certifications table column migration
     const certCols = await sql`
