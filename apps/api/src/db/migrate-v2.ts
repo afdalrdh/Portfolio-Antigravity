@@ -49,8 +49,7 @@ async function migrate() {
             // Split date_range into date_start and date_end
             await sql`ALTER TABLE experiences ADD COLUMN date_start TEXT NOT NULL DEFAULT ''`;
             await sql`ALTER TABLE experiences ADD COLUMN date_end TEXT NOT NULL DEFAULT 'Present'`;
-            await sql`ALTER TABLE experiences ADD COLUMN contract_type TEXT NOT NULL DEFAULT ''`;
-            console.log('  ✓ Added date_start, date_end, contract_type to experiences');
+            console.log('  ✓ Added date_start, date_end to experiences');
             // Drop old column
             await sql`ALTER TABLE experiences DROP COLUMN IF EXISTS date_range`;
             console.log('  ✓ Dropped old date_range from experiences');
