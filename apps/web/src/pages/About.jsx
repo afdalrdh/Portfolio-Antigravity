@@ -2,19 +2,8 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { publicApi } from '../lib/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import * as SiIcons from 'react-icons/si';
-import * as FiIcons from 'react-icons/fi';
-import * as FaIcons from 'react-icons/fa';
+import { renderIcon } from '../utils/renderIcon';
 import './About.css';
-
-// Safe dynamic icon renderer
-const renderIcon = (iconCode) => {
-    if (!iconCode) return null;
-    if (iconCode.startsWith('Si') && SiIcons[iconCode]) { const Icon = SiIcons[iconCode]; return <Icon />; }
-    if (iconCode.startsWith('Fi') && FiIcons[iconCode]) { const Icon = FiIcons[iconCode]; return <Icon />; }
-    if (iconCode.startsWith('Fa') && FaIcons[iconCode]) { const Icon = FaIcons[iconCode]; return <Icon />; }
-    return <span>{iconCode.slice(0, 2)}</span>;
-};
 
 export default function About() {
     const [data, setData] = useState(null)
