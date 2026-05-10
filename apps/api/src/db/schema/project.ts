@@ -10,6 +10,7 @@ export const projects = pgTable('projects', {
     liveLink: text('live_link'),
     coverImageUrl: text('cover_image_url'),
     visibility: text('visibility').notNull().default('draft'), // 'public' | 'draft' | 'private'
+    sortOrder: integer('sort_order').notNull().default(0),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

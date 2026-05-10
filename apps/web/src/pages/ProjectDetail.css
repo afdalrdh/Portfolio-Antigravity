@@ -108,6 +108,7 @@
     font-size: 18px;
     line-height: 1.8;
     color: var(--text-primary);
+    white-space: pre-wrap;
 }
 
 .pd-main-image {

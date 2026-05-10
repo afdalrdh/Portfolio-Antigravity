@@ -138,4 +138,19 @@ router.delete('/projects/:id', async (req, res) => {
     }
 });
 
+router.post('/projects/reorder', async (req, res) => {
+    try {
+        const { projectIds } = req.body;
+        if (!Array.isArray(projectIds)) {
+            res.status(400).json({ error: 'projectIds must be an array' });
+            return;
+        }
+        await projectService.reorderProjects(projectIds);
+        res.json({ message: 'Projects reordered successfully' });
+    } catch (error) {
+        console.error('Error reordering projects:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

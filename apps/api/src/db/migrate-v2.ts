@@ -120,6 +120,10 @@ async function migrate() {
         await sql`ALTER TABLE projects ADD COLUMN category TEXT`;
         console.log('  ✓ Added category to projects');
     }
+    if (!projColNames.includes('sort_order')) {
+        await sql`ALTER TABLE projects ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`;
+        console.log('  ✓ Added sort_order to projects');
+    }
 
     console.log('✅ V2 migration complete!');
     await sql.end();

@@ -44,4 +44,5 @@ export const adminApi = {
     createProject: (data) => api('/admin/projects', { method: 'POST', body: JSON.stringify(data) }),
     updateProject: (id, data) => api(`/admin/projects/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteProject: (id) => api(`/admin/projects/${id}`, { method: 'DELETE' }),
+    reorderProjects: (projectIds) => api('/admin/projects/reorder', { method: 'POST', body: JSON.stringify({ projectIds }) }),
 };

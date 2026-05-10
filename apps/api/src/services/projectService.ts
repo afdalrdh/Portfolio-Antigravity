@@ -21,15 +21,16 @@ type ProjectInput = {
     liveLink?: string;
     coverImageUrl?: string;
     visibility?: string;
+    sortOrder?: number;
     blocks?: BlockInput[];
 };
 
 export const projectService = {
     async listProjects(onlyPublic = false) {
         if (onlyPublic) {
-            return db.select().from(projects).where(eq(projects.visibility, 'public')).orderBy(projects.createdAt);
+            return db.select().from(projects).where(eq(projects.visibility, 'public')).orderBy(projects.sortOrder, projects.createdAt);
         }
-        return db.select().from(projects).orderBy(projects.createdAt);
+        return db.select().from(projects).orderBy(projects.sortOrder, projects.createdAt);
     },
 
     async getProjectBySlug(slug: string) {
@@ -56,6 +57,7 @@ export const projectService = {
             liveLink: data.liveLink,
             coverImageUrl: data.coverImageUrl,
             visibility: data.visibility || 'draft',
+            sortOrder: data.sortOrder || 0,
         }).returning();
 
         if (data.blocks && data.blocks.length > 0) {
@@ -90,6 +92,7 @@ export const projectService = {
             liveLink: data.liveLink ?? existing.liveLink,
             coverImageUrl: data.coverImageUrl ?? existing.coverImageUrl,
             visibility: data.visibility ?? existing.visibility,
+            sortOrder: data.sortOrder ?? existing.sortOrder,
             updatedAt: new Date(),
         }).where(eq(projects.id, id));
 
@@ -119,5 +122,15 @@ export const projectService = {
     async deleteProject(id: number) {
         const [deleted] = await db.delete(projects).where(eq(projects.id, id)).returning();
         return deleted || null;
+    },
+
+    async reorderProjects(projectIds: number[]) {
+        return await db.transaction(async (tx) => {
+            for (let i = 0; i < projectIds.length; i++) {
+                await tx.update(projects)
+                    .set({ sortOrder: i })
+                    .where(eq(projects.id, projectIds[i]));
+            }
+        });
     },
 };
