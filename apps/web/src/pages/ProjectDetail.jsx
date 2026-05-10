@@ -14,7 +14,10 @@ export default function ProjectDetail() {
     useEffect(() => {
         if (!slug) return
         publicApi.getProject(slug)
-            .then(setProject)
+            .then((data) => {
+                setProject(data)
+                document.title = `${data.title} ${data.category || ''} - Afdal Ramdan`.trim()
+            })
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false))
     }, [slug])
@@ -111,7 +114,9 @@ export default function ProjectDetail() {
             <div className="container animate-fade-in project-detail-page">
                 <header className="pd-header delay-100 animate-fade-in">
                     <Link to="/" className="back-button">&larr; Back to home</Link>
-                    <h1 className="pd-title">{project.title}</h1>
+                    <h1 className="pd-title">
+                        {project.title} {project.category && <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{project.category}</span>}
+                    </h1>
                     <p className="pd-meta">
                         {project.company} {project.year}
                         {project.liveLink && (

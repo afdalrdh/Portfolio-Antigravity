@@ -22,6 +22,10 @@ export default function About() {
     }, [selectedImg]);
 
     useEffect(() => {
+        document.title = "About Afdal Ramdan";
+    }, []);
+
+    useEffect(() => {
         publicApi.getAbout()
             .then(setData)
             .catch(console.error)

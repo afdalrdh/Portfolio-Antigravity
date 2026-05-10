@@ -10,6 +10,7 @@ export default function AdminLayout() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        document.title = "Admin Afdal Ramdan";
         authClient.getSession()
             .then((data) => {
                 if (!data || !data.session) {
