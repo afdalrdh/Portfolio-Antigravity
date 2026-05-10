@@ -115,7 +115,7 @@ export default function ProjectDetail() {
                 <header className="pd-header delay-100 animate-fade-in">
                     <Link to="/" className="back-button">&larr; Back to home</Link>
                     <h1 className="pd-title">
-                        {project.title} {project.category && <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{project.category}</span>}
+                        {project.title} {project.category && <span>{project.category}</span>}
                     </h1>
                     <p className="pd-meta">
                         {project.company} {project.year}
