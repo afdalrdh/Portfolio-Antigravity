@@ -22,7 +22,7 @@ export default function About() {
     }, [selectedImg]);
 
     useEffect(() => {
-        document.title = "About Afdal Ramdan";
+        document.title = "About - Afdal Ramdan";
     }, []);
 
     useEffect(() => {

@@ -30,6 +30,7 @@ export default function Home() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        document.title = "Afdal Ramdan - UI/UX Designer";
         Promise.all([publicApi.getHome(), publicApi.getProjects()])
             .then(([home, projs]) => {
                 setHomeData(home)
