@@ -91,10 +91,10 @@ export default function Home() {
 
             <footer className="home-footer delay-300 animate-fade-in">
                 <p className="text-secondary text-sm">
-                    All designs on this website were created by Afdal Ramdan.
+                    All designs on this website were created by Afdal Ramdan Daman Huri
                 </p>
                 <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
-                    © {new Date().getFullYear()} Afdal Ramdan. All rights reserved.
+                    © 2026 All rights reserved.
                 </p>
             </footer>
         </div>
