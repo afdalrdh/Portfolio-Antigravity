@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { createPortal } from 'react-dom';
 import { publicApi } from '../lib/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -38,6 +39,10 @@ export default function About() {
 
     return (
         <div className="container animate-fade-in about-page">
+            <Helmet>
+                <title>About | Afdal Ramdan Daman Huri</title>
+                <meta name="description" content="Learn more about Afdal Ramdan Daman Huri, experience, certifications, and UI/UX design tools." />
+            </Helmet>
             <section className="about-bio">
                 {data?.page?.bioDescription && (
                     <div className="bio-paragraphs delay-100 animate-fade-in" dangerouslySetInnerHTML={{ __html: data.page.bioDescription }} />

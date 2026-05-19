@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { useParams, Link } from 'react-router-dom'
 import { publicApi } from '../lib/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -16,7 +17,6 @@ export default function ProjectDetail() {
         publicApi.getProject(slug)
             .then((data) => {
                 setProject(data)
-                document.title = `${data.title} ${data.category || ''} - Afdal Ramdan`.trim()
             })
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false))
@@ -111,6 +111,10 @@ export default function ProjectDetail() {
 
     return (
         <>
+            <Helmet>
+                <title>{project.title} | Afdal Ramdan Daman Huri</title>
+                <meta name="description" content={project.short_description || `View details for the project ${project.title} by Afdal Ramdan Daman Huri.`} />
+            </Helmet>
             <div className="container animate-fade-in project-detail-page">
                 <header className="pd-header delay-100 animate-fade-in">
                     <Link to="/" className="back-button">&larr; Back to home</Link>

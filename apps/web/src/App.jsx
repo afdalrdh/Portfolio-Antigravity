@@ -21,9 +21,11 @@ const ClientLayout = () => (
 
 import { Analytics } from '@vercel/analytics/react';
 
+import { HelmetProvider } from 'react-helmet-async';
+
 function App() {
     return (
-        <>
+        <HelmetProvider>
             <Router>
                 <Routes>
                     {/* Client Routes */}
@@ -46,7 +48,7 @@ function App() {
                 </Routes>
             </Router>
             <Analytics />
-        </>
+        </HelmetProvider>
     )
 }
 

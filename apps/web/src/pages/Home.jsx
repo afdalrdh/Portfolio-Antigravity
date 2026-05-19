@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async';
 import { publicApi } from '../lib/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { renderIcon as renderReactIcon } from '../utils/renderIcon';
@@ -47,6 +48,10 @@ export default function Home() {
 
     return (
         <div className="container animate-fade-in">
+            <Helmet>
+                <title>Afdal Ramdan Daman Huri | UI/UX Designer</title>
+                <meta name="description" content="Portfolio of Afdal Ramdan Daman Huri, a passionate UI/UX Designer specializing in web and mobile app design, creating intuitive digital experiences." />
+            </Helmet>
             <header className="home-hero">
                 <div className="hero-profile">
                     <img
