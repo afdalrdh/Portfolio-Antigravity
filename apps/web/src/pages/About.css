@@ -227,6 +227,10 @@
 }
 
 @media (max-width: 768px) {
+    .about-page {
+        padding-top: 56px;
+    }
+
     .about-greeting {
         font-size: 32px;
     }

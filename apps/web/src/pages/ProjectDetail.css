@@ -85,6 +85,10 @@
 }
 
 @media (max-width: 768px) {
+    .project-detail-page {
+        padding-top: 24px;
+    }
+
     .scroll-top-btn {
         bottom: 24px;
         right: 24px;
