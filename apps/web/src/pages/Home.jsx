@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion';
+import { optimizeImage } from '../utils/optimizeImage';
 import { Helmet } from 'react-helmet-async';
 import { publicApi } from '../lib/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -47,7 +49,13 @@ export default function Home() {
 
 
     return (
-        <div className="container animate-fade-in">
+        <motion.div 
+            className="container"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+        >
             <Helmet>
                 <title>Afdal Ramdan Daman Huri | UI/UX Designer</title>
                 <meta name="description" content="Portfolio of Afdal Ramdan Daman Huri, a passionate UI/UX Designer specializing in web and mobile app design, creating intuitive digital experiences." />
@@ -55,7 +63,7 @@ export default function Home() {
             <header className="home-hero">
                 <div className="hero-profile">
                     <img
-                        src={homeData?.page?.profileImageUrl || ''}
+                        src={optimizeImage(homeData?.page?.profileImageUrl) || ''}
                         alt="Afdal Ramdan"
                         className="profile-img hover-lift"
                     />
@@ -87,7 +95,7 @@ export default function Home() {
                                 </h2>
                             </div>
                             <div className="project-image-wrapper">
-                                <img src={project.coverImageUrl} alt={project.title} loading="lazy" />
+                                <img src={optimizeImage(project.coverImageUrl)} alt={project.title} loading="lazy" />
                             </div>
                         </a>
                     ))}
@@ -102,6 +110,6 @@ export default function Home() {
                     © 2026 All rights reserved.
                 </p>
             </footer>
-        </div>
+        </motion.div>
     )
 }

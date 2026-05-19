@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import Home from './pages/Home'
 import About from './pages/About'
 import ProjectDetail from './pages/ProjectDetail'
@@ -23,29 +24,39 @@ import { Analytics } from '@vercel/analytics/react';
 
 import { HelmetProvider } from 'react-helmet-async';
 
+const AnimatedRoutes = () => {
+    const location = useLocation();
+    
+    return (
+        <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+                {/* Client Routes */}
+                <Route element={<ClientLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/project/:slug" element={<ProjectDetail />} />
+                </Route>
+
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="projects/new" element={<AdminProjectEditor />} />
+                    <Route path="projects/:id/edit" element={<AdminProjectEditor />} />
+                    <Route path="home" element={<AdminHomeEditor />} />
+                    <Route path="about" element={<AdminAboutEditor />} />
+                    <Route path="contact" element={<AdminContactEditor />} />
+                </Route>
+            </Routes>
+        </AnimatePresence>
+    );
+};
+
 function App() {
     return (
         <HelmetProvider>
             <Router>
-                <Routes>
-                    {/* Client Routes */}
-                    <Route element={<ClientLayout />}>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/project/:slug" element={<ProjectDetail />} />
-                    </Route>
-
-                    {/* Admin Routes */}
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route path="/admin" element={<AdminLayout />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="projects/new" element={<AdminProjectEditor />} />
-                        <Route path="projects/:id/edit" element={<AdminProjectEditor />} />
-                        <Route path="home" element={<AdminHomeEditor />} />
-                        <Route path="about" element={<AdminAboutEditor />} />
-                        <Route path="contact" element={<AdminContactEditor />} />
-                    </Route>
-                </Routes>
+                <AnimatedRoutes />
             </Router>
             <Analytics />
         </HelmetProvider>

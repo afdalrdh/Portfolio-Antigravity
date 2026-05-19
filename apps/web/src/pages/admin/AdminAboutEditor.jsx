@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { adminApi } from '../../lib/api';
+import CloudinaryUploadWidget from '../../components/admin/CloudinaryUploadWidget';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import './AdminProjectEditor.css';
 
@@ -258,7 +259,10 @@ export default function AdminAboutEditor() {
                                 <div className="block-body">
                                     <div className="form-group" style={{ marginBottom: 0 }}>
                                         <label>Image URL</label>
-                                        <input type="url" className="form-input" value={act.imageUrl || act.url || ''} onChange={(e) => updateActivity(index, 'imageUrl', e.target.value)} placeholder="https://..." />
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <input type="url" className="form-input" value={act.imageUrl || act.url || ''} onChange={(e) => updateActivity(index, 'imageUrl', e.target.value)} placeholder="https://..." style={{ flex: 1 }} />
+                                            <CloudinaryUploadWidget onUploadSuccess={(url) => updateActivity(index, 'imageUrl', url)} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

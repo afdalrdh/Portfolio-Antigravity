@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { optimizeImage } from '../utils/optimizeImage';
 import { Helmet } from 'react-helmet-async'
 import { useParams, Link } from 'react-router-dom'
 import { publicApi } from '../lib/api'
@@ -56,7 +58,7 @@ export default function ProjectDetail() {
             case 'image_main':
                 return (
                     <div key={block.id} className="pd-main-image animate-fade-in hover-lift" style={{ marginTop: '40px' }}>
-                        <img src={block.imageUrl} alt={project.title} loading="lazy" />
+                        <img src={optimizeImage(block.imageUrl)} alt={project.title} loading="lazy" />
                     </div>
                 )
             case 'image_grid':
@@ -64,12 +66,12 @@ export default function ProjectDetail() {
                     <div key={block.id} className="pd-grid-images animate-fade-in" style={{ marginTop: '40px' }}>
                         {block.imageUrl && (
                             <div className="pd-image-card hover-lift">
-                                <img src={block.imageUrl} alt="Detail 1" loading="lazy" />
+                                <img src={optimizeImage(block.imageUrl)} alt="Detail 1" loading="lazy" />
                             </div>
                         )}
                         {block.imageUrl2 && (
                             <div className="pd-image-card hover-lift">
-                                <img src={block.imageUrl2} alt="Detail 2" loading="lazy" />
+                                <img src={optimizeImage(block.imageUrl2)} alt="Detail 2" loading="lazy" />
                             </div>
                         )}
                     </div>
@@ -110,7 +112,12 @@ export default function ProjectDetail() {
     }
 
     return (
-        <>
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+        >
             <Helmet>
                 <title>{project.title} | Afdal Ramdan Daman Huri</title>
                 <meta name="description" content={project.short_description || `View details for the project ${project.title} by Afdal Ramdan Daman Huri.`} />
@@ -148,6 +155,6 @@ export default function ProjectDetail() {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>
                 </button>
             )}
-        </>
+        </motion.div>
     )
 }

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { optimizeImage } from '../utils/optimizeImage';
 import { Helmet } from 'react-helmet-async';
 import { createPortal } from 'react-dom';
 import { publicApi } from '../lib/api';
@@ -38,7 +40,13 @@ export default function About() {
     }
 
     return (
-        <div className="container animate-fade-in about-page">
+        <motion.div 
+            className="container about-page"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+        >
             <Helmet>
                 <title>About | Afdal Ramdan Daman Huri</title>
                 <meta name="description" content="Learn more about Afdal Ramdan Daman Huri, experience, certifications, and UI/UX design tools." />
@@ -104,7 +112,7 @@ export default function About() {
                 <div className="gallery-carousel">
                     {(data?.galleryImages || []).map((img, idx) => (
                         <div key={img.id || idx} className="gallery-item hover-lift" onClick={() => setSelectedImg(img.imageUrl)}>
-                            <img src={img.imageUrl} alt="Gallery item" loading="lazy" />
+                            <img src={optimizeImage(img.imageUrl)} alt="Gallery item" loading="lazy" />
                         </div>
                     ))}
                 </div>
@@ -127,6 +135,6 @@ export default function About() {
                 </div>,
                 document.body
             )}
-        </div>
+        </motion.div>
     )
 }

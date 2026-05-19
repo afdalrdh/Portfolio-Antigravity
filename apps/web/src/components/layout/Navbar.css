@@ -22,17 +22,17 @@
 
 @media (max-width: 768px) {
     .navbar {
-        width: 100%;
-        top: 0;
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-        border-top: none;
+        width: calc(100% - 32px);
+        top: 16px;
+        border-radius: 999px;
+        border: 1px solid var(--nav-border);
     }
 
     .nav-content {
         justify-content: space-between;
         width: 100%;
+        padding: 0 16px;
+        gap: 16px;
     }
 }
 
@@ -95,6 +95,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-pill);
+    background: var(--icon-bg);
+    border: 1px solid var(--nav-border);
 }
 
 .desktop-only {

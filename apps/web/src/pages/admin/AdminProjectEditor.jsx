@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import CloudinaryUploadWidget from '../../components/admin/CloudinaryUploadWidget';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import './AdminProjectEditor.css';
 
@@ -135,18 +136,27 @@ export default function AdminProjectEditor() {
                 {block.type === 'image_main' && (
                     <div className="form-group">
                         <label>Image URL</label>
-                        <input type="text" className="form-input" value={block.imageUrl || ''} onChange={(e) => updateBlock(index, 'imageUrl', e.target.value)} placeholder="https://..." />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <input type="text" className="form-input" value={block.imageUrl || ''} onChange={(e) => updateBlock(index, 'imageUrl', e.target.value)} placeholder="https://..." style={{ flex: 1 }} />
+                            <CloudinaryUploadWidget onUploadSuccess={(url) => updateBlock(index, 'imageUrl', url)} />
+                        </div>
                     </div>
                 )}
                 {block.type === 'image_grid' && (
                     <div className="form-group-grid">
                         <div className="form-group">
                             <label>Image 1 URL</label>
-                            <input type="text" className="form-input" value={block.imageUrl || ''} onChange={(e) => updateBlock(index, 'imageUrl', e.target.value)} placeholder="https://..." />
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <input type="text" className="form-input" value={block.imageUrl || ''} onChange={(e) => updateBlock(index, 'imageUrl', e.target.value)} placeholder="https://..." style={{ flex: 1 }} />
+                                <CloudinaryUploadWidget onUploadSuccess={(url) => updateBlock(index, 'imageUrl', url)} />
+                            </div>
                         </div>
                         <div className="form-group">
                             <label>Image 2 URL</label>
-                            <input type="text" className="form-input" value={block.imageUrl2 || ''} onChange={(e) => updateBlock(index, 'imageUrl2', e.target.value)} placeholder="https://..." />
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <input type="text" className="form-input" value={block.imageUrl2 || ''} onChange={(e) => updateBlock(index, 'imageUrl2', e.target.value)} placeholder="https://..." style={{ flex: 1 }} />
+                                <CloudinaryUploadWidget onUploadSuccess={(url) => updateBlock(index, 'imageUrl2', url)} />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -214,7 +224,10 @@ export default function AdminProjectEditor() {
                         </div>
                         <div className="form-group">
                             <label>Cover Image URL (for homepage card)</label>
-                            <input type="url" className="form-input" value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="https://..." />
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <input type="url" className="form-input" value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="https://..." style={{ flex: 1 }} />
+                                <CloudinaryUploadWidget onUploadSuccess={setCoverImageUrl} />
+                            </div>
                         </div>
                     </div>
 
