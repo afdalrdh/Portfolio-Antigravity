@@ -93,7 +93,7 @@ export default function Navbar() {
                             <motion.div 
                                 className="mobile-nav-dropdown mobile-only"
                                 initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
+                                animate={{ height: '100vh', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.2, ease: 'easeInOut' }}
                             >
