@@ -19,29 +19,34 @@ const ClientLayout = () => (
     </>
 );
 
+import { Analytics } from '@vercel/analytics/react';
+
 function App() {
     return (
-        <Router>
-            <Routes>
-                {/* Client Routes */}
-                <Route element={<ClientLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/project/:slug" element={<ProjectDetail />} />
-                </Route>
+        <>
+            <Router>
+                <Routes>
+                    {/* Client Routes */}
+                    <Route element={<ClientLayout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/project/:slug" element={<ProjectDetail />} />
+                    </Route>
 
-                {/* Admin Routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="projects/new" element={<AdminProjectEditor />} />
-                    <Route path="projects/:id/edit" element={<AdminProjectEditor />} />
-                    <Route path="home" element={<AdminHomeEditor />} />
-                    <Route path="about" element={<AdminAboutEditor />} />
-                    <Route path="contact" element={<AdminContactEditor />} />
-                </Route>
-            </Routes>
-        </Router>
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="projects/new" element={<AdminProjectEditor />} />
+                        <Route path="projects/:id/edit" element={<AdminProjectEditor />} />
+                        <Route path="home" element={<AdminHomeEditor />} />
+                        <Route path="about" element={<AdminAboutEditor />} />
+                        <Route path="contact" element={<AdminContactEditor />} />
+                    </Route>
+                </Routes>
+            </Router>
+            <Analytics />
+        </>
     )
 }
 
