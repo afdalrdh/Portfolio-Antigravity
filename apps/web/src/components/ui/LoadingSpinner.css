@@ -1,9 +1,11 @@
 .loading-spinner-wrapper {
+    position: fixed;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 60vh;
-    width: 100%;
+    background-color: var(--bg-primary);
+    z-index: 40;
 }
 
 .dot-grid {
