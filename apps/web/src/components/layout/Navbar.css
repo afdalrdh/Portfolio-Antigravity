@@ -26,11 +26,12 @@
         top: 0;
         left: 0;
         border-radius: 0;
-        border-left: none;
-        border-right: none;
-        border-top: none;
+        border: none;
+        border-bottom: 1px solid var(--nav-border);
         -webkit-transform: none;
         transform: none;
+        height: calc(64px + env(safe-area-inset-top, 0px));
+        padding-top: env(safe-area-inset-top, 0px);
     }
 
     .nav-content {
@@ -121,8 +122,8 @@
 }
 
 .mobile-overlay-header {
-    height: 72px;
-    padding: 0 24px;
+    height: calc(64px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 16px 0 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
