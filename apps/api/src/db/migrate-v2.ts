@@ -7,7 +7,7 @@ if (!DATABASE_URL) {
     process.exit(1);
 }
 
-const sql = postgres(DATABASE_URL);
+const sql = postgres(DATABASE_URL, { ssl: 'require' });
 
 async function migrate() {
     console.log('🔄 Running V2 migration...');
