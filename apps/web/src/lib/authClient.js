@@ -1,4 +1,4 @@
-const AUTH_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api/auth';
+const AUTH_BASE = (import.meta.env.VITE_API_URL || '') + '/api/auth';
 
 // Helper: get stored token for Authorization header
 const getAuthHeaders = (extra = {}) => {
