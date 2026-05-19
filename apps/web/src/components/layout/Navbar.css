@@ -22,12 +22,15 @@
 
 @media (max-width: 768px) {
     .navbar {
-        width: calc(100% - 32px);
-        top: calc(16px + env(safe-area-inset-top, 0px));
-        border-radius: 999px;
-        border: 1px solid var(--nav-border);
-        -webkit-transform: translateX(-50%);
-        transform: translateX(-50%);
+        width: 100%;
+        top: 0;
+        left: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        -webkit-transform: none;
+        transform: none;
     }
 
     .nav-content {
@@ -97,11 +100,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-pill);
-    background: var(--icon-bg);
-    border: 1px solid var(--nav-border);
 }
 
 .desktop-only {
