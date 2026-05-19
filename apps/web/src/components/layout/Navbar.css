@@ -23,9 +23,11 @@
 @media (max-width: 768px) {
     .navbar {
         width: calc(100% - 32px);
-        top: 16px;
+        top: calc(16px + env(safe-area-inset-top, 0px));
         border-radius: 999px;
         border: 1px solid var(--nav-border);
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
     }
 
     .nav-content {
