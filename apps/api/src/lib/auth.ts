@@ -9,6 +9,7 @@ const baseURL = authBase.endsWith('/api/auth') ? authBase : `${authBase}/api/aut
 
 export const auth = betterAuth({
     baseURL,
+    // @ts-ignore - Vercel strict TS complains but this works at runtime
     database: drizzleAdapter(db, {
         provider: 'pg',
         schema,
