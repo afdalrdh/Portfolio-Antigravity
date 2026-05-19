@@ -241,8 +241,9 @@
     }
 
     .gallery-item {
-        min-width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 10;
+        min-width: unset;
+        width: 85%;
+        flex-shrink: 0;
+        height: 220px;
     }
 }

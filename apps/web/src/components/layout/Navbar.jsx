@@ -11,6 +11,20 @@ export default function Navbar() {
     const location = useLocation()
 
     useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100dvh';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+        };
+    }, [isMobileMenuOpen])
+
+    useEffect(() => {
         // Check initial theme from OS or localStorage
         const savedTheme = localStorage.getItem('theme') || 'light'
         setTheme(savedTheme)
@@ -93,7 +107,7 @@ export default function Navbar() {
                             <motion.div 
                                 className="mobile-nav-dropdown mobile-only"
                                 initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: '100vh', opacity: 1 }}
+                                animate={{ height: 'calc(100dvh - 64px - env(safe-area-inset-top, 0px))', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.2, ease: 'easeInOut' }}
                             >
