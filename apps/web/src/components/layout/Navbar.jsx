@@ -100,26 +100,26 @@ export default function Navbar() {
                             </button>
                         </div>
                     </div>
-
-                    {/* Mobile Dropdown Menu */}
-                    <AnimatePresence>
-                        {isMobileMenuOpen && (
-                            <motion.div 
-                                className="mobile-nav-dropdown mobile-only"
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'calc(100dvh - 64px - env(safe-area-inset-top, 0px))', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.2, ease: 'easeInOut' }}
-                            >
-                                <div className="mobile-nav-links">
-                                    <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                                    <Link to="/about" className={location.pathname === '/about' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-                                    <a href={whatsappLink} target="_blank" rel="noreferrer" className="contact-link" onClick={() => setIsMobileMenuOpen(false)}>Contact Me</a>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </nav>
+
+                {/* Mobile Dropdown Menu */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div 
+                            className="mobile-nav-dropdown mobile-only"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'calc(100dvh - 64px - env(safe-area-inset-top, 0px))', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: 'easeInOut' }}
+                        >
+                            <div className="mobile-nav-links">
+                                <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                                <Link to="/about" className={location.pathname === '/about' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
+                                <a href={whatsappLink} target="_blank" rel="noreferrer" className="contact-link" onClick={() => setIsMobileMenuOpen(false)}>Contact Me</a>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </>
         )
     }
