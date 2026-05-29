@@ -74,6 +74,12 @@ export default function AdminLayout() {
                         Contact Page
                     </Link>
                     <Link
+                        to="/admin/ai-chat"
+                        className={`admin-nav-link ${location.pathname === '/admin/ai-chat' ? 'active' : ''}`}
+                    >
+                        AI Chat Settings
+                    </Link>
+                    <Link
                         to="/"
                         className="admin-nav-link text-secondary"
                         style={{ marginTop: '16px' }}

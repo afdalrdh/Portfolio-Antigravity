@@ -78,6 +78,7 @@ export default function Navbar() {
                         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
                         <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
                         <a href={whatsappLink} target="_blank" rel="noreferrer" className="contact-link">Contact Me</a>
+                        <Link to="/ai-chat" className={location.pathname === '/ai-chat' ? 'active' : ''}>AI Chat <span style={{fontSize: '12px'}}>✨</span></Link>
                     </div>
 
                     <div className="nav-controls">
@@ -116,6 +117,7 @@ export default function Navbar() {
                                 <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
                                 <Link to="/about" className={location.pathname === '/about' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
                                 <a href={whatsappLink} target="_blank" rel="noreferrer" className="contact-link" onClick={() => setIsMobileMenuOpen(false)}>Contact Me</a>
+                                <Link to="/ai-chat" className={location.pathname === '/ai-chat' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>AI Chat ✨</Link>
                             </div>
                         </motion.div>
                     )}

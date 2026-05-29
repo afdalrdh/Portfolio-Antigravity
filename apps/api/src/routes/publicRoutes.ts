@@ -3,6 +3,7 @@ import { homeService } from '../services/homeService.js';
 import { aboutService } from '../services/aboutService.js';
 import { contactService } from '../services/contactService.js';
 import { projectService } from '../services/projectService.js';
+import { aiChatService } from '../services/aiChatService.js';
 
 const router = Router();
 
@@ -62,6 +63,36 @@ router.get('/projects/:slug', async (req, res) => {
     } catch (error) {
         console.error('Error fetching project:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// AI Chat - public settings
+router.get('/ai-chat/settings', async (_req, res) => {
+    try {
+        const data = await aiChatService.getPublicSettings();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching AI chat settings:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// AI Chat - chat completion (SSE streaming)
+router.post('/ai-chat', async (req, res) => {
+    try {
+        const { messages } = req.body;
+        if (!messages || !Array.isArray(messages)) {
+            res.status(400).json({ error: 'Messages array is required' });
+            return;
+        }
+        await aiChatService.chatCompletion(messages, res);
+    } catch (error) {
+        console.error('Error in AI chat completion:', error);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            res.end();
+        }
     }
 });
 

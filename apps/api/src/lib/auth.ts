@@ -7,6 +7,8 @@ import * as schema from '../db/schema/index.js';
 const authBase = process.env.BETTER_AUTH_URL || '';
 const baseURL = authBase.endsWith('/api/auth') ? authBase : `${authBase}/api/auth`;
 
+const isProd = process.env.NODE_ENV === 'production' || (process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.startsWith('https://'));
+
 export const auth = betterAuth({
     baseURL,
     // @ts-ignore - Vercel strict TS complains but this works at runtime
@@ -19,9 +21,9 @@ export const auth = betterAuth({
     },
     trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:5173'],
     advanced: {
-        cookieOptions: {
-            sameSite: "none",
-            secure: true,
+        defaultCookieAttributes: {
+            sameSite: isProd ? "none" : "lax",
+            secure: isProd ? true : false,
         },
     },
     plugins: [

@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import Home from './pages/Home'
 import About from './pages/About'
 import ProjectDetail from './pages/ProjectDetail'
+import AiChat from './pages/AiChat'
 import Navbar from './components/layout/Navbar'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -10,6 +11,7 @@ import AdminProjectEditor from './pages/admin/AdminProjectEditor'
 import AdminHomeEditor from './pages/admin/AdminHomeEditor'
 import AdminAboutEditor from './pages/admin/AdminAboutEditor'
 import AdminContactEditor from './pages/admin/AdminContactEditor'
+import AdminAiChatEditor from './pages/admin/AdminAiChatEditor'
 import AdminLogin from './pages/admin/AdminLogin'
 const ClientLayout = () => (
     <>
@@ -35,6 +37,7 @@ const AnimatedRoutes = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/project/:slug" element={<ProjectDetail />} />
+                    <Route path="/ai-chat" element={<AiChat />} />
                 </Route>
 
                 {/* Admin Routes */}
@@ -46,6 +49,7 @@ const AnimatedRoutes = () => {
                     <Route path="home" element={<AdminHomeEditor />} />
                     <Route path="about" element={<AdminAboutEditor />} />
                     <Route path="contact" element={<AdminContactEditor />} />
+                    <Route path="ai-chat" element={<AdminAiChatEditor />} />
                 </Route>
             </Routes>
         </AnimatePresence>

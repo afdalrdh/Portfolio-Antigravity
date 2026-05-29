@@ -3,6 +3,7 @@ import { homeService } from '../services/homeService.js';
 import { aboutService } from '../services/aboutService.js';
 import { contactService } from '../services/contactService.js';
 import { projectService } from '../services/projectService.js';
+import { aiChatService } from '../services/aiChatService.js';
 
 const router = Router();
 
@@ -149,6 +150,28 @@ router.post('/projects/reorder', async (req, res) => {
         res.json({ message: 'Projects reordered successfully' });
     } catch (error) {
         console.error('Error reordering projects:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ==================== AI CHAT ====================
+
+router.get('/ai-chat', async (_req, res) => {
+    try {
+        const data = await aiChatService.getSettings();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching AI chat settings:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.put('/ai-chat', async (req, res) => {
+    try {
+        const data = await aiChatService.updateSettings(req.body);
+        res.json(data);
+    } catch (error) {
+        console.error('Error updating AI chat settings:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

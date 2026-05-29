@@ -30,6 +30,7 @@ export const publicApi = {
     getContact: () => api('/contact'),
     getProjects: () => api('/projects'),
     getProject: (slug) => api(`/projects/${slug}`),
+    getAiChatSettings: () => api('/ai-chat/settings'),
 };
 
 export const adminApi = {
@@ -45,4 +46,6 @@ export const adminApi = {
     updateProject: (id, data) => api(`/admin/projects/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteProject: (id) => api(`/admin/projects/${id}`, { method: 'DELETE' }),
     reorderProjects: (projectIds) => api('/admin/projects/reorder', { method: 'POST', body: JSON.stringify({ projectIds }) }),
+    getAiChat: () => api('/admin/ai-chat'),
+    updateAiChat: (data) => api('/admin/ai-chat', { method: 'PUT', body: JSON.stringify(data) }),
 };

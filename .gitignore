@@ -27,3 +27,6 @@ npm-debug.log*
 
 # Misc
 .cache/
+apps/api/local-db/
+scratch/
+eng.traineddata
