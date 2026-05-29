@@ -37,4 +37,7 @@ app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Force Vercel rebuild 2
+console.log('API starting up...');
+
 export default app;
