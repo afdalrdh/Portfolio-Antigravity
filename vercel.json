@@ -3,14 +3,14 @@
     "outputDirectory": "apps/web/dist",
     "installCommand": "npm install",
     "functions": {
-        "api/index.ts": {
+        "api/index.js": {
             "includeFiles": "apps/api/src/**"
         }
     },
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "/api/index.ts"
+            "destination": "/api/index.js"
         },
         {
             "source": "/((?!api/).*)",
