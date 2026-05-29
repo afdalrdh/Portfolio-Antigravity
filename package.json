@@ -1,6 +1,7 @@
 {
     "name": "portfolio-antigravity",
     "private": true,
+    "type": "module",
     "workspaces": [
         "apps/*"
     ],
