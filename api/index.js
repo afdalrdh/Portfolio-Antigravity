@@ -1,6 +1,6 @@
 try {
-  // Try to load the compiled app.ts
-  const appModule = require('./app.ts');
+  // Try to load the compiled app.js
+  const appModule = require('./app.js');
   module.exports = appModule.default || appModule;
 } catch (error) {
   // If it fails to compile or load, return the error to the client
