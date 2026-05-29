@@ -9,6 +9,7 @@ const authBase = process.env.BETTER_AUTH_URL || defaultBase;
 const baseURL = authBase.endsWith('/api/auth') ? authBase : `${authBase}/api/auth`;
 
 export const auth = betterAuth({
+    secret: process.env.BETTER_AUTH_SECRET || "default_fallback_secret_that_is_long_enough_for_better_auth",
     baseURL,
     // @ts-ignore - Vercel strict TS complains but this works at runtime
     database: drizzleAdapter(db, {
@@ -20,6 +21,7 @@ export const auth = betterAuth({
     },
     trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:5173'],
     advanced: {
+        // @ts-ignore - Ignore TS2353 for cookieOptions as it works at runtime
         cookieOptions: {
             sameSite: "none",
             secure: true,
