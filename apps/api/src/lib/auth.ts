@@ -4,7 +4,8 @@ import { bearer } from 'better-auth/plugins';
 import { db } from '../db/index.js';
 import * as schema from '../db/schema/index.js';
 
-const authBase = process.env.BETTER_AUTH_URL || '';
+const defaultBase = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://afdalrdh.com';
+const authBase = process.env.BETTER_AUTH_URL || defaultBase;
 const baseURL = authBase.endsWith('/api/auth') ? authBase : `${authBase}/api/auth`;
 
 export const auth = betterAuth({
