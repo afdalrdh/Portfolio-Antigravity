@@ -67,13 +67,6 @@ router.get('/projects/:slug', async (req, res) => {
 });
 
 // AI Chat - public settings
-router.get('/ai-chat/settings', async (_req, res) => {
-    try {
-        const data = await aiChatService.getPublicSettings();
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching AI chat settings:', error);
-        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
