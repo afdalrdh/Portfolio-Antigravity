@@ -287,8 +287,6 @@
     cursor: pointer;
     transition: transform var(--transition-fast), background-color var(--transition-fast);
     flex-shrink: 0;
-    margin-bottom: 6px;
-    margin-left: 12px;
 }
 
 .send-button:hover:not(:disabled) {
