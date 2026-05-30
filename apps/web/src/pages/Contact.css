@@ -1,6 +1,6 @@
 .contact-page {
-    padding-top: 120px;
-    padding-bottom: 60px;
+    padding-top: 100px;
+    padding-bottom: 40px;
     max-width: 1000px;
     margin: 0 auto;
     display: flex;
@@ -31,7 +31,7 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     width: 100%;
     overflow: hidden;
-    min-height: 600px;
+    min-height: 500px;
 }
 
 [data-theme='dark'] .contact-card {
@@ -41,7 +41,7 @@
 
 /* Left Panel */
 .contact-info-panel {
-    background: var(--accent-primary);
+    background: #4b5563;
     color: white;
     width: 40%;
     padding: 40px;
@@ -188,6 +188,7 @@
     resize: none;
     border: none;
     border-bottom: 1px solid var(--card-border);
+    font-family: inherit;
 }
 
 .contact-form-panel input:focus,

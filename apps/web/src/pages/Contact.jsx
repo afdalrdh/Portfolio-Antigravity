@@ -69,11 +69,6 @@ export default function Contact() {
                 <meta name="description" content="Contact Afdal Ramdan for your next project." />
             </Helmet>
 
-            <div className="contact-header">
-                <h2>Contact Us</h2>
-                <p>Any question or remarks? Just write us a message!</p>
-            </div>
-
             <div className="contact-card">
                 <div className="contact-info-panel">
                     <div className="info-content">
@@ -118,7 +113,7 @@ export default function Contact() {
                         <div className="form-row">
                             <div className="form-group">
                                 <label>First Name</label>
-                                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
+                                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="John" />
                             </div>
                             <div className="form-group">
                                 <label>Last Name</label>
