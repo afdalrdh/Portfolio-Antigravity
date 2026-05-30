@@ -356,7 +356,7 @@ export default function AiChat() {
                                     <img 
                                         src={`https://flagcdn.com/w20/${language === 'en' ? 'gb' : 'id'}.png`}
                                         alt={language}
-                                        style={{ width: '20px', borderRadius: '2px' }}
+                                        style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }}
                                     />
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-secondary)' }}>
                                         <polyline points="6 9 12 15 18 9"></polyline>
@@ -395,7 +395,7 @@ export default function AiChat() {
                                                     background: language === 'en' ? 'var(--bg-secondary)' : 'transparent'
                                                 }}
                                             >
-                                                <img src="https://flagcdn.com/w20/gb.png" alt="English" style={{ width: '20px', borderRadius: '2px' }} />
+                                                <img src="https://flagcdn.com/w20/gb.png" alt="English" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }} />
                                                 <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>English</span>
                                             </div>
                                             <div 
@@ -410,7 +410,7 @@ export default function AiChat() {
                                                     background: language === 'id' ? 'var(--bg-secondary)' : 'transparent'
                                                 }}
                                             >
-                                                <img src="https://flagcdn.com/w20/id.png" alt="Indonesia" style={{ width: '20px', borderRadius: '2px' }} />
+                                                <img src="https://flagcdn.com/w20/id.png" alt="Indonesia" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }} />
                                                 <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Indonesia</span>
                                             </div>
                                         </motion.div>
