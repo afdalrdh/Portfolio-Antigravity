@@ -51,12 +51,12 @@
 .social-links {
     display: flex;
     gap: 24px;
-    margin-top: 16px;
+    margin-top: 8px;
 }
 
 .social-links a {
     color: var(--text-secondary);
-    font-size: 22px;
+    font-size: 20px;
     transition: all var(--transition-fast);
 }
 
