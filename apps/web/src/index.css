@@ -183,7 +183,7 @@ h6 {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   z-index: 99;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-size: 15px;
   font-weight: 500;
   transition: all var(--transition-normal);

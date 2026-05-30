@@ -49,7 +49,7 @@ export default function FloatingAiButton() {
                         onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=AI&background=2e83fb&color=fff'; }}
                     />
                 )}
-                Ask Bodal AI
+                Bodal AI
             </motion.button>
         </AnimatePresence>
     );
