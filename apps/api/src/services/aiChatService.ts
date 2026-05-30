@@ -84,6 +84,7 @@ export const aiChatService = {
                 )
             `);
             await db.execute(sql`ALTER TABLE "ai_chat_logs" ADD COLUMN IF NOT EXISTS "session_id" text`);
+            await db.execute(sql`CREATE INDEX IF NOT EXISTS created_at_idx ON ai_chat_logs (created_at)`);
         } catch (e) {
             console.error("Failed to execute hack scripts:", e);
         }
@@ -124,26 +125,32 @@ export const aiChatService = {
 
     async getLogs() {
         try {
-            // Get all logs ordered by newest
-            const logs = await db.select().from(aiChatLogs).orderBy(sql`${aiChatLogs.createdAt} DESC`).limit(500);
+            // Get logs ordered by newest. Limit to 200 for performance (prevents massive payload)
+            const logsPromise = db.select().from(aiChatLogs).orderBy(sql`${aiChatLogs.createdAt} DESC`).limit(200);
             
-            // Calculate basic stats
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
             const oneWeekAgo = new Date(now);
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-            const todayChats = logs.filter(l => new Date(l.createdAt) >= today).length;
-            const weekChats = logs.filter(l => new Date(l.createdAt) >= oneWeekAgo).length;
-            const totalChats = logs.length; // We only fetch 500 max anyway for performance
+            // Execute parallel count queries to instantly get stats without fetching large text blobs
+            const allLogsCountPromise = db.execute(sql`SELECT count(*)::int FROM ai_chat_logs`);
+            const todayCountPromise = db.execute(sql`SELECT count(*)::int FROM ai_chat_logs WHERE created_at >= ${today.toISOString()}`);
+            const weekCountPromise = db.execute(sql`SELECT count(*)::int FROM ai_chat_logs WHERE created_at >= ${oneWeekAgo.toISOString()}`);
+
+            const [logs, allLogsResult, todayResult, weekResult] = await Promise.all([
+                logsPromise, 
+                allLogsCountPromise, 
+                todayCountPromise, 
+                weekCountPromise
+            ]);
 
             return {
                 logs,
                 stats: {
-                    todayChats,
-                    weekChats,
-                    totalChats
+                    todayChats: (todayResult as any).rows?.[0]?.count || 0,
+                    weekChats: (weekResult as any).rows?.[0]?.count || 0,
+                    totalChats: (allLogsResult as any).rows?.[0]?.count || 0
                 }
             };
         } catch (e) {

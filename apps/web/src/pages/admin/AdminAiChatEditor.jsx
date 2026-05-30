@@ -57,7 +57,10 @@ export default function AdminAiChatEditor() {
         const sessions = [];
         let currentSession = null;
         
-        const sorted = [...filtered].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        // Logs are already sorted DESC from API (newest first). 
+        // We reverse them to ASC (oldest first) to build sessions chronologically, 
+        // which avoids expensive O(N log N) sorting and Date parsing.
+        const sorted = [...filtered].reverse();
 
         sorted.forEach(log => {
             if (!currentSession) {
@@ -70,7 +73,7 @@ export default function AdminAiChatEditor() {
                 };
                 sessions.push(currentSession);
             } else {
-                const timeDiff = new Date(log.createdAt) - new Date(currentSession.endTime);
+                const timeDiff = new Date(log.createdAt).getTime() - new Date(currentSession.endTime).getTime();
                 const isSameSessionId = log.sessionId && currentSession.logs[0].sessionId === log.sessionId;
                 const isSameLocationAndTime = !log.sessionId && currentSession.location === log.location && timeDiff <= 30 * 60 * 1000;
                 
@@ -90,7 +93,7 @@ export default function AdminAiChatEditor() {
             }
         });
 
-        return sessions.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+        return sessions.reverse(); // Reverse back to DESC (newest sessions first)
     }, [logsData.logs, dateFilter]);
 
     useEffect(() => {
