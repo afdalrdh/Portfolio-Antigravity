@@ -56,11 +56,14 @@ const AnimatedRoutes = () => {
     );
 };
 
+import FloatingAiButton from './components/layout/FloatingAiButton';
+
 function App() {
     return (
         <HelmetProvider>
             <Router>
                 <AnimatedRoutes />
+                <FloatingAiButton />
             </Router>
             <Analytics />
         </HelmetProvider>

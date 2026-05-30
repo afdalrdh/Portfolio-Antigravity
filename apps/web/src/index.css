@@ -167,3 +167,30 @@ h6 {
     padding-inline: 16px;
   }
 }
+
+.floating-ai-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  background: var(--bg-primary);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  cursor: pointer;
+  z-index: 999;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+@media (max-width: 768px) {
+  .floating-ai-btn {
+    bottom: 24px;
+    right: 24px;
+  }
+}
