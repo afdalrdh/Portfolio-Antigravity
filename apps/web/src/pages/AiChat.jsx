@@ -339,7 +339,7 @@ export default function AiChat() {
                             style={{ flex: 1 }}
                         />
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '6px' }}>
-                            {!inputValue.trim() && (
+                            {!hasStarted && (
                                 <div className="language-selector" ref={dropdownRef} style={{ position: 'relative' }}>
                                     <div 
                                         onClick={() => setShowLangDropdown(!showLangDropdown)}

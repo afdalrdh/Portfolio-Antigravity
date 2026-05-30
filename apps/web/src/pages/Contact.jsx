@@ -6,7 +6,11 @@ import { FiPhone, FiMail, FiMapPin } from 'react-icons/fi';
 import './Contact.css';
 
 export default function Contact() {
-    const [contactData, setContactData] = useState(null);
+    const [contactData, setContactData] = useState({
+        phone: '6287777299033',
+        email: 'afdalramdan@gmail.com',
+        location: 'Cimahi, Indonesia'
+    });
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
