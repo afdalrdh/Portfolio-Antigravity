@@ -173,12 +173,12 @@ export const aiChatService = {
 
         if (models.length === 0) models = ["llama-3.3-70b-versatile"];
 
-        const emojiInstruction = `\n\n[PENTING] 
-1. Gunakan emoji asli (seperti 😊, 😂, 😎) SECUKUPNYA saja (misal 1 atau 2 di akhir kalimat) agar tidak berlebihan. JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*, *tertawa*, dsb).
-2. Jika memberikan daftar (seperti daftar proyek, pengalaman, dll), JANGAN gunakan paragraf panjang. Selalu gunakan format poin-poin (bullet points) agar rapi dan mudah dibaca.
-3. Saat menyebutkan proyek, PRIORITASKAN proyek yang memiliki link website dan langsung sertakan linknya dalam format Markdown (contoh: [Nama Proyek](https://afdalrdh.com/project/nama-project)).
-4. CRITICAL: YOU MUST ALWAYS REPLY IN THE EXACT SAME LANGUAGE AS THE USER. Jika user bertanya dalam bahasa Indonesia, balas dengan bahasa Indonesia. If the user asks in English, you MUST reply entirely in English.`;
-        const combinedSystemPrompt = `[PERAN & SIFAT AI]\n${settings.personaPrompt || ''}\n\n[DATA PENGETAHUAN & FAKTA]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
+        const emojiInstruction = `\n\n[CRITICAL INSTRUCTIONS]
+1. LANGUAGE MATCHING: YOU MUST RESPOND IN THE EXACT SAME LANGUAGE AS THE USER'S INPUT. If the user asks in English, you MUST respond entirely in English. Jika user bertanya dalam bahasa Indonesia, kamu WAJIB menjawab dalam bahasa Indonesia.
+2. EMOJIS: Use real emojis (like 😊, 😂, 😎) SPARINGLY (e.g., 1 or 2 at the end of sentences) so it's not overwhelming. NEVER use action text in asterisks (like *smiles*, *laughs*, etc).
+3. LIST FORMATTING: When providing lists (e.g., projects, experience), DO NOT use long paragraphs. Always use clean bullet points for readability.
+4. PROJECT LINKS: When mentioning a project, PRIORITIZE projects that have a website link and include the link in Markdown format (e.g., [Project Name](https://afdalrdh.com/project/name)).`;
+        const combinedSystemPrompt = `[AI ROLE & PERSONA]\n${settings.personaPrompt || ''}\n\n[KNOWLEDGE BASE & FACTS]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
 
         const systemMessage = {
             role: 'system',
