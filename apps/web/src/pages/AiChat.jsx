@@ -13,8 +13,15 @@ const parseMarkdown = (text) => {
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         // Italic
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        // Links
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+        // Links (Markdown format)
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer" style="color: var(--accent-primary); text-decoration: underline;">$1</a>')
+        // Bare URLs
+        .replace(/(^|\s)(https?:\/\/\S+|www\.\S+)/g, (match, space, url) => {
+            const cleanUrl = url.replace(/[.,!?;]+$/, '');
+            const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+            const punctuation = url.substring(cleanUrl.length);
+            return `${space}<a href="${href}" target="_blank" rel="noreferrer" style="color: var(--accent-primary); text-decoration: underline;">${cleanUrl}</a>${punctuation}`;
+        })
         // Paragraphs (double newline)
         .replace(/\n\n/g, '</p><p>')
         // Line breaks

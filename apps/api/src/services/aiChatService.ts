@@ -176,7 +176,7 @@ export const aiChatService = {
 
         if (models.length === 0) models = ["llama-3.3-70b-versatile"];
 
-        const emojiInstruction = `\n\n[PENTING] Gunakan emoji asli (seperti 😊, 😂, 😎) dan JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*, *tertawa*, dsb).`;
+        const emojiInstruction = `\n\n[PENTING] Gunakan emoji asli (seperti 😊, 😂, 😎) dan JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*, *tertawa*, dsb). Jika pengunjung menanyakan terkait suatu proyek atau portofolio, selalu berikan link yang relevan menuju website ini (contoh: "Kamu bisa cek detailnya di https://afdalrdh.com/project/nama-project").`;
         const combinedSystemPrompt = `[PERAN & SIFAT AI]\n${settings.personaPrompt || ''}\n\n[DATA PENGETAHUAN & FAKTA]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
 
         const systemMessage = {

@@ -14,7 +14,13 @@ const parseMarkdown = (text) => {
     let html = text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer" style="color: var(--accent-primary); text-decoration: underline;">$1</a>')
+        .replace(/(^|\s)(https?:\/\/\S+|www\.\S+)/g, (match, space, url) => {
+            const cleanUrl = url.replace(/[.,!?;]+$/, '');
+            const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+            const punctuation = url.substring(cleanUrl.length);
+            return `${space}<a href="${href}" target="_blank" rel="noreferrer" style="color: var(--accent-primary); text-decoration: underline;">${cleanUrl}</a>${punctuation}`;
+        })
         .replace(/\n\n/g, '</p><p>')
         .replace(/\n/g, '<br />');
     return `<p>${html}</p>`;
