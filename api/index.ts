@@ -32,4 +32,20 @@ app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Temporary migration endpoint to fix production DB
+app.get('/api/debug/migrate', async (_req, res) => {
+    try {
+        const { db } = await import('../apps/api/src/db/index.js');
+        const { sql } = await import('drizzle-orm');
+        
+        await db.execute(sql`ALTER TABLE contact_page ADD COLUMN IF NOT EXISTS email text;`);
+        await db.execute(sql`ALTER TABLE contact_page ADD COLUMN IF NOT EXISTS phone text;`);
+        await db.execute(sql`ALTER TABLE contact_page ADD COLUMN IF NOT EXISTS location text;`);
+        
+        res.json({ success: true, message: 'Database migrated successfully. Columns email, phone, location added.' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: (error as any)?.message });
+    }
+});
+
 export default app;
