@@ -205,7 +205,8 @@ export const aiChatService = {
         const emojiInstruction = `\n\n[PENTING] 
 1. Gunakan emoji asli (seperti 😊, 😂, 😎) SECUKUPNYA saja (misal 1 atau 2 di akhir kalimat) agar tidak berlebihan. JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*, *tertawa*, dsb).
 2. Jika memberikan daftar (seperti daftar proyek, pengalaman, dll), JANGAN gunakan paragraf panjang. Selalu gunakan format poin-poin (bullet points) agar rapi dan mudah dibaca.
-3. Saat menyebutkan proyek, PRIORITASKAN proyek yang memiliki link website dan langsung sertakan linknya dalam format Markdown (contoh: [Nama Proyek](https://afdalrdh.com/project/nama-project)).`;
+3. Saat menyebutkan proyek, PRIORITASKAN proyek yang memiliki link website dan langsung sertakan linknya dalam format Markdown (contoh: [Nama Proyek](https://afdalrdh.com/project/nama-project)).
+4. CRITICAL: YOU MUST ALWAYS REPLY IN THE EXACT SAME LANGUAGE AS THE USER. Jika user bertanya dalam bahasa Indonesia, balas dengan bahasa Indonesia. If the user asks in English, you MUST reply entirely in English.`;
         const combinedSystemPrompt = `[PERAN & SIFAT AI]\n${settings.personaPrompt || ''}\n\n[DATA PENGETAHUAN & FAKTA]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
 
         const systemMessage = {
