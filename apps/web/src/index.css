@@ -172,20 +172,26 @@ h6 {
   position: fixed;
   bottom: 40px;
   right: 40px;
+  height: 48px;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 24px;
-  border-radius: 30px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
   background: var(--bg-primary);
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border: 1px solid var(--nav-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   cursor: pointer;
-  z-index: 999;
+  z-index: 99;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 15px;
   font-weight: 500;
   transition: all var(--transition-normal);
+}
+
+.floating-ai-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
