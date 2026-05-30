@@ -130,32 +130,51 @@ export const aiChatService = {
             
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
             const oneWeekAgo = new Date(now);
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            const oneMonthAgo = new Date(now);
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-            // Execute parallel count queries to instantly get stats without fetching large text blobs
-            const allLogsCountPromise = db.execute(sql`SELECT count(*)::int FROM ai_chat_logs`);
-            const todayCountPromise = db.execute(sql`SELECT count(*)::int FROM ai_chat_logs WHERE created_at >= ${today.toISOString()}`);
-            const weekCountPromise = db.execute(sql`SELECT count(*)::int FROM ai_chat_logs WHERE created_at >= ${oneWeekAgo.toISOString()}`);
+            // Execute parallel count queries for unique sessions
+            const allLogsCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs`);
+            const todayCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${today.toISOString()}`);
+            const weekCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneWeekAgo.toISOString()}`);
+            const monthCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneMonthAgo.toISOString()}`);
 
-            const [logs, allLogsResult, todayResult, weekResult] = await Promise.all([
+            const [logs, allLogsResult, todayResult, weekResult, monthResult] = await Promise.all([
                 logsPromise, 
                 allLogsCountPromise, 
                 todayCountPromise, 
-                weekCountPromise
+                weekCountPromise,
+                monthCountPromise
             ]);
 
             return {
                 logs,
                 stats: {
-                    todayChats: (todayResult as any).rows?.[0]?.count || 0,
-                    weekChats: (weekResult as any).rows?.[0]?.count || 0,
-                    totalChats: (allLogsResult as any).rows?.[0]?.count || 0
+                    // In neon-serverless, the result rows are directly an array in the output or under .rows
+                    todayChats: todayResult?.[0]?.count || (todayResult as any)?.rows?.[0]?.count || 0,
+                    weekChats: weekResult?.[0]?.count || (weekResult as any)?.rows?.[0]?.count || 0,
+                    monthChats: monthResult?.[0]?.count || (monthResult as any)?.rows?.[0]?.count || 0,
+                    totalChats: allLogsResult?.[0]?.count || (allLogsResult as any)?.rows?.[0]?.count || 0
                 }
             };
         } catch (e) {
             console.error('Error fetching logs:', e);
-            return { logs: [], stats: { todayChats: 0, weekChats: 0, totalChats: 0 } };
+            return { logs: [], stats: { todayChats: 0, weekChats: 0, monthChats: 0, totalChats: 0 } };
+        }
+    },
+
+    async deleteSession(sessionId: string) {
+        if (!sessionId) return false;
+        try {
+            await db.delete(aiChatLogs).where(eq(aiChatLogs.sessionId, sessionId));
+            return true;
+        } catch (e) {
+            console.error('Error deleting session:', e);
+            return false;
         }
     },
 

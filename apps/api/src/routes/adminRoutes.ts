@@ -186,4 +186,18 @@ router.get('/ai-chat/logs', async (_req, res) => {
     }
 });
 
+router.delete('/ai-chat/logs/session/:sessionId', async (req, res) => {
+    try {
+        const success = await aiChatService.deleteSession(req.params.sessionId);
+        if (!success) {
+            res.status(404).json({ error: 'Session not found or could not be deleted' });
+            return;
+        }
+        res.json({ message: 'Session deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting AI chat session:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

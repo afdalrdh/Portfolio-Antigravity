@@ -44,14 +44,37 @@ export default function AdminAiChatEditor() {
     const [logsData, setLogsData] = useState({ logs: [], stats: {} });
     const [loadingLogs, setLoadingLogs] = useState(false);
     const [expandedLogs, setExpandedLogs] = useState({});
-    const [dateFilter, setDateFilter] = useState('');
+    const [timeRange, setTimeRange] = useState('daily'); // 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all'
+
+    const fetchLogs = useCallback(() => {
+        setLoadingLogs(true);
+        adminApi.getAiChatLogs()
+            .then(data => setLogsData(data))
+            .catch(console.error)
+            .finally(() => setLoadingLogs(false));
+    }, []);
 
     const groupedLogs = useMemo(() => {
         if (!logsData.logs) return [];
         
         let filtered = logsData.logs;
-        if (dateFilter) {
-            filtered = filtered.filter(log => new Date(log.createdAt).toISOString().split('T')[0] === dateFilter);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        if (timeRange === 'daily') {
+            filtered = filtered.filter(log => new Date(log.createdAt) >= today);
+        } else if (timeRange === 'weekly') {
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            filtered = filtered.filter(log => new Date(log.createdAt) >= weekAgo);
+        } else if (timeRange === 'monthly') {
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            filtered = filtered.filter(log => new Date(log.createdAt) >= monthAgo);
+        } else if (timeRange === 'yearly') {
+            const yearAgo = new Date(today);
+            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+            filtered = filtered.filter(log => new Date(log.createdAt) >= yearAgo);
         }
 
         const sessions = [];
@@ -94,20 +117,28 @@ export default function AdminAiChatEditor() {
         });
 
         return sessions.reverse(); // Reverse back to DESC (newest sessions first)
-    }, [logsData.logs, dateFilter]);
+    }, [logsData.logs, timeRange]);
 
     useEffect(() => {
         if (activeTab === 'logs') {
-            setLoadingLogs(true);
-            adminApi.getAiChatLogs()
-                .then(data => setLogsData(data))
-                .catch(console.error)
-                .finally(() => setLoadingLogs(false));
+            fetchLogs();
         }
-    }, [activeTab]);
+    }, [activeTab, fetchLogs]);
 
     const toggleLogExpand = (id) => {
         setExpandedLogs(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    const handleDeleteSession = async (sessionId, e) => {
+        e.stopPropagation();
+        if (window.confirm('Are you sure you want to delete this session and all its messages? This action cannot be undone.')) {
+            try {
+                await adminApi.deleteAiChatSession(sessionId);
+                fetchLogs(); // Refresh logs after deletion
+            } catch (err) {
+                alert('Failed to delete session: ' + err.message);
+            }
+        }
     };
     
     const [showApiKey, setShowApiKey] = useState(false);
@@ -444,28 +475,49 @@ export default function AdminAiChatEditor() {
                 <div className="logs-dashboard animate-fade-in">
                     <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
                         <div className="stat-card" style={{ padding: '16px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--card-border)', flex: 1 }}>
-                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Chat Hari Ini</h4>
+                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Sesi Hari Ini</h4>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{logsData.stats.todayChats || 0}</div>
                         </div>
                         <div className="stat-card" style={{ padding: '16px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--card-border)', flex: 1 }}>
-                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Chat Minggu Ini</h4>
+                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Sesi Minggu Ini</h4>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{logsData.stats.weekChats || 0}</div>
                         </div>
                         <div className="stat-card" style={{ padding: '16px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--card-border)', flex: 1 }}>
-                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Total Chat</h4>
+                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Sesi Bulan Ini</h4>
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{logsData.stats.monthChats || 0}</div>
+                        </div>
+                        <div className="stat-card" style={{ padding: '16px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--card-border)', flex: 1 }}>
+                            <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Total Sesi</h4>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{logsData.stats.totalChats || 0}</div>
                         </div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                         <h3 style={{ margin: 0 }}>Riwayat Percakapan</h3>
-                        <input 
-                            type="date" 
-                            className="form-input" 
-                            style={{ width: 'auto', padding: '6px 12px' }} 
-                            value={dateFilter} 
-                            onChange={e => setDateFilter(e.target.value)} 
-                        />
+                        
+                        {/* Segmented Control for Time Range Filter */}
+                        <div style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--card-border)' }}>
+                            {['daily', 'weekly', 'monthly', 'yearly', 'all'].map((range) => (
+                                <button
+                                    key={range}
+                                    onClick={() => setTimeRange(range)}
+                                    style={{
+                                        padding: '6px 16px',
+                                        border: 'none',
+                                        background: timeRange === range ? 'var(--bg-primary)' : 'transparent',
+                                        color: timeRange === range ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                        borderRadius: 'var(--radius-sm)',
+                                        cursor: 'pointer',
+                                        fontWeight: timeRange === range ? '500' : 'normal',
+                                        boxShadow: timeRange === range ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                                        transition: 'all 0.2s',
+                                        textTransform: 'capitalize'
+                                    }}
+                                >
+                                    {range}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                     {loadingLogs ? (
                         <LoadingSpinner />
@@ -481,14 +533,22 @@ export default function AdminAiChatEditor() {
                                             style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--bg-secondary)' }}
                                             onClick={() => toggleLogExpand(session.id)}
                                         >
-                                            <div>
-                                                <strong>Sesi {groupedLogs.length - idx}</strong> - {session.location || 'Unknown'} 
-                                                <span className="text-secondary" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <strong>{String(groupedLogs.length - idx).padStart(4, '0')}</strong> - {session.location || 'Unknown'} 
+                                                <span className="text-secondary" style={{ fontSize: '0.9rem' }}>
                                                     ({new Date(session.startTime).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })})
                                                 </span>
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                                 <span className="text-secondary" style={{ fontSize: '0.9rem', background: 'var(--nav-border)', padding: '2px 8px', borderRadius: '12px' }}>{session.logs.length} Pesan</span>
+                                                <button 
+                                                    className="btn-secondary" 
+                                                    style={{ padding: '4px 8px', color: '#ff3b30', borderColor: '#ff3b3033' }}
+                                                    onClick={(e) => handleDeleteSession(session.id, e)}
+                                                    title="Delete Session"
+                                                >
+                                                    Hapus
+                                                </button>
                                                 <span style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
                                             </div>
                                         </div>
