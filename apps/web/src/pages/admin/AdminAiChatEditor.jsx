@@ -38,6 +38,7 @@ export default function AdminAiChatEditor() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    const [activeTab, setActiveTab] = useState('settings');
     const [logsData, setLogsData] = useState({ logs: [], stats: {} });
     const [loadingLogs, setLoadingLogs] = useState(false);
     const [expandedLogs, setExpandedLogs] = useState({});
@@ -174,7 +175,6 @@ export default function AdminAiChatEditor() {
         }
     };
     
-    const [activeTab, setActiveTab] = useState('settings'); // 'settings' | 'logs'
     const [showApiKey, setShowApiKey] = useState(false);
     const fileInputRef = useRef(null);
 
