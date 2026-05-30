@@ -1,6 +1,6 @@
 import { db } from '../db/index.js';
 import { aiChatSettings } from '../db/schema/aiChat.js';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import type { Response } from 'express';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -47,7 +47,34 @@ export const aiChatService = {
     },
 
     async updateSettings(data: any) {
-        const [existing] = await db.select().from(aiChatSettings).limit(1);
+        // Temporary hack to ensure table exists in production
+        try {
+            await db.execute(sql`
+                CREATE TABLE IF NOT EXISTS "ai_chat_settings" (
+                    "id" serial PRIMARY KEY NOT NULL,
+                    "groq_api_key" text,
+                    "groq_models" text DEFAULT '["llama-3.3-70b-versatile","llama-3.1-8b-instant","gemma2-9b-it","mixtral-8x7b-32768","meta-llama/llama-4-scout-17b-16e-instruct"]',
+                    "system_prompt" text,
+                    "temperature" real DEFAULT 0.7,
+                    "max_tokens" integer DEFAULT 1024,
+                    "assistant_name" text DEFAULT 'Bodal AI',
+                    "assistant_avatar_url" text DEFAULT '/images/bodal-avatar.png',
+                    "welcome_title" text DEFAULT 'Ask Anything About Afdal',
+                    "welcome_subtitle" text DEFAULT 'Hey, I''m Bodal AI Assistant',
+                    "suggestions" text DEFAULT '[{"icon":"👤","label":"Me","prompt":"Tell me about Afdal Ramdan"},{"icon":"💼","label":"Project","prompt":"What projects has Afdal worked on?"},{"icon":"🛠","label":"Skills","prompt":"What are Afdal''s skills?"},{"icon":"📋","label":"Experience","prompt":"Tell me about Afdal''s work experience"},{"icon":"📬","label":"Contact","prompt":"How can I contact Afdal?"}]',
+                    "is_enabled" boolean DEFAULT true,
+                    "updated_at" timestamp DEFAULT now() NOT NULL
+                )
+            `);
+        } catch (e) {
+            console.error("Failed to create table:", e);
+        }
+
+        let existing;
+        try {
+            const result = await db.select().from(aiChatSettings).limit(1);
+            existing = result[0];
+        } catch (e) {}
 
         const modelsStr = Array.isArray(data.groqModels) ? JSON.stringify(data.groqModels) : data.groqModels;
         const suggestionsStr = Array.isArray(data.suggestions) ? JSON.stringify(data.suggestions) : data.suggestions;

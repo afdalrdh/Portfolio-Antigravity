@@ -4,8 +4,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import CloudinaryUploadWidget from '../../components/admin/CloudinaryUploadWidget';
 import './AdminProjectEditor.css';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 // Helper to determine if an avatar URL is a Lottie animation
 const isLottie = (url) => {
