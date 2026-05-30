@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .contact-header {
@@ -41,14 +42,19 @@
 
 /* Left Panel */
 .contact-info-panel {
-    background: #64748b;
-    color: white;
+    background: #f0f0f0;
+    color: #1a1a1a;
     width: 40%;
     padding: 40px;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+[data-theme='dark'] .contact-info-panel {
+    background: #1e1e21;
+    color: #ffffff;
 }
 
 .info-content {
@@ -95,8 +101,8 @@
 }
 
 .social-links a {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
+    color: #6b7280;
+    background: rgba(0, 0, 0, 0.06);
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -106,9 +112,14 @@
     transition: all 0.3s ease;
 }
 
+[data-theme='dark'] .social-links a {
+    color: #9ca3af;
+    background: rgba(255, 255, 255, 0.08);
+}
+
 .social-links a:hover {
-    background: white;
-    color: var(--accent-primary);
+    background: var(--accent-primary);
+    color: white;
     transform: translateY(-3px);
 }
 
@@ -116,8 +127,12 @@
 .circle-deco {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.04);
     z-index: 1;
+}
+
+[data-theme='dark'] .circle-deco {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .small-circle {
@@ -132,7 +147,11 @@
     height: 200px;
     bottom: -80px;
     right: -80px;
-    background: rgba(255, 255, 255, 0.15); /* Slightly darker/lighter for depth */
+    background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] .large-circle {
+    background: rgba(255, 255, 255, 0.07);
 }
 
 /* Right Panel - Form */
@@ -179,6 +198,7 @@
     border-bottom: 1px solid var(--card-border);
     padding: 8px 0;
     font-size: 1rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--text-primary);
     transition: border-color 0.3s;
     outline: none;
@@ -274,6 +294,14 @@
     padding: 14px 32px;
     font-size: 1rem;
     border-radius: 8px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.form-actions button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .status-msg {

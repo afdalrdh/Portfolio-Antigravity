@@ -18,6 +18,8 @@ export default function Contact() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
 
+    const isFormValid = formData.firstName.trim() && formData.lastName.trim() && formData.email.trim() && formData.message.trim();
+
     useEffect(() => {
         publicApi.getContact()
             .then(data => {
@@ -161,7 +163,7 @@ export default function Contact() {
                         </div>
 
                         <div className="form-actions">
-                            <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                            <button type="submit" className="btn-primary" disabled={isSubmitting || !isFormValid}>
                                 {isSubmitting ? 'Sending...' : 'Send Message'}
                             </button>
                         </div>
