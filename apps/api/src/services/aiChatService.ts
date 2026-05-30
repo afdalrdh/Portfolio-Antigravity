@@ -76,12 +76,14 @@ export const aiChatService = {
             await db.execute(sql`
                 CREATE TABLE IF NOT EXISTS "ai_chat_logs" (
                     "id" serial PRIMARY KEY NOT NULL,
+                    "session_id" text,
                     "prompt" text NOT NULL,
                     "response" text NOT NULL,
                     "location" text,
                     "created_at" timestamp DEFAULT now() NOT NULL
                 )
             `);
+            await db.execute(sql`ALTER TABLE "ai_chat_logs" ADD COLUMN IF NOT EXISTS "session_id" text`);
         } catch (e) {
             console.error("Failed to execute hack scripts:", e);
         }
@@ -150,7 +152,7 @@ export const aiChatService = {
         }
     },
 
-    async chatCompletion(messages: any[], location: string, res: Response) {
+    async chatCompletion(messages: any[], location: string, res: Response, sessionId?: string) {
         const settings = await this.getSettings();
         if (!settings.isEnabled) {
             res.write('data: {"error": "AI Chat is currently disabled"}\n\n');
@@ -174,7 +176,8 @@ export const aiChatService = {
 
         if (models.length === 0) models = ["llama-3.3-70b-versatile"];
 
-        const combinedSystemPrompt = `[PERAN & SIFAT AI]\n${settings.personaPrompt || ''}\n\n[DATA PENGETAHUAN & FAKTA]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}`;
+        const emojiInstruction = `\n\n[PENTING] Gunakan emoji asli (seperti 😊, 😂, 😎) dan JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*, *tertawa*, dsb).`;
+        const combinedSystemPrompt = `[PERAN & SIFAT AI]\n${settings.personaPrompt || ''}\n\n[DATA PENGETAHUAN & FAKTA]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
 
         const systemMessage = {
             role: 'system',
@@ -253,6 +256,7 @@ export const aiChatService = {
                     const userMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || '';
                     if (userMessage && fullResponse) {
                         await db.insert(aiChatLogs).values({
+                            sessionId: sessionId || null,
                             prompt: userMessage,
                             response: fullResponse,
                             location: location || 'Unknown',

@@ -38,6 +38,7 @@ export default function AiChat() {
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [chatError, setChatError] = useState(null);
+    const [sessionId] = useState(() => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
     
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
@@ -91,7 +92,7 @@ export default function AiChat() {
             const response = await fetch(`${API_BASE}/ai-chat`, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify({ messages: newMessages }),
+                body: JSON.stringify({ messages: newMessages, sessionId }),
             });
 
             if (!response.ok) {

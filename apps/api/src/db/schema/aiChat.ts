@@ -9,7 +9,7 @@ export const aiChatSettings = pgTable('ai_chat_settings', {
     
     // AI Behavior (Split into Persona and Knowledge Base)
     systemPrompt: text('system_prompt'), // Keeping this for backward compatibility or general rules
-    personaPrompt: text('persona_prompt').default('Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'),
+    personaPrompt: text('persona_prompt').default('Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik. Gunakan emoji asli (😊, 😂, 😎) dan JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*, *tertawa*, dsb).'),
     knowledgeBase: text('knowledge_base').default('Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'),
     
     temperature: real('temperature').default(0.7),
@@ -30,6 +30,7 @@ export const aiChatSettings = pgTable('ai_chat_settings', {
 
 export const aiChatLogs = pgTable('ai_chat_logs', {
     id: serial('id').primaryKey(),
+    sessionId: text('session_id'),
     prompt: text('prompt').notNull(),
     response: text('response').notNull(),
     location: text('location'),

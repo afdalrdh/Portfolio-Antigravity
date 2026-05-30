@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { adminApi } from '../../lib/api';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import CloudinaryUploadWidget from '../../components/admin/CloudinaryUploadWidget';
@@ -7,6 +7,18 @@ import * as pdfjsLib from 'pdfjs-dist';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+
+// Simple Markdown parser for AI responses
+const parseMarkdown = (text) => {
+    if (!text) return '';
+    let html = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br />');
+    return `<p>${html}</p>`;
+};
 
 // Helper to determine if an avatar URL is a Lottie animation
 const isLottie = (url) => {
@@ -25,6 +37,54 @@ export default function AdminAiChatEditor() {
     const [logsData, setLogsData] = useState({ logs: [], stats: {} });
     const [loadingLogs, setLoadingLogs] = useState(false);
     const [expandedLogs, setExpandedLogs] = useState({});
+    const [dateFilter, setDateFilter] = useState('');
+
+    const groupedLogs = useMemo(() => {
+        if (!logsData.logs) return [];
+        
+        let filtered = logsData.logs;
+        if (dateFilter) {
+            filtered = filtered.filter(log => new Date(log.createdAt).toISOString().split('T')[0] === dateFilter);
+        }
+
+        const sessions = [];
+        let currentSession = null;
+        
+        const sorted = [...filtered].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        sorted.forEach(log => {
+            if (!currentSession) {
+                currentSession = {
+                    id: log.sessionId || `session-${log.id}`,
+                    location: log.location,
+                    startTime: log.createdAt,
+                    endTime: log.createdAt,
+                    logs: [log]
+                };
+                sessions.push(currentSession);
+            } else {
+                const timeDiff = new Date(log.createdAt) - new Date(currentSession.endTime);
+                const isSameSessionId = log.sessionId && currentSession.logs[0].sessionId === log.sessionId;
+                const isSameLocationAndTime = !log.sessionId && currentSession.location === log.location && timeDiff <= 30 * 60 * 1000;
+                
+                if (isSameSessionId || isSameLocationAndTime) {
+                    currentSession.logs.push(log);
+                    currentSession.endTime = log.createdAt;
+                } else {
+                    currentSession = {
+                        id: log.sessionId || `session-${log.id}`,
+                        location: log.location,
+                        startTime: log.createdAt,
+                        endTime: log.createdAt,
+                        logs: [log]
+                    };
+                    sessions.push(currentSession);
+                }
+            }
+        });
+
+        return sessions.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+    }, [logsData.logs, dateFilter]);
 
     useEffect(() => {
         if (activeTab === 'logs') {
@@ -118,9 +178,29 @@ export default function AdminAiChatEditor() {
         }
     };
 
-    const handleUpdate = (field, value) => {
+    const handleUpdate = useCallback((field, value) => {
         setSettings(prev => ({ ...prev, [field]: value }));
-    };
+    }, []);
+
+    const handleAvatarUpload = useCallback((url) => {
+        handleUpdate('assistantAvatarUrl', url);
+    }, [handleUpdate]);
+
+    const avatarPreview = useMemo(() => {
+        if (!settings?.assistantAvatarUrl) return null;
+        return isLottie(settings.assistantAvatarUrl) ? (
+            <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                <dotlottie-wc 
+                    src={settings.assistantAvatarUrl} 
+                    style={{ width: '100%', height: '100%' }} 
+                    autoplay 
+                    loop 
+                />
+            </div>
+        ) : (
+            <img src={settings.assistantAvatarUrl} alt="Avatar" style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} />
+        );
+    }, [settings?.assistantAvatarUrl]);
 
     const handleSuggestionChange = (index, field, value) => {
         const newSuggestions = [...settings.suggestions];
@@ -286,25 +366,12 @@ export default function AdminAiChatEditor() {
                         <div className="form-group" style={{ marginTop: '16px' }}>
                             <label>Avatar URL</label>
                             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                                {settings?.assistantAvatarUrl && (
-                                    isLottie(settings.assistantAvatarUrl) ? (
-                                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                                            <dotlottie-wc 
-                                                src={settings.assistantAvatarUrl} 
-                                                style={{ width: '100%', height: '100%' }} 
-                                                autoplay 
-                                                loop 
-                                            />
-                                        </div>
-                                    ) : (
-                                        <img src={settings.assistantAvatarUrl} alt="Avatar" style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} />
-                                    )
-                                )}
+                                {avatarPreview}
                                 <div style={{ flex: 1 }}>
                                     <input type="text" className="form-input" value={settings?.assistantAvatarUrl || ''} onChange={(e) => handleUpdate('assistantAvatarUrl', e.target.value)} placeholder="/images/bodal-avatar.png" />
                                 </div>
                                 <CloudinaryUploadWidget 
-                                    onUploadSuccess={(url) => handleUpdate('assistantAvatarUrl', url)} 
+                                    onUploadSuccess={handleAvatarUpload} 
                                     buttonText="Upload Avatar"
                                 />
                             </div>
@@ -380,68 +447,59 @@ export default function AdminAiChatEditor() {
                         </div>
                     </div>
 
-                    <h3 style={{ marginBottom: '16px' }}>Riwayat Percakapan</h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <h3 style={{ margin: 0 }}>Riwayat Percakapan</h3>
+                        <input 
+                            type="date" 
+                            className="form-input" 
+                            style={{ width: 'auto', padding: '6px 12px' }} 
+                            value={dateFilter} 
+                            onChange={e => setDateFilter(e.target.value)} 
+                        />
+                    </div>
                     {loadingLogs ? (
                         <LoadingSpinner />
-                    ) : logsData.logs.length === 0 ? (
-                        <p className="text-secondary">Belum ada percakapan dengan AI.</p>
+                    ) : groupedLogs.length === 0 ? (
+                        <p className="text-secondary">Belum ada percakapan dengan AI pada kriteria ini.</p>
                     ) : (
-                        <div style={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '2px solid var(--card-border)', textAlign: 'left' }}>
-                                        <th style={{ padding: '12px' }}>Waktu</th>
-                                        <th style={{ padding: '12px' }}>Lokasi</th>
-                                        <th style={{ padding: '12px' }}>Pertanyaan (Prompt)</th>
-                                        <th style={{ padding: '12px' }}>Jawaban (Response)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {logsData.logs.map(log => {
-                                        const isExpanded = expandedLogs[log.id];
-                                        return (
-                                            <tr key={log.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
-                                                <td style={{ padding: '12px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                                                    {new Date(log.createdAt).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}
-                                                </td>
-                                                <td style={{ padding: '12px', verticalAlign: 'top' }}>
-                                                    {log.location || '-'}
-                                                </td>
-                                                <td style={{ padding: '12px', verticalAlign: 'top', maxWidth: '250px' }}>
-                                                    {log.prompt}
-                                                </td>
-                                                <td style={{ padding: '12px', verticalAlign: 'top', maxWidth: '400px' }}>
-                                                    <div style={{ 
-                                                        maxHeight: isExpanded ? 'none' : '60px', 
-                                                        overflow: 'hidden',
-                                                        position: 'relative'
-                                                    }}>
-                                                        {log.response}
-                                                        {!isExpanded && log.response.length > 100 && (
-                                                            <div style={{
-                                                                position: 'absolute',
-                                                                bottom: 0,
-                                                                left: 0,
-                                                                right: 0,
-                                                                height: '30px',
-                                                                background: 'linear-gradient(transparent, var(--bg-primary))'
-                                                            }} />
-                                                        )}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {groupedLogs.map((session, idx) => {
+                                const isExpanded = expandedLogs[session.id];
+                                return (
+                                    <div key={session.id} style={{ background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--card-border)', overflow: 'hidden' }}>
+                                        <div 
+                                            style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--bg-secondary)' }}
+                                            onClick={() => toggleLogExpand(session.id)}
+                                        >
+                                            <div>
+                                                <strong>Sesi {groupedLogs.length - idx}</strong> - {session.location || 'Unknown'} 
+                                                <span className="text-secondary" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>
+                                                    ({new Date(session.startTime).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })})
+                                                </span>
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                <span className="text-secondary" style={{ fontSize: '0.9rem', background: 'var(--nav-border)', padding: '2px 8px', borderRadius: '12px' }}>{session.logs.length} Pesan</span>
+                                                <span style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {isExpanded && (
+                                            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '500px', overflowY: 'auto', background: 'var(--bg-primary)' }}>
+                                                {session.logs.map(log => (
+                                                    <div key={log.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                        <div style={{ alignSelf: 'flex-end', background: 'var(--accent-primary)', color: 'white', padding: '12px 16px', borderRadius: '16px 16px 0 16px', maxWidth: '85%' }}>
+                                                            {log.prompt}
+                                                        </div>
+                                                        <div style={{ alignSelf: 'flex-start', background: 'var(--bg-secondary)', padding: '12px 16px', borderRadius: '16px 16px 16px 0', maxWidth: '85%', border: '1px solid var(--card-border)' }}>
+                                                            <div dangerouslySetInnerHTML={{ __html: parseMarkdown(log.response) }} />
+                                                        </div>
                                                     </div>
-                                                    {log.response.length > 100 && (
-                                                        <button 
-                                                            style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: '4px 0', fontSize: '0.8rem', fontWeight: 'bold' }}
-                                                            onClick={() => toggleLogExpand(log.id)}
-                                                        >
-                                                            {isExpanded ? 'Tutup' : 'Baca Selengkapnya'}
-                                                        </button>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
