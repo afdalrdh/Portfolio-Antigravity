@@ -345,10 +345,12 @@ export default function AiChat() {
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '36px',
                                         gap: '4px',
-                                        padding: '4px 8px',
+                                        padding: '0 8px',
                                         cursor: 'pointer',
-                                        borderRadius: '8px',
+                                        borderRadius: '50px',
                                         background: showLangDropdown ? 'var(--bg-secondary)' : 'transparent',
                                         transition: 'background 0.2s'
                                     }}
