@@ -21,6 +21,7 @@ const parseMarkdown = (text) => {
             const punctuation = url.substring(cleanUrl.length);
             return `${space}<a href="${href}" target="_blank" rel="noreferrer" style="color: var(--accent-primary); text-decoration: underline;">${cleanUrl}</a>${punctuation}`;
         })
+        .replace(/^\s*[-*]\s+(.*)$/gm, '&bull; $1')
         .replace(/\n\n/g, '</p><p>')
         .replace(/\n/g, '<br />');
     return `<p>${html}</p>`;
