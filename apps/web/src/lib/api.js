@@ -50,4 +50,5 @@ export const adminApi = {
     getAiChatLogs: () => api('/admin/ai-chat/logs'),
     updateAiChat: (data) => api('/admin/ai-chat', { method: 'PUT', body: JSON.stringify(data) }),
     deleteAiChatSession: (sessionId) => api(`/admin/ai-chat/logs/session/${sessionId}`, { method: 'DELETE' }),
+    deleteAiChatSessionsBulk: (sessionIds) => api('/admin/ai-chat/logs/sessions/bulk-delete', { method: 'POST', body: JSON.stringify({ sessionIds }) }),
 };

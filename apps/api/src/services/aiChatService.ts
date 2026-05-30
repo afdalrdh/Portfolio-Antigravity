@@ -1,6 +1,6 @@
 import { db } from '../db/index.js';
 import { aiChatSettings, aiChatLogs } from '../db/schema/aiChat.js';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import type { Response } from 'express';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -134,6 +134,17 @@ export const aiChatService = {
             return true;
         } catch (e) {
             console.error('Error deleting session:', e);
+            return false;
+        }
+    },
+
+    async deleteSessionsBulk(sessionIds: string[]) {
+        if (!sessionIds || sessionIds.length === 0) return false;
+        try {
+            await db.delete(aiChatLogs).where(inArray(aiChatLogs.sessionId, sessionIds));
+            return true;
+        } catch (e) {
+            console.error('Error deleting bulk sessions:', e);
             return false;
         }
     },

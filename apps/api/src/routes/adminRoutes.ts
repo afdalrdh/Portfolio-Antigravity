@@ -200,4 +200,23 @@ router.delete('/ai-chat/logs/session/:sessionId', async (req, res) => {
     }
 });
 
+router.post('/ai-chat/logs/sessions/bulk-delete', async (req, res) => {
+    try {
+        const { sessionIds } = req.body;
+        if (!Array.isArray(sessionIds)) {
+            res.status(400).json({ error: 'sessionIds must be an array' });
+            return;
+        }
+        const success = await aiChatService.deleteSessionsBulk(sessionIds);
+        if (!success) {
+            res.status(500).json({ error: 'Failed to delete sessions' });
+            return;
+        }
+        res.json({ message: 'Sessions deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting bulk AI chat sessions:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

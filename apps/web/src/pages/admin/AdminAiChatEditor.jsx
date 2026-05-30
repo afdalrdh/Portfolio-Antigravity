@@ -37,15 +37,14 @@ export default function AdminAiChatEditor() {
     const [settings, setSettings] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [uploadingFile, setUploadingFile] = useState(false);
     const [message, setMessage] = useState('');
-    
-    const [activeTab, setActiveTab] = useState('settings'); // 'settings' | 'logs'
     const [logsData, setLogsData] = useState({ logs: [], stats: {} });
     const [loadingLogs, setLoadingLogs] = useState(false);
     const [expandedLogs, setExpandedLogs] = useState({});
-    const [timeRange, setTimeRange] = useState('daily'); // 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all'
+    const [uploadingFile, setUploadingFile] = useState(false);
+    const [timeRange, setTimeRange] = useState('daily');
     const [dateFilter, setDateFilter] = useState('');
+    const [selectedSessions, setSelectedSessions] = useState([]);
 
     const fetchLogs = useCallback(() => {
         setLoadingLogs(true);
@@ -137,13 +136,45 @@ export default function AdminAiChatEditor() {
         if (window.confirm('Are you sure you want to delete this session and all its messages? This action cannot be undone.')) {
             try {
                 await adminApi.deleteAiChatSession(sessionId);
+                setSelectedSessions(prev => prev.filter(id => id !== sessionId));
                 fetchLogs(); // Refresh logs after deletion
             } catch (err) {
                 alert('Failed to delete session: ' + err.message);
             }
         }
     };
+
+    const handleBulkDelete = async () => {
+        if (selectedSessions.length === 0) return;
+        if (window.confirm(`Are you sure you want to delete ${selectedSessions.length} selected sessions? This action cannot be undone.`)) {
+            try {
+                await adminApi.deleteAiChatSessionsBulk(selectedSessions);
+                setSelectedSessions([]);
+                fetchLogs(); // Refresh logs after deletion
+            } catch (err) {
+                alert('Failed to delete selected sessions: ' + err.message);
+            }
+        }
+    };
+
+    const toggleSelectSession = (sessionId, e) => {
+        e.stopPropagation();
+        setSelectedSessions(prev => 
+            prev.includes(sessionId) 
+                ? prev.filter(id => id !== sessionId) 
+                : [...prev, sessionId]
+        );
+    };
+
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedSessions(groupedLogs.map(s => s.id));
+        } else {
+            setSelectedSessions([]);
+        }
+    };
     
+    const [activeTab, setActiveTab] = useState('settings'); // 'settings' | 'logs'
     const [showApiKey, setShowApiKey] = useState(false);
     const fileInputRef = useRef(null);
 
@@ -522,6 +553,21 @@ export default function AdminAiChatEditor() {
                                     </button>
                                 ))}
                             </div>
+                            
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginLeft: '16px' }}>
+                                <input type="checkbox" checked={selectedSessions.length === groupedLogs.length && groupedLogs.length > 0} onChange={handleSelectAll} />
+                                <span>Select All</span>
+                            </label>
+
+                            {selectedSessions.length > 0 && (
+                                <button 
+                                    className="btn-secondary" 
+                                    style={{ padding: '6px 16px', color: '#ff3b30', borderColor: '#ff3b3033', marginLeft: 'auto' }}
+                                    onClick={handleBulkDelete}
+                                >
+                                    Hapus Terpilih ({selectedSessions.length})
+                                </button>
+                            )}
                         </div>
 
                         <input 
@@ -547,7 +593,14 @@ export default function AdminAiChatEditor() {
                                             style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--bg-secondary)' }}
                                             onClick={() => toggleLogExpand(session.id)}
                                         >
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={selectedSessions.includes(session.id)} 
+                                                    onChange={(e) => toggleSelectSession(session.id, e)}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                                                />
                                                 <strong>{new Date(session.startTime).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':')}</strong>
                                                 <span>- {session.location || 'Unknown'} </span>
                                                 <span className="text-secondary" style={{ fontSize: '0.9rem' }}>({String(groupedLogs.length - idx).padStart(4, '0')})</span>
