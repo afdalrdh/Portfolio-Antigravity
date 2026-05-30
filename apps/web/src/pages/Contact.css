@@ -1,6 +1,6 @@
 .contact-page {
-    padding-top: 100px;
-    padding-bottom: 40px;
+    padding-top: 120px;
+    padding-bottom: 60px;
     max-width: 1000px;
     margin: 0 auto;
     display: flex;
@@ -41,7 +41,7 @@
 
 /* Left Panel */
 .contact-info-panel {
-    background: #4b5563;
+    background: #64748b;
     color: white;
     width: 40%;
     padding: 40px;

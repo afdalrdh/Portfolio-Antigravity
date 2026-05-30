@@ -12,7 +12,7 @@ export default function Contact() {
         lastName: '',
         email: '',
         phone: '',
-        projectType: 'Web Development',
+        projectType: 'Web Design',
         message: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,7 +117,7 @@ export default function Contact() {
                             </div>
                             <div className="form-group">
                                 <label>Last Name</label>
-                                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="John Doe" />
+                                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Doe" />
                             </div>
                         </div>
 

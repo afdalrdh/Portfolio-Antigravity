@@ -8,7 +8,7 @@
   --text-secondary: #6e6e77;
   --accent-primary: #2e83fb;
 
-  --nav-bg: rgba(255, 255, 255, 0.7);
+  --nav-bg: rgba(255, 255, 255, 0.85);
   --nav-border: #f1f1f1;
 
   --card-bg: #ffffff;
@@ -41,7 +41,7 @@
   --text-secondary: #9094a6;
   --accent-primary: #3b8cfc;
 
-  --nav-bg: rgba(10, 10, 11, 0.7);
+  --nav-bg: rgba(10, 10, 11, 0.85);
   --nav-border: #232326;
 
   --card-bg: #121214;
