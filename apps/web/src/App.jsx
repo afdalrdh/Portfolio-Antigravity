@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import About from './pages/About'
 import ProjectDetail from './pages/ProjectDetail'
 import AiChat from './pages/AiChat'
+import Contact from './pages/Contact'
 import Navbar from './components/layout/Navbar'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -38,6 +39,7 @@ const AnimatedRoutes = () => {
                     <Route path="/about" element={<About />} />
                     <Route path="/project/:slug" element={<ProjectDetail />} />
                     <Route path="/ai-chat" element={<AiChat />} />
+                    <Route path="/contact" element={<Contact />} />
                 </Route>
 
                 {/* Admin Routes */}

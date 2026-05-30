@@ -6,6 +6,9 @@ import './AdminProjectEditor.css';
 export default function AdminContactEditor() {
     const [whatsappNumber, setWhatsappNumber] = useState('');
     const [defaultMessage, setDefaultMessage] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [location, setLocation] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -16,6 +19,9 @@ export default function AdminContactEditor() {
                 if (data) {
                     setWhatsappNumber(data.whatsappNumber || '');
                     setDefaultMessage(data.defaultMessage || '');
+                    setEmail(data.email || 'afdalramdan@gmail.com');
+                    setPhone(data.phone || '');
+                    setLocation(data.location || '');
                 }
             })
             .catch(console.error)
@@ -26,7 +32,7 @@ export default function AdminContactEditor() {
         setSaving(true);
         setMessage('');
         try {
-            await adminApi.updateContact({ whatsappNumber, defaultMessage });
+            await adminApi.updateContact({ whatsappNumber, defaultMessage, email, phone, location });
             setMessage('✅ Saved successfully!');
             setTimeout(() => setMessage(''), 3000);
         } catch (err) {
@@ -52,9 +58,26 @@ export default function AdminContactEditor() {
 
             <div className="editor-layout" style={{ gridTemplateColumns: '1fr' }}>
                 <div className="editor-panel animate-fade-in">
-                    <h4 className="panel-title">WhatsApp Settings</h4>
-                    <p className="text-secondary" style={{ marginBottom: '24px', fontSize: '0.9rem' }}>Configure the phone number and default message for the WhatsApp contact button.</p>
+                    <h4 className="panel-title">Contact Information</h4>
+                    <p className="text-secondary" style={{ marginBottom: '24px', fontSize: '0.9rem' }}>Configure the contact details shown on your Contact page.</p>
 
+                    <div className="form-group" style={{ marginBottom: '16px' }}>
+                        <label>Email Address</label>
+                        <input type="email" className="form-input text-lg" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="e.g. afdalramdan@gmail.com" />
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: '16px' }}>
+                        <label>Phone Number (Display)</label>
+                        <input type="text" className="form-input text-lg" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="e.g. +62 812 3456 7890" />
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: '32px' }}>
+                        <label>Location / Address</label>
+                        <input type="text" className="form-input text-lg" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. 102 Street 2714 Don" />
+                    </div>
+
+                    <h4 className="panel-title" style={{ borderTop: '1px solid var(--card-border)', paddingTop: '24px', marginTop: '24px' }}>WhatsApp Integration</h4>
+                    
                     <div className="form-group">
                         <label>WhatsApp Number</label>
                         <input type="text" className="form-input text-lg" value={whatsappNumber} onChange={(e) => setWhatsappNumber(e.target.value)} placeholder="e.g. 628123... (include country code)" />

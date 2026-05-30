@@ -40,6 +40,17 @@ router.get('/contact', async (_req, res) => {
     }
 });
 
+// Contact form submission
+router.post('/contact/send', async (req, res) => {
+    try {
+        const result = await contactService.sendMessage(req.body);
+        res.json(result);
+    } catch (error: any) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+});
+
 // List published projects
 router.get('/projects', async (_req, res) => {
     try {
