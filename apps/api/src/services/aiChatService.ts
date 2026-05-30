@@ -49,46 +49,6 @@ export const aiChatService = {
     },
 
     async updateSettings(data: any) {
-        // Temporary hack to ensure table exists in production
-        try {
-            await db.execute(sql`
-                CREATE TABLE IF NOT EXISTS "ai_chat_settings" (
-                    "id" serial PRIMARY KEY NOT NULL,
-                    "groq_api_key" text,
-                    "groq_models" text DEFAULT '["llama-3.3-70b-versatile","llama-3.1-8b-instant","gemma2-9b-it","mixtral-8x7b-32768","meta-llama/llama-4-scout-17b-16e-instruct"]',
-                    "system_prompt" text,
-                    "temperature" real DEFAULT 0.7,
-                    "max_tokens" integer DEFAULT 1024,
-                    "assistant_name" text DEFAULT 'Bodal AI',
-                    "assistant_avatar_url" text DEFAULT '/images/bodal-avatar.png',
-                    "welcome_title" text DEFAULT 'Ask Anything About Afdal',
-                    "welcome_subtitle" text DEFAULT 'Hey, I''m Bodal AI Assistant',
-                    "suggestions" text DEFAULT '[{"icon":"👤","label":"Me","prompt":"Tell me about Afdal Ramdan"},{"icon":"💼","label":"Project","prompt":"What projects has Afdal worked on?"},{"icon":"🛠","label":"Skills","prompt":"What are Afdal''s skills?"},{"icon":"📋","label":"Experience","prompt":"Tell me about Afdal''s work experience"},{"icon":"📬","label":"Contact","prompt":"How can I contact Afdal?"}]',
-                    "is_enabled" boolean DEFAULT true,
-                    "updated_at" timestamp DEFAULT now() NOT NULL
-                )
-            `);
-            // Attempt to add new columns if they don't exist
-            await db.execute(sql`ALTER TABLE "ai_chat_settings" ADD COLUMN IF NOT EXISTS "persona_prompt" text DEFAULT ''`);
-            await db.execute(sql`ALTER TABLE "ai_chat_settings" ADD COLUMN IF NOT EXISTS "knowledge_base" text DEFAULT ''`);
-            
-            // Create logs table
-            await db.execute(sql`
-                CREATE TABLE IF NOT EXISTS "ai_chat_logs" (
-                    "id" serial PRIMARY KEY NOT NULL,
-                    "session_id" text,
-                    "prompt" text NOT NULL,
-                    "response" text NOT NULL,
-                    "location" text,
-                    "created_at" timestamp DEFAULT now() NOT NULL
-                )
-            `);
-            await db.execute(sql`ALTER TABLE "ai_chat_logs" ADD COLUMN IF NOT EXISTS "session_id" text`);
-            await db.execute(sql`CREATE INDEX IF NOT EXISTS created_at_idx ON ai_chat_logs (created_at)`);
-        } catch (e) {
-            console.error("Failed to execute hack scripts:", e);
-        }
-
         let existing;
         try {
             const result = await db.select().from(aiChatSettings).limit(1);
