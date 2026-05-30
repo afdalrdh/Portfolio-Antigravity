@@ -72,11 +72,9 @@
 .ai-avatar-large {
     width: 160px;
     height: 160px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid var(--card-bg);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    background-color: var(--icon-bg);
+    object-fit: contain;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.08));
+    background-color: transparent;
 }
 
 .ai-avatar-lottie-container {
@@ -216,10 +214,8 @@
 .ai-avatar-small {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--card-border);
-    background-color: var(--icon-bg);
+    object-fit: contain;
+    background-color: transparent;
     flex-shrink: 0;
 }
 

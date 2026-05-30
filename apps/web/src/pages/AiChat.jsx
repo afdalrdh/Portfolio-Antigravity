@@ -274,41 +274,18 @@ export default function AiChat() {
                                     <div className="chat-bubble">
                                         {msg.role === 'user' ? (
                                             msg.content
-                                        ) : (
+                                        ) : msg.content ? (
                                             <div dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }} />
+                                        ) : (
+                                            <div className="typing-indicator">
+                                                <div className="typing-dot"></div>
+                                                <div className="typing-dot"></div>
+                                                <div className="typing-dot"></div>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
                             ))}
-                            
-                            {isTyping && (
-                                <div className="chat-message message-ai">
-                                    {isLottie(settings?.assistantAvatarUrl || 'https://lottie.host/5c297a87-37d6-47c7-9ce6-640e0c805d6d/Q6NEU3fvv0.lottie') ? (
-                                        <div className="ai-avatar-small ai-avatar-small-lottie-container">
-                                            <dotlottie-wc 
-                                                src={settings?.assistantAvatarUrl || 'https://lottie.host/5c297a87-37d6-47c7-9ce6-640e0c805d6d/Q6NEU3fvv0.lottie'} 
-                                                style={{ width: '100%', height: '100%', display: 'block' }}
-                                                autoplay 
-                                                loop
-                                            />
-                                        </div>
-                                    ) : (
-                                        <img 
-                                            src={settings?.assistantAvatarUrl || '/images/bodal-avatar.png'} 
-                                            alt="AI Avatar" 
-                                            className="ai-avatar-small"
-                                            onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=AI&background=2e83fb&color=fff'; }}
-                                        />
-                                    )}
-                                    <div className="chat-bubble">
-                                        <div className="typing-indicator">
-                                            <div className="typing-dot"></div>
-                                            <div className="typing-dot"></div>
-                                            <div className="typing-dot"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
                             {chatError && (
                                 <div className="chat-error animate-fade-in">
