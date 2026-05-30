@@ -1,11 +1,13 @@
 .contact-page {
     padding-top: 120px;
-    padding-bottom: 60px;
+    padding-bottom: 0;
     max-width: 1000px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 120px);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -92,35 +94,6 @@
 
 .info-item svg {
     font-size: 1.4rem;
-}
-
-.social-links {
-    display: flex;
-    gap: 16px;
-    margin-top: 60px;
-}
-
-.social-links a {
-    color: #6b7280;
-    background: rgba(0, 0, 0, 0.06);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-[data-theme='dark'] .social-links a {
-    color: #9ca3af;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.social-links a:hover {
-    background: var(--accent-primary);
-    color: white;
-    transform: translateY(-3px);
 }
 
 /* Decorative Circles */
@@ -314,12 +287,21 @@
 .status-msg.error { color: #ef4444; }
 
 @media (max-width: 768px) {
+    .contact-page {
+        padding-top: 0;
+        min-height: auto;
+    }
     .contact-card {
         flex-direction: column;
+        border-radius: 0;
+        box-shadow: none;
     }
     .contact-info-panel,
     .contact-form-panel {
         width: 100%;
+    }
+    .contact-info-panel {
+        border-radius: 0;
     }
     .form-row {
         flex-direction: column;

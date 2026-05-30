@@ -41,7 +41,7 @@
 .hero-cta {
     font-size: 20px;
     display: inline-flex;
-    margin-top: 4px;
+    margin-top: 0;
 }
 
 .hero-cta:hover {
@@ -51,7 +51,7 @@
 .social-links {
     display: flex;
     gap: 24px;
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .social-links a {

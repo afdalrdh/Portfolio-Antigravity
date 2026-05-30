@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { publicApi } from '../lib/api';
-import { FiPhone, FiMail, FiMapPin, FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from 'react-icons/fi';
+import { FiPhone, FiMail, FiMapPin } from 'react-icons/fi';
 import './Contact.css';
 
 export default function Contact() {
@@ -98,13 +98,6 @@ export default function Contact() {
                                 </div>
                             )}
                         </div>
-
-                        <div className="social-links">
-                            <a href="#" aria-label="Facebook"><FiFacebook /></a>
-                            <a href="#" aria-label="Twitter"><FiTwitter /></a>
-                            <a href="#" aria-label="Instagram"><FiInstagram /></a>
-                            <a href="#" aria-label="LinkedIn"><FiLinkedin /></a>
-                        </div>
                     </div>
                     
                     <div className="circle-deco small-circle"></div>
@@ -173,6 +166,15 @@ export default function Contact() {
                     </form>
                 </div>
             </div>
+
+            <footer className="home-footer delay-300 animate-fade-in">
+                <p className="text-secondary text-sm">
+                    All designs on this website were created by Afdal Ramdan Daman Huri
+                </p>
+                <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
+                    © 2026 All rights reserved.
+                </p>
+            </footer>
         </motion.div>
     );
 }
