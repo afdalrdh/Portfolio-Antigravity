@@ -45,6 +45,7 @@ export default function AdminAiChatEditor() {
     const [loadingLogs, setLoadingLogs] = useState(false);
     const [expandedLogs, setExpandedLogs] = useState({});
     const [timeRange, setTimeRange] = useState('daily'); // 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all'
+    const [dateFilter, setDateFilter] = useState('');
 
     const fetchLogs = useCallback(() => {
         setLoadingLogs(true);
@@ -61,7 +62,9 @@ export default function AdminAiChatEditor() {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         
-        if (timeRange === 'daily') {
+        if (dateFilter) {
+            filtered = filtered.filter(log => new Date(log.createdAt).toISOString().split('T')[0] === dateFilter);
+        } else if (timeRange === 'daily') {
             filtered = filtered.filter(log => new Date(log.createdAt) >= today);
         } else if (timeRange === 'weekly') {
             const weekAgo = new Date(today);
@@ -117,7 +120,7 @@ export default function AdminAiChatEditor() {
         });
 
         return sessions.reverse(); // Reverse back to DESC (newest sessions first)
-    }, [logsData.logs, timeRange]);
+    }, [logsData.logs, timeRange, dateFilter]);
 
     useEffect(() => {
         if (activeTab === 'logs') {
@@ -493,31 +496,42 @@ export default function AdminAiChatEditor() {
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                        <h3 style={{ margin: 0 }}>Riwayat Percakapan</h3>
-                        
-                        {/* Segmented Control for Time Range Filter */}
-                        <div style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--card-border)' }}>
-                            {['daily', 'weekly', 'monthly', 'yearly', 'all'].map((range) => (
-                                <button
-                                    key={range}
-                                    onClick={() => setTimeRange(range)}
-                                    style={{
-                                        padding: '6px 16px',
-                                        border: 'none',
-                                        background: timeRange === range ? 'var(--bg-primary)' : 'transparent',
-                                        color: timeRange === range ? 'var(--text-primary)' : 'var(--text-secondary)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        cursor: 'pointer',
-                                        fontWeight: timeRange === range ? '500' : 'normal',
-                                        boxShadow: timeRange === range ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
-                                        transition: 'all 0.2s',
-                                        textTransform: 'capitalize'
-                                    }}
-                                >
-                                    {range}
-                                </button>
-                            ))}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <h3 style={{ margin: 0 }}>Riwayat Percakapan</h3>
+                            
+                            {/* Segmented Control for Time Range Filter */}
+                            <div style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--card-border)' }}>
+                                {['daily', 'weekly', 'monthly', 'yearly', 'all'].map((range) => (
+                                    <button
+                                        key={range}
+                                        onClick={() => { setTimeRange(range); setDateFilter(''); }}
+                                        style={{
+                                            padding: '6px 16px',
+                                            border: 'none',
+                                            background: (timeRange === range && !dateFilter) ? 'var(--bg-primary)' : 'transparent',
+                                            color: (timeRange === range && !dateFilter) ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                            borderRadius: 'var(--radius-sm)',
+                                            cursor: 'pointer',
+                                            fontWeight: (timeRange === range && !dateFilter) ? '500' : 'normal',
+                                            boxShadow: (timeRange === range && !dateFilter) ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                                            transition: 'all 0.2s',
+                                            textTransform: 'capitalize'
+                                        }}
+                                    >
+                                        {range}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+
+                        <input 
+                            type="date" 
+                            className="form-input" 
+                            style={{ width: 'auto', padding: '6px 12px' }} 
+                            value={dateFilter} 
+                            onChange={e => { setDateFilter(e.target.value); setTimeRange('daily'); }} 
+                            title="Filter Tanggal"
+                        />
                     </div>
                     {loadingLogs ? (
                         <LoadingSpinner />
@@ -534,10 +548,9 @@ export default function AdminAiChatEditor() {
                                             onClick={() => toggleLogExpand(session.id)}
                                         >
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                <strong>{String(groupedLogs.length - idx).padStart(4, '0')}</strong> - {session.location || 'Unknown'} 
-                                                <span className="text-secondary" style={{ fontSize: '0.9rem' }}>
-                                                    ({new Date(session.startTime).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })})
-                                                </span>
+                                                <strong>{new Date(session.startTime).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':')}</strong>
+                                                <span>- {session.location || 'Unknown'} </span>
+                                                <span className="text-secondary" style={{ fontSize: '0.9rem' }}>({String(groupedLogs.length - idx).padStart(4, '0')})</span>
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                                 <span className="text-secondary" style={{ fontSize: '0.9rem', background: 'var(--nav-border)', padding: '2px 8px', borderRadius: '12px' }}>{session.logs.length} Pesan</span>
