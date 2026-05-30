@@ -9,8 +9,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
-    out: path.resolve(__dirname, './drizzle'),
-    schema: path.join(__dirname, 'src', 'db', 'schema', '*.ts').replace(/\\/g, '/'),
+    out: './drizzle',
+    schema: './src/db/schema/*.ts',
     dialect: 'postgresql',
     dbCredentials: {
         url: process.env.DATABASE_URL!,

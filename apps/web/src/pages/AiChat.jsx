@@ -47,6 +47,7 @@ export default function AiChat() {
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [chatError, setChatError] = useState(null);
+    const [language, setLanguage] = useState('en');
     const [sessionId] = useState(() => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
     
     const messagesEndRef = useRef(null);
@@ -101,7 +102,7 @@ export default function AiChat() {
             const response = await fetch(`${API_BASE}/ai-chat`, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify({ messages: newMessages, sessionId }),
+                body: JSON.stringify({ messages: newMessages, sessionId, language }),
             });
 
             if (!response.ok) {
@@ -308,7 +309,7 @@ export default function AiChat() {
                 </AnimatePresence>
 
                 <div className="chat-input-wrapper">
-                    <div className="chat-input-container">
+                    <div className="chat-input-container" style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
                         <textarea 
                             ref={inputRef}
                             className="chat-input"
@@ -322,18 +323,42 @@ export default function AiChat() {
                             onKeyDown={handleKeyDown}
                             disabled={isTyping}
                             rows={1}
+                            style={{ flex: 1 }}
                         />
-                        <button 
-                            className="send-button"
-                            onClick={() => handleSendMessage()}
-                            disabled={!inputValue.trim() || isTyping}
-                            aria-label="Send message"
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="12" y1="19" x2="12" y2="5"></line>
-                                <polyline points="5 12 12 5 19 12"></polyline>
-                            </svg>
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px' }}>
+                            <div className="language-selector" style={{ position: 'relative' }}>
+                                <select 
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                    style={{
+                                        appearance: 'none',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        fontSize: '1.2rem',
+                                        cursor: 'pointer',
+                                        padding: '4px 16px 4px 4px',
+                                        outline: 'none'
+                                    }}
+                                >
+                                    <option value="en">🇬🇧</option>
+                                    <option value="id">🇮🇩</option>
+                                </select>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', right: '2px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-secondary)' }}>
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </div>
+                            <button 
+                                className="send-button"
+                                onClick={() => handleSendMessage()}
+                                disabled={!inputValue.trim() || isTyping}
+                                aria-label="Send message"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                                    <polyline points="5 12 12 5 19 12"></polyline>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 

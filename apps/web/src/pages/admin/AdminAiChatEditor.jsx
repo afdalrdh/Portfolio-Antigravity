@@ -38,7 +38,7 @@ export default function AdminAiChatEditor() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
-    const [activeTab, setActiveTab] = useState('settings');
+    const [activeTab, setActiveTab] = useState('logs');
     const [logsData, setLogsData] = useState({ logs: [], stats: {} });
     const [loadingLogs, setLoadingLogs] = useState(false);
     const [expandedLogs, setExpandedLogs] = useState({});
@@ -315,16 +315,16 @@ export default function AdminAiChatEditor() {
 
             <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '1px solid var(--card-border)', paddingBottom: '12px' }}>
                 <button 
-                    style={{ background: 'none', border: 'none', fontSize: '1rem', fontWeight: activeTab === 'settings' ? 'bold' : 'normal', color: activeTab === 'settings' ? 'var(--accent-primary)' : 'var(--text-primary)', cursor: 'pointer', borderBottom: activeTab === 'settings' ? '2px solid var(--accent-primary)' : 'none', padding: '0 8px 8px 8px', marginBottom: '-13px' }}
-                    onClick={() => setActiveTab('settings')}
-                >
-                    ⚙️ Pengaturan AI
-                </button>
-                <button 
                     style={{ background: 'none', border: 'none', fontSize: '1rem', fontWeight: activeTab === 'logs' ? 'bold' : 'normal', color: activeTab === 'logs' ? 'var(--accent-primary)' : 'var(--text-primary)', cursor: 'pointer', borderBottom: activeTab === 'logs' ? '2px solid var(--accent-primary)' : 'none', padding: '0 8px 8px 8px', marginBottom: '-13px' }}
                     onClick={() => setActiveTab('logs')}
                 >
                     📊 Analitik & Riwayat
+                </button>
+                <button 
+                    style={{ background: 'none', border: 'none', fontSize: '1rem', fontWeight: activeTab === 'settings' ? 'bold' : 'normal', color: activeTab === 'settings' ? 'var(--accent-primary)' : 'var(--text-primary)', cursor: 'pointer', borderBottom: activeTab === 'settings' ? '2px solid var(--accent-primary)' : 'none', padding: '0 8px 8px 8px', marginBottom: '-13px' }}
+                    onClick={() => setActiveTab('settings')}
+                >
+                    ⚙️ Pengaturan AI
                 </button>
             </div>
 
@@ -385,20 +385,31 @@ export default function AdminAiChatEditor() {
                         </div>
 
                         <div className="form-group" style={{ marginTop: '16px' }}>
-                            <label>Sifat & Peran AI (Persona)</label>
+                            <label>Sifat & Peran AI (Persona) - English</label>
                             <textarea 
                                 className="form-input" 
                                 rows="6" 
                                 value={settings?.personaPrompt || ''} 
                                 onChange={(e) => handleUpdate('personaPrompt', e.target.value)} 
-                                placeholder="Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan..."
+                                placeholder="You are a loyal virtual assistant..."
+                            />
+                        </div>
+
+                        <div className="form-group" style={{ marginTop: '16px' }}>
+                            <label>Sifat & Peran AI (Persona) - Indonesia</label>
+                            <textarea 
+                                className="form-input" 
+                                rows="6" 
+                                value={settings?.personaPromptId || ''} 
+                                onChange={(e) => handleUpdate('personaPromptId', e.target.value)} 
+                                placeholder="Kamu adalah asisten virtual yang setia..."
                             />
                             <span className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '4px' }}>Tentukan sifat, peran, dan cara AI menjawab (contoh: galak, ramah, loyal, dll).</span>
                         </div>
 
                         <div className="form-group" style={{ marginTop: '16px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                <label style={{ margin: 0 }}>Data Pengetahuan (Portofolio)</label>
+                                <label style={{ margin: 0 }}>Data Pengetahuan (Portofolio) - English</label>
                                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                     {uploadingFile && <span className="text-secondary" style={{ fontSize: '0.8rem' }}>Extracting text...</span>}
                                     <button 
@@ -421,10 +432,21 @@ export default function AdminAiChatEditor() {
                             </div>
                             <textarea 
                                 className="form-input" 
-                                rows="12" 
+                                rows="8" 
                                 value={settings?.knowledgeBase || ''} 
                                 onChange={(e) => handleUpdate('knowledgeBase', e.target.value)} 
-                                placeholder="Berikut adalah data tentang bosmu: Nama: Afdal Ramdan..."
+                                placeholder="Here is the data about your boss..."
+                            />
+                        </div>
+
+                        <div className="form-group" style={{ marginTop: '16px' }}>
+                            <label>Data Pengetahuan (Portofolio) - Indonesia</label>
+                            <textarea 
+                                className="form-input" 
+                                rows="8" 
+                                value={settings?.knowledgeBaseId || ''} 
+                                onChange={(e) => handleUpdate('knowledgeBaseId', e.target.value)} 
+                                placeholder="Berikut adalah data tentang bosmu..."
                             />
                             <span className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '4px' }}>Masukkan data portofolio, pengalaman kerja, kontak, dll. AI akan membaca data ini untuk menjawab pertanyaan teknis.</span>
                         </div>

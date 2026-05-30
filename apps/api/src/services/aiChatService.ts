@@ -5,8 +5,22 @@ import type { Response } from 'express';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
+let isDbSetup = false;
+
 export const aiChatService = {
+    async setupDatabase() {
+        if (isDbSetup) return;
+        try {
+            await db.execute(sql`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS persona_prompt_id text DEFAULT 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'`);
+            await db.execute(sql`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS knowledge_base_id text DEFAULT 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'`);
+            isDbSetup = true;
+        } catch (e) {
+            console.error("Setup DB error (might already exist):", e);
+        }
+    },
+
     async getSettings() {
+        await this.setupDatabase();
         let settings;
         try {
             const result = await db.select().from(aiChatSettings).limit(1);
@@ -21,8 +35,10 @@ export const aiChatService = {
                 groqApiKey: process.env.GROQ_API_KEY || '',
                 groqModels: '["llama-3.3-70b-versatile","llama-3.1-8b-instant","gemma2-9b-it","mixtral-8x7b-32768","meta-llama/llama-4-scout-17b-16e-instruct"]',
                 systemPrompt: '',
-                personaPrompt: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.',
+                personaPrompt: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan...',
+                personaPromptId: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.',
                 knowledgeBase: 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.',
+                knowledgeBaseId: 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.',
                 temperature: 0.7,
                 maxTokens: 1024,
                 assistantName: 'Bodal AI',
@@ -149,7 +165,7 @@ export const aiChatService = {
         }
     },
 
-    async chatCompletion(messages: any[], location: string, res: Response, sessionId?: string) {
+    async chatCompletion(messages: any[], location: string, res: Response, sessionId?: string, language: string = 'en') {
         const settings = await this.getSettings();
         if (!settings.isEnabled) {
             res.write('data: {"error": "AI Chat is currently disabled"}\n\n');
@@ -178,7 +194,11 @@ export const aiChatService = {
 2. EMOJIS: Use real emojis (like 😊, 😂, 😎) SPARINGLY (e.g., 1 or 2 at the end of sentences) so it's not overwhelming. NEVER use action text in asterisks (like *smiles*, *laughs*, etc).
 3. LIST FORMATTING: When providing lists (e.g., projects, experience), DO NOT use long paragraphs. Always use clean bullet points for readability.
 4. PROJECT LINKS: When mentioning a project, PRIORITIZE projects that have a website link and include the link in Markdown format (e.g., [Project Name](https://afdalrdh.com/project/name)).`;
-        const combinedSystemPrompt = `[AI ROLE & PERSONA]\n${settings.personaPrompt || ''}\n\n[KNOWLEDGE BASE & FACTS]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
+        
+        const activePersona = language === 'id' ? (settings.personaPromptId || settings.personaPrompt) : (settings.personaPrompt || '');
+        const activeKnowledgeBase = language === 'id' ? (settings.knowledgeBaseId || settings.knowledgeBase) : (settings.knowledgeBase || '');
+
+        const combinedSystemPrompt = `[AI ROLE & PERSONA]\n${activePersona}\n\n[KNOWLEDGE BASE & FACTS]\n${activeKnowledgeBase}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
 
         const systemMessage = {
             role: 'system',

@@ -9,8 +9,10 @@ export const aiChatSettings = pgTable('ai_chat_settings', {
     
     // AI Behavior (Split into Persona and Knowledge Base)
     systemPrompt: text('system_prompt'), // Keeping this for backward compatibility or general rules
-    personaPrompt: text('persona_prompt').default('Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.\n\n[ATURAN UTAMA]\n1. Gunakan emoji asli (😊, 😂, 😎) SECUKUPNYA saja (misal 1 atau 2 di akhir kalimat) agar tidak berlebihan. JANGAN PERNAH menggunakan teks aksi di dalam asterik (seperti *tersenyum*).\n2. Jika memberikan daftar (seperti proyek), gunakan format poin-poin (bullet points) agar rapi, JANGAN paragraf panjang.\n3. Saat menyebutkan proyek, PRIORITASKAN proyek yang memiliki link website dan langsung sertakan linknya (contoh: [Nama Proyek](https://afdalrdh.com/project/nama-project)).'),
-    knowledgeBase: text('knowledge_base').default('Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'),
+    personaPrompt: text('persona_prompt').default('Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan...'), // English
+    personaPromptId: text('persona_prompt_id').default('Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'), // Indonesian
+    knowledgeBase: text('knowledge_base').default('Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'), // English
+    knowledgeBaseId: text('knowledge_base_id').default('Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'), // Indonesian
     
     temperature: real('temperature').default(0.7),
     maxTokens: integer('max_tokens').default(1024),

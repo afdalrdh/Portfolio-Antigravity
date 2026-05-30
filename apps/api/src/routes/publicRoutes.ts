@@ -80,7 +80,7 @@ router.get('/ai-chat/settings', async (_req, res) => {
 // AI Chat - chat completion (SSE streaming)
 router.post('/ai-chat', async (req, res) => {
     try {
-        const { messages, sessionId } = req.body;
+        const { messages, sessionId, language } = req.body;
         if (!messages || !Array.isArray(messages)) {
             res.status(400).json({ error: 'Messages array is required' });
             return;
@@ -96,7 +96,7 @@ router.post('/ai-chat', async (req, res) => {
             location = String(city);
         }
 
-        await aiChatService.chatCompletion(messages, location, res, sessionId);
+        await aiChatService.chatCompletion(messages, location, res, sessionId, language || 'en');
     } catch (error) {
         console.error('Error in AI chat completion:', error);
         if (!res.headersSent) {
