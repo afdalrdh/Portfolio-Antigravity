@@ -339,86 +339,88 @@ export default function AiChat() {
                             style={{ flex: 1 }}
                         />
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '6px' }}>
-                            <div className="language-selector" ref={dropdownRef} style={{ position: 'relative' }}>
-                                <div 
-                                    onClick={() => setShowLangDropdown(!showLangDropdown)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '36px',
-                                        gap: '4px',
-                                        padding: '0 8px',
-                                        cursor: 'pointer',
-                                        borderRadius: '50px',
-                                        background: showLangDropdown ? 'var(--bg-secondary)' : 'transparent',
-                                        transition: 'background 0.2s'
-                                    }}
-                                >
-                                    <img 
-                                        src={`https://flagcdn.com/w20/${language === 'en' ? 'gb' : 'id'}.png`}
-                                        alt={language}
-                                        style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }}
-                                    />
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-secondary)' }}>
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
+                            {!inputValue.trim() && (
+                                <div className="language-selector" ref={dropdownRef} style={{ position: 'relative' }}>
+                                    <div 
+                                        onClick={() => setShowLangDropdown(!showLangDropdown)}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            height: '36px',
+                                            gap: '4px',
+                                            padding: '0 8px',
+                                            cursor: 'pointer',
+                                            borderRadius: '50px',
+                                            background: showLangDropdown ? 'var(--bg-secondary)' : 'transparent',
+                                            transition: 'background 0.2s'
+                                        }}
+                                    >
+                                        <img 
+                                            src={`https://flagcdn.com/w20/${language === 'en' ? 'gb' : 'id'}.png`}
+                                            alt={language}
+                                            style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }}
+                                        />
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-secondary)' }}>
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                    
+                                    <AnimatePresence>
+                                        {showLangDropdown && (
+                                            <motion.div 
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.15 }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    bottom: '100%',
+                                                    right: 0,
+                                                    marginBottom: '8px',
+                                                    background: 'var(--bg-primary)',
+                                                    border: '1px solid var(--card-border)',
+                                                    borderRadius: '12px',
+                                                    padding: '4px',
+                                                    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div 
+                                                    onClick={() => { setLanguage('en'); setShowLangDropdown(false); }}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        padding: '8px 12px',
+                                                        cursor: 'pointer',
+                                                        borderRadius: '8px',
+                                                        background: language === 'en' ? 'var(--bg-secondary)' : 'transparent'
+                                                    }}
+                                                >
+                                                    <img src="https://flagcdn.com/w20/gb.png" alt="English" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }} />
+                                                    <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>English</span>
+                                                </div>
+                                                <div 
+                                                    onClick={() => { setLanguage('id'); setShowLangDropdown(false); }}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        padding: '8px 12px',
+                                                        cursor: 'pointer',
+                                                        borderRadius: '8px',
+                                                        background: language === 'id' ? 'var(--bg-secondary)' : 'transparent'
+                                                    }}
+                                                >
+                                                    <img src="https://flagcdn.com/w20/id.png" alt="Indonesia" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }} />
+                                                    <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Indonesia</span>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
-                                
-                                <AnimatePresence>
-                                    {showLangDropdown && (
-                                        <motion.div 
-                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            transition={{ duration: 0.15 }}
-                                            style={{
-                                                position: 'absolute',
-                                                bottom: '100%',
-                                                right: 0,
-                                                marginBottom: '8px',
-                                                background: 'var(--bg-primary)',
-                                                border: '1px solid var(--card-border)',
-                                                borderRadius: '12px',
-                                                padding: '4px',
-                                                boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                                                zIndex: 10
-                                            }}
-                                        >
-                                            <div 
-                                                onClick={() => { setLanguage('en'); setShowLangDropdown(false); }}
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '8px',
-                                                    padding: '8px 12px',
-                                                    cursor: 'pointer',
-                                                    borderRadius: '8px',
-                                                    background: language === 'en' ? 'var(--bg-secondary)' : 'transparent'
-                                                }}
-                                            >
-                                                <img src="https://flagcdn.com/w20/gb.png" alt="English" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }} />
-                                                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>English</span>
-                                            </div>
-                                            <div 
-                                                onClick={() => { setLanguage('id'); setShowLangDropdown(false); }}
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '8px',
-                                                    padding: '8px 12px',
-                                                    cursor: 'pointer',
-                                                    borderRadius: '8px',
-                                                    background: language === 'id' ? 'var(--bg-secondary)' : 'transparent'
-                                                }}
-                                            >
-                                                <img src="https://flagcdn.com/w20/id.png" alt="Indonesia" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--card-border)' }} />
-                                                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Indonesia</span>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                            )}
                             <button 
                                 className="send-button"
                                 onClick={() => handleSendMessage()}

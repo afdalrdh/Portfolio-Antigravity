@@ -77,7 +77,7 @@ export default function Contact() {
                     <div className="contact-info-panel">
                         <div className="info-content">
                             <h3>Contact Information</h3>
-                            <p>Fill up the form and our Team will get back to you within 24 hours.</p>
+                            <p>Please fill out the form, and I will get back to you within 24 hours.</p>
 
                             <div className="info-details">
                                 {contactData?.phone && (
