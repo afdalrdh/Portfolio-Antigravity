@@ -19,6 +19,10 @@ export default function FloatingAiButton() {
         return null;
     }
 
+    if (!settings || !settings.isEnabled) {
+        return null;
+    }
+
     const avatarUrl = settings?.assistantAvatarUrl || '/images/bodal-avatar.png';
     const isLottie = avatarUrl.endsWith('.lottie') || avatarUrl.endsWith('.json') || avatarUrl.includes('lottie.host');
 
