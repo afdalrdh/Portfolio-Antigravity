@@ -48,10 +48,12 @@ export default function AiChat() {
     const [isTyping, setIsTyping] = useState(false);
     const [chatError, setChatError] = useState(null);
     const [language, setLanguage] = useState('en');
+    const [showLangDropdown, setShowLangDropdown] = useState(false);
     const [sessionId] = useState(() => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
     
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+    const dropdownRef = useRef(null);
 
     // Fetch public settings on mount
     useEffect(() => {
@@ -61,6 +63,17 @@ export default function AiChat() {
             })
             .catch(console.error)
             .finally(() => setLoading(false));
+    }, []);
+
+    // Close dropdown on click outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowLangDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     // Auto-scroll to bottom
@@ -326,26 +339,83 @@ export default function AiChat() {
                             style={{ flex: 1 }}
                         />
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px' }}>
-                            <div className="language-selector" style={{ position: 'relative' }}>
-                                <select 
-                                    value={language}
-                                    onChange={(e) => setLanguage(e.target.value)}
+                            <div className="language-selector" ref={dropdownRef} style={{ position: 'relative' }}>
+                                <div 
+                                    onClick={() => setShowLangDropdown(!showLangDropdown)}
                                     style={{
-                                        appearance: 'none',
-                                        background: 'transparent',
-                                        border: 'none',
-                                        fontSize: '1.2rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        padding: '4px 8px',
                                         cursor: 'pointer',
-                                        padding: '4px 16px 4px 4px',
-                                        outline: 'none'
+                                        borderRadius: '8px',
+                                        background: showLangDropdown ? 'var(--bg-secondary)' : 'transparent',
+                                        transition: 'background 0.2s'
                                     }}
                                 >
-                                    <option value="en">🇬🇧</option>
-                                    <option value="id">🇮🇩</option>
-                                </select>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', right: '2px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-secondary)' }}>
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
+                                    <img 
+                                        src={`https://flagcdn.com/w20/${language === 'en' ? 'gb' : 'id'}.png`}
+                                        alt={language}
+                                        style={{ width: '20px', borderRadius: '2px' }}
+                                    />
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-secondary)' }}>
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                
+                                <AnimatePresence>
+                                    {showLangDropdown && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.15 }}
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: '100%',
+                                                right: 0,
+                                                marginBottom: '8px',
+                                                background: 'var(--bg-primary)',
+                                                border: '1px solid var(--card-border)',
+                                                borderRadius: '12px',
+                                                padding: '4px',
+                                                boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                                                zIndex: 10
+                                            }}
+                                        >
+                                            <div 
+                                                onClick={() => { setLanguage('en'); setShowLangDropdown(false); }}
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    padding: '8px 12px',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '8px',
+                                                    background: language === 'en' ? 'var(--bg-secondary)' : 'transparent'
+                                                }}
+                                            >
+                                                <img src="https://flagcdn.com/w20/gb.png" alt="English" style={{ width: '20px', borderRadius: '2px' }} />
+                                                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>English</span>
+                                            </div>
+                                            <div 
+                                                onClick={() => { setLanguage('id'); setShowLangDropdown(false); }}
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    padding: '8px 12px',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '8px',
+                                                    background: language === 'id' ? 'var(--bg-secondary)' : 'transparent'
+                                                }}
+                                            >
+                                                <img src="https://flagcdn.com/w20/id.png" alt="Indonesia" style={{ width: '20px', borderRadius: '2px' }} />
+                                                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Indonesia</span>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                             <button 
                                 className="send-button"
