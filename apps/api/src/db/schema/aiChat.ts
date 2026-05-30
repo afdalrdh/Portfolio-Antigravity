@@ -7,8 +7,11 @@ export const aiChatSettings = pgTable('ai_chat_settings', {
     groqApiKey: text('groq_api_key'),
     groqModels: text('groq_models').default('["llama-3.3-70b-versatile","llama-3.1-8b-instant","gemma2-9b-it","mixtral-8x7b-32768","meta-llama/llama-4-scout-17b-16e-instruct"]'),
     
-    // AI Behavior
-    systemPrompt: text('system_prompt'),
+    // AI Behavior (Split into Persona and Knowledge Base)
+    systemPrompt: text('system_prompt'), // Keeping this for backward compatibility or general rules
+    personaPrompt: text('persona_prompt').default('Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'),
+    knowledgeBase: text('knowledge_base').default('Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'),
+    
     temperature: real('temperature').default(0.7),
     maxTokens: integer('max_tokens').default(1024),
     
@@ -23,4 +26,12 @@ export const aiChatSettings = pgTable('ai_chat_settings', {
     
     isEnabled: boolean('is_enabled').default(true),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const aiChatLogs = pgTable('ai_chat_logs', {
+    id: serial('id').primaryKey(),
+    prompt: text('prompt').notNull(),
+    response: text('response').notNull(),
+    location: text('location'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
 });

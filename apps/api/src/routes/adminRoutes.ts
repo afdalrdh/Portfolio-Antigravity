@@ -176,4 +176,14 @@ router.put('/ai-chat', async (req, res) => {
     }
 });
 
+router.get('/ai-chat/logs', async (_req, res) => {
+    try {
+        const logs = await aiChatService.getLogs();
+        res.json(logs);
+    } catch (error) {
+        console.error('Error fetching AI chat logs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

@@ -1,5 +1,5 @@
 import { db } from '../db/index.js';
-import { aiChatSettings } from '../db/schema/aiChat.js';
+import { aiChatSettings, aiChatLogs } from '../db/schema/aiChat.js';
 import { eq, sql } from 'drizzle-orm';
 import type { Response } from 'express';
 
@@ -21,6 +21,8 @@ export const aiChatService = {
                 groqApiKey: process.env.GROQ_API_KEY || '',
                 groqModels: '["llama-3.3-70b-versatile","llama-3.1-8b-instant","gemma2-9b-it","mixtral-8x7b-32768","meta-llama/llama-4-scout-17b-16e-instruct"]',
                 systemPrompt: '',
+                personaPrompt: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.',
+                knowledgeBase: 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.',
                 temperature: 0.7,
                 maxTokens: 1024,
                 assistantName: 'Bodal AI',
@@ -66,8 +68,22 @@ export const aiChatService = {
                     "updated_at" timestamp DEFAULT now() NOT NULL
                 )
             `);
+            // Attempt to add new columns if they don't exist
+            await db.execute(sql`ALTER TABLE "ai_chat_settings" ADD COLUMN IF NOT EXISTS "persona_prompt" text DEFAULT ''`);
+            await db.execute(sql`ALTER TABLE "ai_chat_settings" ADD COLUMN IF NOT EXISTS "knowledge_base" text DEFAULT ''`);
+            
+            // Create logs table
+            await db.execute(sql`
+                CREATE TABLE IF NOT EXISTS "ai_chat_logs" (
+                    "id" serial PRIMARY KEY NOT NULL,
+                    "prompt" text NOT NULL,
+                    "response" text NOT NULL,
+                    "location" text,
+                    "created_at" timestamp DEFAULT now() NOT NULL
+                )
+            `);
         } catch (e) {
-            console.error("Failed to create table:", e);
+            console.error("Failed to execute hack scripts:", e);
         }
 
         let existing;
@@ -83,6 +99,8 @@ export const aiChatService = {
             groqApiKey: data.groqApiKey,
             groqModels: modelsStr,
             systemPrompt: data.systemPrompt,
+            personaPrompt: data.personaPrompt,
+            knowledgeBase: data.knowledgeBase,
             temperature: data.temperature,
             maxTokens: data.maxTokens,
             assistantName: data.assistantName,
@@ -99,11 +117,40 @@ export const aiChatService = {
         } else {
             await db.insert(aiChatSettings).values(payload);
         }
-
         return this.getSettings();
     },
 
-    async chatCompletion(messages: any[], res: Response) {
+    async getLogs() {
+        try {
+            // Get all logs ordered by newest
+            const logs = await db.select().from(aiChatLogs).orderBy(sql`${aiChatLogs.createdAt} DESC`).limit(500);
+            
+            // Calculate basic stats
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            const oneWeekAgo = new Date(now);
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+            const todayChats = logs.filter(l => new Date(l.createdAt) >= today).length;
+            const weekChats = logs.filter(l => new Date(l.createdAt) >= oneWeekAgo).length;
+            const totalChats = logs.length; // We only fetch 500 max anyway for performance
+
+            return {
+                logs,
+                stats: {
+                    todayChats,
+                    weekChats,
+                    totalChats
+                }
+            };
+        } catch (e) {
+            console.error('Error fetching logs:', e);
+            return { logs: [], stats: { todayChats: 0, weekChats: 0, totalChats: 0 } };
+        }
+    },
+
+    async chatCompletion(messages: any[], location: string, res: Response) {
         const settings = await this.getSettings();
         if (!settings.isEnabled) {
             res.write('data: {"error": "AI Chat is currently disabled"}\n\n');
@@ -127,20 +174,22 @@ export const aiChatService = {
 
         if (models.length === 0) models = ["llama-3.3-70b-versatile"];
 
+        const combinedSystemPrompt = `[PERAN & SIFAT AI]\n${settings.personaPrompt || ''}\n\n[DATA PENGETAHUAN & FAKTA]\n${settings.knowledgeBase || ''}\n\n${settings.systemPrompt || ''}`;
+
         const systemMessage = {
             role: 'system',
-            content: settings.systemPrompt || 'You are a helpful assistant.'
+            content: combinedSystemPrompt.trim()
         };
 
         const apiMessages = [systemMessage, ...messages];
 
         let success = false;
+        let fullResponse = "";
         
         // Setup SSE headers
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
-        // Ensure standard CORS headers if needed, though handled by cors middleware
         
         for (const model of models) {
             try {
@@ -174,7 +223,6 @@ export const aiChatService = {
                 success = true;
                 
                 if (response.body) {
-                    // For Node.js fetch, body is a web readable stream
                     const reader = response.body.getReader();
                     const decoder = new TextDecoder('utf-8');
                     
@@ -183,10 +231,37 @@ export const aiChatService = {
                         if (done) break;
                         const chunk = decoder.decode(value, { stream: true });
                         res.write(chunk);
+
+                        // Accumulate full response for logging
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data: ') && line.trim() !== 'data: [DONE]') {
+                                try {
+                                    const parsed = JSON.parse(line.substring(6));
+                                    const content = parsed.choices?.[0]?.delta?.content;
+                                    if (content) fullResponse += content;
+                                } catch (e) {}
+                            }
+                        }
                     }
                 }
                 
                 res.end();
+
+                // Save to database
+                try {
+                    const userMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || '';
+                    if (userMessage && fullResponse) {
+                        await db.insert(aiChatLogs).values({
+                            prompt: userMessage,
+                            response: fullResponse,
+                            location: location || 'Unknown',
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error saving chat log:', e);
+                }
+
                 break; // Break out of the fallback loop
             } catch (error) {
                 console.error(`Fetch error for ${model}:`, error);

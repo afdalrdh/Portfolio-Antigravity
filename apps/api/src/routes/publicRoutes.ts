@@ -85,7 +85,18 @@ router.post('/ai-chat', async (req, res) => {
             res.status(400).json({ error: 'Messages array is required' });
             return;
         }
-        await aiChatService.chatCompletion(messages, res);
+        let location = 'Unknown';
+        const city = req.headers['x-vercel-ip-city'];
+        const country = req.headers['x-vercel-ip-country'];
+        if (city && country) {
+            location = `${city}, ${country}`;
+        } else if (country) {
+            location = String(country);
+        } else if (city) {
+            location = String(city);
+        }
+
+        await aiChatService.chatCompletion(messages, location, res);
     } catch (error) {
         console.error('Error in AI chat completion:', error);
         if (!res.headersSent) {

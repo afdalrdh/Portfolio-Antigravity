@@ -47,5 +47,6 @@ export const adminApi = {
     deleteProject: (id) => api(`/admin/projects/${id}`, { method: 'DELETE' }),
     reorderProjects: (projectIds) => api('/admin/projects/reorder', { method: 'POST', body: JSON.stringify({ projectIds }) }),
     getAiChat: () => api('/admin/ai-chat'),
+    getAiChatLogs: () => api('/admin/ai-chat/logs'),
     updateAiChat: (data) => api('/admin/ai-chat', { method: 'PUT', body: JSON.stringify(data) }),
 };
