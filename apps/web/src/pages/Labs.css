@@ -13,7 +13,7 @@
 /* Header & Filters */
 .labs-header {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 16px;
     align-items: center;
     margin-bottom: 32px;
@@ -21,8 +21,8 @@
 
 .labs-search {
     position: relative;
-    flex: 1;
-    min-width: 250px;
+    flex-shrink: 0;
+    width: 250px;
 }
 
 .labs-search input {
@@ -51,21 +51,35 @@
     pointer-events: none;
 }
 
+.labs-categories-wrapper {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+.labs-categories-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(to right, transparent, var(--bg-primary));
+    pointer-events: none;
+}
+
 .labs-categories {
     display: flex;
     gap: 12px;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 8px; /* for scrollbar */
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-right: 40px;
 }
 
 .labs-categories::-webkit-scrollbar {
-    height: 6px;
-}
-.labs-categories::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: 4px;
+    display: none;
 }
 
 .category-pill {
@@ -103,6 +117,10 @@
 @media (max-width: 768px) {
     .masonry-grid { column-count: 2; }
     .labs-page { padding-top: 56px; }
+    
+    .labs-search {
+        width: 160px; /* Make search smaller on mobile to fit categories */
+    }
 }
 @media (max-width: 480px) {
     .masonry-grid { column-count: 1; }
@@ -152,6 +170,20 @@
     font-weight: 500;
     margin: 0;
     color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.skeleton-item {
+    background: var(--border-color);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+    100% { opacity: 0.3; }
 }
 
 /* Lightbox Modal */

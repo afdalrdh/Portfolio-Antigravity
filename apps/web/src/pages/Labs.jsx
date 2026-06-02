@@ -98,29 +98,33 @@ export default function Labs() {
                         </div>
 
                         {categories.length > 0 && (
-                            <div className="labs-categories">
-                                <button 
-                                    className={`category-pill ${activeCategory === '' ? 'active' : ''}`}
-                                    onClick={() => handleCategoryClick('')}
-                                >
-                                    All
-                                </button>
-                                {categories.map(cat => (
+                            <div className="labs-categories-wrapper">
+                                <div className="labs-categories">
                                     <button 
-                                        key={cat}
-                                        className={`category-pill ${activeCategory === cat ? 'active' : ''}`}
-                                        onClick={() => handleCategoryClick(cat)}
+                                        className={`category-pill ${activeCategory === '' ? 'active' : ''}`}
+                                        onClick={() => setActiveCategory('')}
                                     >
-                                        {cat}
+                                        All
                                     </button>
-                                ))}
+                                    {categories.map((cat, idx) => (
+                                        <button 
+                                            key={idx}
+                                            className={`category-pill ${activeCategory === cat ? 'active' : ''}`}
+                                            onClick={() => handleCategoryClick(cat)}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
 
                     {loading ? (
-                        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
-                            <LoadingSpinner />
+                        <div className="masonry-grid">
+                            {[250, 300, 200, 350, 280, 220, 310, 260].map((height, i) => (
+                                <div key={i} className="masonry-item skeleton-item" style={{ height: `${height}px` }}></div>
+                            ))}
                         </div>
                     ) : (
                         <div className="masonry-grid">
