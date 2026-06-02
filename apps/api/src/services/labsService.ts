@@ -11,7 +11,7 @@ export const labsService = {
         }
         
         if (category) {
-            conditions.push(eq(creations.category, category));
+            conditions.push(ilike(creations.category, `%${category}%`));
         }
 
         const query = db
@@ -32,7 +32,16 @@ export const labsService = {
             .from(creations)
             .where(sql`${creations.category} != ''`);
         
-        return result.map(r => r.category);
+        // Split comma-separated categories, trim, and unique them
+        const allCategories = new Set<string>();
+        result.forEach(r => {
+            const parts = r.category.split(',');
+            parts.forEach(p => {
+                const trimmed = p.trim();
+                if (trimmed) allCategories.add(trimmed);
+            });
+        });
+        return Array.from(allCategories);
     },
 
     async getCreationById(id: number) {

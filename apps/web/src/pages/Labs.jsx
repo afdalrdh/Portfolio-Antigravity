@@ -112,6 +112,11 @@ export default function Labs() {
                                     <img src={item.imageUrl} alt={item.title} loading="lazy" />
                                     <div className="masonry-item-overlay">
                                         <h3 className="masonry-item-title">{item.title}</h3>
+                                        <div className="masonry-item-categories">
+                                            {item.category.split(',').map((cat, i) => (
+                                                <span key={i} className="masonry-item-badge">{cat.trim()}</span>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             ))}

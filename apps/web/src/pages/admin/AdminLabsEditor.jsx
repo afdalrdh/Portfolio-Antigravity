@@ -11,12 +11,21 @@ export default function AdminLabsEditor() {
     const [isEditing, setIsEditing] = useState(false);
     const [currentId, setCurrentId] = useState(null);
     const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [categoryInput, setCategoryInput] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        fetchData();
+        // Auto-fix DB table if it doesn't exist on production
+        const fixDb = async () => {
+            try {
+                await fetch(`${import.meta.env.VITE_API_URL || ''}/api/debug/migrate-labs`);
+            } catch (e) {
+                console.log("DB fix check failed", e);
+            }
+        };
+        fixDb().then(() => fetchData());
     }, []);
 
     const fetchData = async () => {
@@ -37,7 +46,8 @@ export default function AdminLabsEditor() {
         setIsEditing(false);
         setCurrentId(null);
         setTitle('');
-        setCategory('');
+        setSelectedCategories([]);
+        setCategoryInput('');
         setImageUrl('');
     };
 
@@ -45,7 +55,9 @@ export default function AdminLabsEditor() {
         setIsEditing(true);
         setCurrentId(creation.id);
         setTitle(creation.title);
-        setCategory(creation.category);
+        // creation.category is a comma-separated string
+        const cats = creation.category ? creation.category.split(',').map(c => c.trim()).filter(Boolean) : [];
+        setSelectedCategories(cats);
         setImageUrl(creation.imageUrl);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -63,13 +75,13 @@ export default function AdminLabsEditor() {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if (!title || !category || !imageUrl) {
-            setMessage('❌ Please fill all fields and upload an image');
+        if (!title || selectedCategories.length === 0 || !imageUrl) {
+            setMessage('❌ Please fill all fields, add at least 1 category, and upload an image');
             return;
         }
 
         try {
-            const payload = { title, category, imageUrl };
+            const payload = { title, category: selectedCategories.join(','), imageUrl };
             if (isEditing) {
                 await adminApi.updateCreation(currentId, payload);
                 setMessage('✅ Creation updated successfully!');
@@ -107,13 +119,34 @@ export default function AdminLabsEditor() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Category</label>
+                                <label>Categories (Max 3)</label>
+                                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                                    {selectedCategories.map((cat, i) => (
+                                        <span key={i} style={{ padding: '4px 12px', background: 'var(--text-primary)', color: 'var(--bg-primary)', borderRadius: '16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            {cat}
+                                            <button type="button" onClick={() => setSelectedCategories(prev => prev.filter((_, idx) => idx !== i))} style={{ background: 'none', border: 'none', color: 'var(--bg-primary)', cursor: 'pointer', fontSize: '1rem', lineHeight: 1 }}>&times;</button>
+                                        </span>
+                                    ))}
+                                </div>
                                 <input 
                                     type="text" 
                                     className="form-input" 
-                                    value={category} 
-                                    onChange={(e) => setCategory(e.target.value)} 
-                                    placeholder="e.g. UI Kit or 3D Design" 
+                                    value={categoryInput} 
+                                    onChange={(e) => setCategoryInput(e.target.value)} 
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            const val = categoryInput.trim();
+                                            if (val && selectedCategories.length < 3 && !selectedCategories.includes(val)) {
+                                                setSelectedCategories([...selectedCategories, val]);
+                                                setCategoryInput('');
+                                            } else if (selectedCategories.length >= 3) {
+                                                alert("Maximum 3 categories allowed");
+                                            }
+                                        }
+                                    }}
+                                    placeholder={selectedCategories.length < 3 ? "Type category and press Enter..." : "Max 3 categories reached"} 
+                                    disabled={selectedCategories.length >= 3}
                                     list="category-suggestions"
                                 />
                                 <datalist id="category-suggestions">
@@ -121,7 +154,7 @@ export default function AdminLabsEditor() {
                                         <option key={idx} value={cat} />
                                     ))}
                                 </datalist>
-                                <p className="text-secondary" style={{fontSize: '0.8rem', marginTop: '4px'}}>Categories are automatically added when you type a new one.</p>
+                                <p className="text-secondary" style={{fontSize: '0.8rem', marginTop: '4px'}}>Categories are automatically added when you press Enter.</p>
                             </div>
                         </div>
 
@@ -161,10 +194,14 @@ export default function AdminLabsEditor() {
                                 <img src={item.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
                             <h4 style={{ fontSize: '0.9rem', marginBottom: '4px', fontWeight: 600 }}>{item.title}</h4>
-                            <span className="badge" style={{ fontSize: '0.75rem', marginBottom: '12px' }}>{item.category}</span>
-                            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                                <button onClick={() => handleEdit(item)} className="btn-outline" style={{ flex: 1, padding: '6px' }}>Edit</button>
-                                <button onClick={() => handleDelete(item.id)} className="btn-outline text-danger" style={{ flex: 1, padding: '6px' }}>Delete</button>
+                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                {item.category.split(',').map((c, i) => (
+                                    <span key={i} className="badge" style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '12px' }}>{c.trim()}</span>
+                                ))}
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: 'auto' }}>
+                                <button onClick={() => handleEdit(item)} className="btn-outline" style={{ flex: 1, padding: '8px', fontSize: '0.85rem' }}>Edit</button>
+                                <button onClick={() => handleDelete(item.id)} className="btn-outline" style={{ flex: 1, padding: '8px', fontSize: '0.85rem', color: '#ff3b30', borderColor: 'rgba(255, 59, 48, 0.3)' }}>Delete</button>
                             </div>
                         </div>
                     ))}
