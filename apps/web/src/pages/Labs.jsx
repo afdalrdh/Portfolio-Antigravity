@@ -101,7 +101,7 @@ export default function Labs() {
     return (
         <>
             <Helmet>
-                <title>Labs - Creations | Afdal Ramdan</title>
+                <title>Labs | Afdal Ramdan</title>
                 <meta name="description" content="Explore my conceptual designs, experiments, and creative works." />
             </Helmet>
 
@@ -124,7 +124,15 @@ export default function Labs() {
                             />
                         </div>
 
-                        {categories.length > 0 && (
+                        {loading && categories.length === 0 ? (
+                            <div className="labs-categories-wrapper">
+                                <div className="labs-categories">
+                                    {Array.from({ length: 6 }).map((_, i) => (
+                                        <div key={i} className="category-pill skeleton-box" style={{ width: `${Math.random() * 40 + 60}px`, height: '36px', border: 'none' }}></div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : categories.length > 0 && (
                             <div className="labs-categories-wrapper">
                                 <div 
                                     className="labs-categories"
@@ -158,7 +166,7 @@ export default function Labs() {
                     {loading ? (
                         <div className="masonry-grid">
                             {[250, 300, 200, 350, 280, 220, 310, 260].map((height, i) => (
-                                <div key={i} className="masonry-item skeleton-item" style={{ height: `${height}px` }}></div>
+                                <div key={i} className="masonry-item skeleton-box" style={{ height: `${height}px` }}></div>
                             ))}
                         </div>
                     ) : (
