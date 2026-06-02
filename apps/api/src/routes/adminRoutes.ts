@@ -4,6 +4,7 @@ import { aboutService } from '../services/aboutService.js';
 import { contactService } from '../services/contactService.js';
 import { projectService } from '../services/projectService.js';
 import { aiChatService } from '../services/aiChatService.js';
+import { labsService } from '../services/labsService.js';
 
 const router = Router();
 
@@ -215,6 +216,44 @@ router.post('/ai-chat/logs/sessions/bulk-delete', async (req, res) => {
         res.json({ message: 'Sessions deleted successfully' });
     } catch (error) {
         console.error('Error deleting bulk AI chat sessions:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ==================== LABS ====================
+
+router.get('/labs/creations', async (_req, res) => {
+    try {
+        const data = await labsService.getCreations();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.post('/labs/creations', async (req, res) => {
+    try {
+        const data = await labsService.createCreation(req.body);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.put('/labs/creations/:id', async (req, res) => {
+    try {
+        const data = await labsService.updateCreation(Number(req.params.id), req.body);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.delete('/labs/creations/:id', async (req, res) => {
+    try {
+        await labsService.deleteCreation(Number(req.params.id));
+        res.json({ success: true });
+    } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
 });

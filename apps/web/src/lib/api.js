@@ -31,6 +31,14 @@ export const publicApi = {
     getProjects: () => api('/projects'),
     getProject: (slug) => api(`/projects/${slug}`),
     getAiChatSettings: () => api('/ai-chat/settings'),
+    getCreations: (search = '', category = '') => {
+        const query = new URLSearchParams();
+        if (search) query.append('search', search);
+        if (category) query.append('category', category);
+        const qs = query.toString();
+        return api(`/labs/creations${qs ? `?${qs}` : ''}`);
+    },
+    getCategories: () => api('/labs/categories'),
 };
 
 export const adminApi = {
@@ -51,4 +59,8 @@ export const adminApi = {
     updateAiChat: (data) => api('/admin/ai-chat', { method: 'PUT', body: JSON.stringify(data) }),
     deleteAiChatSession: (sessionId) => api(`/admin/ai-chat/logs/session/${sessionId}`, { method: 'DELETE' }),
     deleteAiChatSessionsBulk: (sessionIds) => api('/admin/ai-chat/logs/sessions/bulk-delete', { method: 'POST', body: JSON.stringify({ sessionIds }) }),
+    getCreations: () => api('/admin/labs/creations'),
+    createCreation: (data) => api('/admin/labs/creations', { method: 'POST', body: JSON.stringify(data) }),
+    updateCreation: (id, data) => api(`/admin/labs/creations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteCreation: (id) => api(`/admin/labs/creations/${id}`, { method: 'DELETE' }),
 };

@@ -62,6 +62,12 @@ export default function AdminLayout() {
                         Home Page
                     </Link>
                     <Link
+                        to="/admin/labs"
+                        className={`admin-nav-link ${location.pathname === '/admin/labs' ? 'active' : ''}`}
+                    >
+                        Labs Page
+                    </Link>
+                    <Link
                         to="/admin/about"
                         className={`admin-nav-link ${location.pathname === '/admin/about' ? 'active' : ''}`}
                     >

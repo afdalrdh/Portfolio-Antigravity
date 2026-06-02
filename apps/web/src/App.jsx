@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import Home from './pages/Home'
 import About from './pages/About'
 import ProjectDetail from './pages/ProjectDetail'
+import Labs from './pages/Labs'
 import AiChat from './pages/AiChat'
 import Contact from './pages/Contact'
 import Navbar from './components/layout/Navbar'
@@ -13,6 +14,7 @@ import AdminHomeEditor from './pages/admin/AdminHomeEditor'
 import AdminAboutEditor from './pages/admin/AdminAboutEditor'
 import AdminContactEditor from './pages/admin/AdminContactEditor'
 import AdminAiChatEditor from './pages/admin/AdminAiChatEditor'
+import AdminLabsEditor from './pages/admin/AdminLabsEditor'
 import AdminLogin from './pages/admin/AdminLogin'
 const ClientLayout = () => (
     <>
@@ -38,6 +40,7 @@ const AnimatedRoutes = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/project/:slug" element={<ProjectDetail />} />
+                    <Route path="/labs" element={<Labs />} />
                     <Route path="/ai-chat" element={<AiChat />} />
                     <Route path="/contact" element={<Contact />} />
                 </Route>
@@ -49,6 +52,7 @@ const AnimatedRoutes = () => {
                     <Route path="projects/new" element={<AdminProjectEditor />} />
                     <Route path="projects/:id/edit" element={<AdminProjectEditor />} />
                     <Route path="home" element={<AdminHomeEditor />} />
+                    <Route path="labs" element={<AdminLabsEditor />} />
                     <Route path="about" element={<AdminAboutEditor />} />
                     <Route path="contact" element={<AdminContactEditor />} />
                     <Route path="ai-chat" element={<AdminAiChatEditor />} />

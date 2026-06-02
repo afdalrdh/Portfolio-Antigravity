@@ -4,6 +4,7 @@ import { aboutService } from '../services/aboutService.js';
 import { contactService } from '../services/contactService.js';
 import { projectService } from '../services/projectService.js';
 import { aiChatService } from '../services/aiChatService.js';
+import { labsService } from '../services/labsService.js';
 
 const router = Router();
 
@@ -115,6 +116,28 @@ router.post('/ai-chat', async (req, res) => {
         } else {
             res.end();
         }
+    }
+});
+
+// Labs
+router.get('/labs/creations', async (req, res) => {
+    try {
+        const { search, category } = req.query;
+        const data = await labsService.getCreations(search as string, category as string);
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching creations:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/labs/categories', async (_req, res) => {
+    try {
+        const data = await labsService.getCategories();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 

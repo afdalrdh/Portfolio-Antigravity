@@ -4,3 +4,4 @@ export * from './about.js';
 export * from './contact.js';
 export * from './project.js';
 export * from './aiChat.js';
+export * from './labs.js';
