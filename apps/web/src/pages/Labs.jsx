@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { publicApi } from '../lib/api';
 import './Labs.css';
 import { Helmet } from 'react-helmet-async';
-import LoadingScreen from '../components/ui/LoadingScreen';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiSearch, FiX } from 'react-icons/fi';
 
