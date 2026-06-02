@@ -49,36 +49,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     transition: all var(--transition-normal);
     cursor: default;
-    position: relative;
 }
 
 .tool-icon:hover {
     transform: translateY(-2px);
     border-color: var(--text-secondary);
-}
-
-.tool-icon::after {
-    content: attr(data-title);
-    position: absolute;
-    bottom: -32px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-primary);
-    color: var(--bg-primary);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-fast), bottom var(--transition-fast);
-    z-index: 10;
-}
-
-.tool-icon:hover::after {
-    opacity: 1;
-    bottom: -36px;
 }
 
 .divider {
