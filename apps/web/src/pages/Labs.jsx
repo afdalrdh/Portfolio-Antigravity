@@ -1,27 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { publicApi } from '../lib/api';
-import { FiSearch, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiSearch, FiX, FiChevronLeft, FiChevronRight, FiChevronDown, FiCheck } from 'react-icons/fi';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import './Labs.css';
 import { Helmet } from 'react-helmet-async';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Labs() {
-    const [creations, setCreations] = useState([]);
-    const [categories, setCategories] = useState([]);
+    const [allCreations, setAllCreations] = useState([]);
     const [loading, setLoading] = useState(true);
     
     // Filters
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('');
     
+    // Dropdown state
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [categorySearch, setCategorySearch] = useState('');
+    const dropdownRef = useRef(null);
+    
     // Lightbox
     const [selectedImage, setSelectedImage] = useState(null);
-
-    const scrollRef = useRef(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
 
     // Debounce search
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -37,12 +36,9 @@ export default function Labs() {
         const fetchCreations = async () => {
             setLoading(true);
             try {
-                const [creationsData, categoriesData] = await Promise.all([
-                    publicApi.getCreations(debouncedSearch, activeCategory),
-                    publicApi.getCategories()
-                ]);
-                setCreations(creationsData || []);
-                setCategories(categoriesData || []);
+                // Fetch ALL creations to do client-side filtering and counting
+                const creationsData = await publicApi.getCreations('', '');
+                setAllCreations(creationsData || []);
             } catch (error) {
                 console.error("Failed to load labs data", error);
             } finally {
@@ -50,48 +46,81 @@ export default function Labs() {
             }
         };
         fetchCreations();
-    }, [debouncedSearch, activeCategory]);
+    }, []);
 
-    const handleCategoryClick = (cat) => {
-        setActiveCategory(prev => prev === cat ? '' : cat);
-    };
+    // Click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsCategoryOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
-    const handleMouseDown = (e) => {
-        setIsDragging(true);
-        setStartX(e.pageX - scrollRef.current.offsetLeft);
-        setScrollLeft(scrollRef.current.scrollLeft);
-    };
+    // Compute categories with counts
+    const categoriesWithCounts = useMemo(() => {
+        const counts = {};
+        allCreations.forEach(c => {
+            if (!c.category) return;
+            const parts = c.category.split(',').map(s => s.trim()).filter(Boolean);
+            parts.forEach(p => {
+                counts[p] = (counts[p] || 0) + 1;
+            });
+        });
+        
+        const sorted = Object.keys(counts).map(name => ({
+            name,
+            count: counts[name]
+        })).sort((a, b) => b.count - a.count);
+        
+        return [
+            { name: 'All', count: allCreations.length, isAll: true },
+            ...sorted
+        ];
+    }, [allCreations]);
 
-    const handleMouseLeave = () => {
-        setIsDragging(false);
-    };
+    // Filter categories based on category dropdown search
+    const filteredCategories = useMemo(() => {
+        if (!categorySearch) return categoriesWithCounts;
+        const lowerSearch = categorySearch.toLowerCase();
+        return categoriesWithCounts.filter(c => c.isAll || c.name.toLowerCase().includes(lowerSearch));
+    }, [categoriesWithCounts, categorySearch]);
 
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
+    // Filter creations based on main search and active category
+    const displayCreations = useMemo(() => {
+        return allCreations.filter(c => {
+            const matchesSearch = !debouncedSearch || c.title?.toLowerCase().includes(debouncedSearch.toLowerCase());
+            let matchesCategory = true;
+            if (activeCategory) {
+                const parts = (c.category || '').split(',').map(s => s.trim());
+                matchesCategory = parts.includes(activeCategory);
+            }
+            return matchesSearch && matchesCategory;
+        });
+    }, [allCreations, debouncedSearch, activeCategory]);
 
-    const handleMouseMove = (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - scrollRef.current.offsetLeft;
-        const walk = (x - startX) * 2;
-        scrollRef.current.scrollLeft = scrollLeft - walk;
+    const handleCategorySelect = (catName) => {
+        setActiveCategory(catName === 'All' ? '' : catName);
+        setIsCategoryOpen(false);
+        setCategorySearch('');
     };
 
     const handlePrev = (e) => {
         e.stopPropagation();
-        if (!selectedImage || creations.length === 0) return;
-        const currentIndex = creations.findIndex(c => c.id === selectedImage.id);
-        const prevIndex = (currentIndex - 1 + creations.length) % creations.length;
-        setSelectedImage(creations[prevIndex]);
+        if (!selectedImage || displayCreations.length === 0) return;
+        const currentIndex = displayCreations.findIndex(c => c.id === selectedImage.id);
+        const prevIndex = (currentIndex - 1 + displayCreations.length) % displayCreations.length;
+        setSelectedImage(displayCreations[prevIndex]);
     };
 
     const handleNext = (e) => {
         e.stopPropagation();
-        if (!selectedImage || creations.length === 0) return;
-        const currentIndex = creations.findIndex(c => c.id === selectedImage.id);
-        const nextIndex = (currentIndex + 1) % creations.length;
-        setSelectedImage(creations[nextIndex]);
+        if (!selectedImage || displayCreations.length === 0) return;
+        const currentIndex = displayCreations.findIndex(c => c.id === selectedImage.id);
+        const nextIndex = (currentIndex + 1) % displayCreations.length;
+        setSelectedImage(displayCreations[nextIndex]);
     };
 
     const closeLightbox = () => {
@@ -114,53 +143,73 @@ export default function Labs() {
                 <div className="labs-container">
                     
                     <div className="labs-header">
-                        <div className="labs-search">
-                            <FiSearch className="labs-search-icon" />
-                            <input 
-                                type="text" 
-                                placeholder="Search creations..." 
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
+                        <h1 className="labs-title">Experiments & Explorations 🧪</h1>
+                        
+                        <div className="labs-header-actions">
+                            <div className="labs-search">
+                                <FiSearch className="labs-search-icon" />
+                                <input 
+                                    type="text" 
+                                    placeholder="Search creations..." 
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
 
-                        {loading && categories.length === 0 ? (
-                            <div className="labs-categories-wrapper">
-                                <div className="labs-categories">
-                                    {Array.from({ length: 6 }).map((_, i) => (
-                                        <div key={i} className="category-pill skeleton-box" style={{ width: `${Math.random() * 40 + 60}px`, height: '36px', border: 'none' }}></div>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : categories.length > 0 && (
-                            <div className="labs-categories-wrapper">
-                                <div 
-                                    className="labs-categories"
-                                    ref={scrollRef}
-                                    onMouseDown={handleMouseDown}
-                                    onMouseLeave={handleMouseLeave}
-                                    onMouseUp={handleMouseUp}
-                                    onMouseMove={handleMouseMove}
-                                    style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                            <div className="labs-category-dropdown" ref={dropdownRef}>
+                                <button 
+                                    className="labs-category-btn"
+                                    onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                                 >
-                                    <button 
-                                        className={`category-pill ${activeCategory === '' ? 'active' : ''}`}
-                                        onClick={() => setActiveCategory('')}
-                                    >
-                                        All
-                                    </button>
-                                    {categories.map((cat, idx) => (
-                                        <button 
-                                            key={idx}
-                                            className={`category-pill ${activeCategory === cat ? 'active' : ''}`}
-                                            onClick={() => handleCategoryClick(cat)}
+                                    Category <FiChevronDown style={{ transform: isCategoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                                </button>
+                                
+                                <AnimatePresence>
+                                    {isCategoryOpen && (
+                                        <motion.div 
+                                            className="labs-dropdown-menu"
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.15 }}
                                         >
-                                            {cat}
-                                        </button>
-                                    ))}
-                                </div>
+                                            <div className="labs-dropdown-search">
+                                                <FiSearch className="labs-dropdown-search-icon" />
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Search" 
+                                                    value={categorySearch}
+                                                    onChange={(e) => setCategorySearch(e.target.value)}
+                                                />
+                                            </div>
+                                            <ul className="labs-dropdown-list">
+                                                {filteredCategories.map((cat, idx) => {
+                                                    const isActive = (cat.isAll && activeCategory === '') || activeCategory === cat.name;
+                                                    return (
+                                                        <li 
+                                                            key={idx} 
+                                                            className={`labs-dropdown-item ${isActive ? 'active' : ''}`}
+                                                            onClick={() => handleCategorySelect(cat.name)}
+                                                        >
+                                                            <div className="labs-dropdown-item-left">
+                                                                <div className={`labs-checkbox ${isActive ? 'checked' : ''}`}>
+                                                                    {isActive && <FiCheck className="labs-check-icon" />}
+                                                                </div>
+                                                                <span className="labs-cat-name">{cat.isAll ? '(All)' : cat.name}</span>
+                                                            </div>
+                                                            <span className="labs-cat-count">({cat.count})</span>
+                                                        </li>
+                                                    );
+                                                })}
+                                                {filteredCategories.length === 0 && (
+                                                    <li className="labs-dropdown-empty">No categories found</li>
+                                                )}
+                                            </ul>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                        )}
+                        </div>
                     </div>
 
                     {loading ? (
@@ -171,7 +220,7 @@ export default function Labs() {
                         </div>
                     ) : (
                         <div className="masonry-grid">
-                            {creations.map((item) => (
+                            {displayCreations.map((item) => (
                                 <div 
                                     key={item.id} 
                                     className="masonry-item"
@@ -186,7 +235,7 @@ export default function Labs() {
                         </div>
                     )}
                     
-                    {!loading && creations.length === 0 && (
+                    {!loading && displayCreations.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '60px 0' }}>
                             <p className="text-secondary">No creations found.</p>
                         </div>
