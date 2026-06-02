@@ -48,4 +48,27 @@ app.get('/api/debug/migrate', async (_req, res) => {
     }
 });
 
+// Temporary migration endpoint to fix V3 Labs DB
+app.get('/api/debug/migrate-labs', async (_req, res) => {
+    try {
+        const { db } = await import('../apps/api/src/db/index.js');
+        const { sql } = await import('drizzle-orm');
+        
+        await db.execute(sql`
+            CREATE TABLE IF NOT EXISTS creations (
+                id SERIAL PRIMARY KEY,
+                title TEXT NOT NULL,
+                image_url TEXT NOT NULL,
+                category TEXT NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+            )
+        `);
+        
+        res.json({ success: true, message: 'Database migrated successfully for Labs. creations table ensured.' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: (error as any)?.message });
+    }
+});
+
 export default app;
