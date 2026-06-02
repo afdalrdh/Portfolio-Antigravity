@@ -125,18 +125,6 @@ async function migrate() {
         console.log('  ✓ Added sort_order to projects');
     }
 
-    // 5. Handle social_links table column migration
-    const socialCols = await sql`
-        SELECT column_name FROM information_schema.columns
-        WHERE table_name = 'social_links'
-    `;
-    const socialColNames = socialCols.map((r: any) => r.column_name);
-
-    if (!socialColNames.includes('hover_text')) {
-        await sql`ALTER TABLE social_links ADD COLUMN hover_text TEXT`;
-        console.log('  ✓ Added hover_text to social_links');
-    }
-
     console.log('✅ V2 migration complete!');
     await sql.end();
 }

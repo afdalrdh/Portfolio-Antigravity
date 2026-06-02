@@ -13,6 +13,5 @@ export const socialLinks = pgTable('social_links', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     url: text('url').notNull(),
-    hoverText: text('hover_text'),
     sortOrder: integer('sort_order').notNull().default(0),
 });

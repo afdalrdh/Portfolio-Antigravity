@@ -76,7 +76,7 @@ export default function Home() {
 
                     <div className="social-links delay-100 animate-fade-in">
                         {(homeData?.socialLinks || []).map((link) => (
-                            <a key={link.id} href={link.url} aria-label={link.name} data-title={link.hoverText || link.name} className="custom-tooltip" target="_blank" rel="noreferrer">
+                            <a key={link.id} href={link.url} aria-label={link.name} target="_blank" rel="noreferrer">
                                 {renderIcon(link.name)}
                             </a>
                         ))}
