@@ -105,7 +105,7 @@ export default function Home() {
 
             <div style={{ textAlign: 'center', marginTop: '48px', marginBottom: '24px' }} className="delay-300 animate-fade-in">
                 <Link to="/labs" className="explore-button">
-                    Explore the Lab
+                    Explore Labs
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '2px' }}><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
                 </Link>
             </div>
