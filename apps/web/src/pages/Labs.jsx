@@ -103,8 +103,6 @@ export default function Labs() {
 
     const handleCategorySelect = (catName) => {
         setActiveCategory(catName === 'All' ? '' : catName);
-        setIsCategoryOpen(false);
-        setCategorySearch('');
     };
 
     const handlePrev = (e) => {
@@ -150,7 +148,7 @@ export default function Labs() {
                                 <FiSearch className="labs-search-icon" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search creations..." 
+                                    placeholder="Search..." 
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -177,7 +175,7 @@ export default function Labs() {
                                                 <FiSearch className="labs-dropdown-search-icon" />
                                                 <input 
                                                     type="text" 
-                                                    placeholder="Search" 
+                                                    placeholder="Search category" 
                                                     value={categorySearch}
                                                     onChange={(e) => setCategorySearch(e.target.value)}
                                                 />
@@ -192,8 +190,8 @@ export default function Labs() {
                                                             onClick={() => handleCategorySelect(cat.name)}
                                                         >
                                                             <div className="labs-dropdown-item-left">
-                                                                <div className={`labs-checkbox ${isActive ? 'checked' : ''}`}>
-                                                                    {isActive && <FiCheck className="labs-check-icon" />}
+                                                                <div className={`labs-radio ${isActive ? 'checked' : ''}`}>
+                                                                    {isActive && <div className="labs-radio-dot" />}
                                                                 </div>
                                                                 <span className="labs-cat-name">{cat.isAll ? '(All)' : cat.name}</span>
                                                             </div>
