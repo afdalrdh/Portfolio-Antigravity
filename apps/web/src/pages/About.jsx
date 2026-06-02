@@ -48,8 +48,8 @@ export default function About() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
             <Helmet>
-                <title>About - Afdal Ramdan Daman Huri</title>
-                <meta name="description" content="Learn more about Afdal Ramdan Daman Huri, experience, certifications, and UI/UX design tools." />
+                <title>About - Afdal Ramdan</title>
+                <meta name="description" content="Learn more about Afdal Ramdan, experience, certifications, and UI/UX design tools." />
             </Helmet>
             <section className="about-bio">
                 {data?.page?.bioDescription && (
@@ -120,7 +120,7 @@ export default function About() {
 
             <footer className="home-footer delay-300 animate-fade-in">
                 <p className="text-secondary text-sm">
-                    All designs on this website were created by Afdal Ramdan Daman Huri
+                    All designs on this website were created by Afdal Ramdan
                 </p>
                 <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
                     © 2026 All rights reserved.

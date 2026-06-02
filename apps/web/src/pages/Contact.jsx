@@ -175,7 +175,7 @@ export default function Contact() {
 
             <footer className="home-footer delay-300 animate-fade-in">
                 <p className="text-secondary text-sm">
-                    All designs on this website were created by Afdal Ramdan Daman Huri
+                    All designs on this website were created by Afdal Ramdan
                 </p>
                 <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
                     © 2026 All rights reserved.

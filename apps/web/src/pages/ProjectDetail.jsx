@@ -119,8 +119,8 @@ export default function ProjectDetail() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
             <Helmet>
-                <title>{project.title} - Afdal Ramdan Daman Huri</title>
-                <meta name="description" content={project.short_description || `View details for the project ${project.title} by Afdal Ramdan Daman Huri.`} />
+                <title>{project.title} - Afdal Ramdan</title>
+                <meta name="description" content={project.short_description || `View details for the project ${project.title} by Afdal Ramdan.`} />
             </Helmet>
             <div className="container animate-fade-in project-detail-page">
                 <header className="pd-header delay-100 animate-fade-in">
@@ -142,7 +142,7 @@ export default function ProjectDetail() {
 
                 <footer className="home-footer">
                     <p className="text-secondary text-sm">
-                        All designs on this website were created by Afdal Ramdan Daman Huri
+                        All designs on this website were created by Afdal Ramdan
                     </p>
                     <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
                         © 2026 All rights reserved.
