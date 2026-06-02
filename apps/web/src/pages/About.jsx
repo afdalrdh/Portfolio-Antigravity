@@ -58,7 +58,7 @@ export default function About() {
 
                 <div className="tool-icons delay-200 animate-fade-in">
                     {(data?.tools || []).map((tool, idx) => (
-                        <div key={tool.id || idx} className="tool-icon" title={tool.name}>
+                        <div key={tool.id || idx} className="tool-icon custom-tooltip" data-title={tool.name}>
                             {renderIcon(tool.iconCode)}
                         </div>
                     ))}

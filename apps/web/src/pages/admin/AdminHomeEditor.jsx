@@ -60,7 +60,7 @@ export default function AdminHomeEditor() {
                 heroHeadline,
                 ctaText,
                 ctaUrl,
-                socialLinks: socials.map(s => ({ name: s.name, url: s.url })),
+                socialLinks: socials.map(s => ({ name: s.name, url: s.url, hoverText: s.hoverText })),
             });
             setMessage('✅ Saved successfully!');
             setTimeout(() => setMessage(''), 3000);
@@ -132,11 +132,15 @@ export default function AdminHomeEditor() {
                                 <div className="block-body" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px' }}>
                                     <div className="form-group">
                                         <label>Platform Name (or React-Icon code)</label>
-                                        <input type="text" className="form-input" value={social.name} onChange={(e) => updateSocial(index, 'name', e.target.value)} placeholder="e.g. LinkedIn or SiLinkedin" />
+                                        <input type="text" className="form-input" value={social.name || ''} onChange={(e) => updateSocial(index, 'name', e.target.value)} placeholder="e.g. LinkedIn or SiLinkedin" />
                                     </div>
                                     <div className="form-group">
                                         <label>Target URL</label>
-                                        <input type="text" className="form-input" value={social.url} onChange={(e) => updateSocial(index, 'url', e.target.value)} placeholder="https://" />
+                                        <input type="text" className="form-input" value={social.url || ''} onChange={(e) => updateSocial(index, 'url', e.target.value)} placeholder="https://" />
+                                    </div>
+                                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                        <label>Hover Text (Tooltip)</label>
+                                        <input type="text" className="form-input" value={social.hoverText || ''} onChange={(e) => updateSocial(index, 'hoverText', e.target.value)} placeholder="e.g. Follow me on Instagram" />
                                     </div>
                                 </div>
                             </div>
