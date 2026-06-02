@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../../lib/api';
-import CloudinaryUploadWidget from '../../../components/admin/CloudinaryUploadWidget';
+import { adminApi } from '../../lib/api';
+import CloudinaryUploadWidget from '../../components/admin/CloudinaryUploadWidget';
 
 export default function AdminLabsEditor() {
     const [creations, setCreations] = useState([]);
