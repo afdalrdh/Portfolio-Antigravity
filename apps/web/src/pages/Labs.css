@@ -97,7 +97,7 @@
 .category-pill:hover {
     background: transparent;
     color: var(--text-primary);
-    border: 1px solid var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 .category-pill.active {
@@ -122,7 +122,7 @@
     .labs-header {
         position: sticky;
         top: 64px;
-        z-index: 40;
+        z-index: 30;
         background-color: var(--bg-primary);
         margin: 0 -24px 24px -24px;
         padding: 16px 24px;
