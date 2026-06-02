@@ -1,5 +1,5 @@
 .labs-page {
-    padding-top: 100px;
+    padding-top: 140px;
     padding-bottom: 60px;
     min-height: 100vh;
 }
@@ -102,6 +102,7 @@
 }
 @media (max-width: 768px) {
     .masonry-grid { column-count: 2; }
+    .labs-page { padding-top: 56px; }
 }
 @media (max-width: 480px) {
     .masonry-grid { column-count: 1; }
@@ -150,21 +151,6 @@
     font-size: 0.95rem;
     font-weight: 500;
     margin: 0;
-    margin-bottom: 8px;
-}
-
-.masonry-item-categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.masonry-item-badge {
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(4px);
-    border-radius: 12px;
     color: white;
 }
 
@@ -221,4 +207,35 @@
 
 .lightbox-close:hover {
     opacity: 1;
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    z-index: 100000;
+}
+
+.lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-prev {
+    left: 24px;
+}
+
+.lightbox-next {
+    right: 24px;
 }

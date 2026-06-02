@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { publicApi } from '../lib/api';
+import { FiSearch, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import './Labs.css';
 import { Helmet } from 'react-helmet-async';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiSearch, FiX } from 'react-icons/fi';
 
 export default function Labs() {
     const [creations, setCreations] = useState([]);
@@ -48,6 +49,26 @@ export default function Labs() {
 
     const handleCategoryClick = (cat) => {
         setActiveCategory(prev => prev === cat ? '' : cat);
+    };
+
+    const handlePrev = (e) => {
+        e.stopPropagation();
+        if (!selectedImage || creations.length === 0) return;
+        const currentIndex = creations.findIndex(c => c.id === selectedImage.id);
+        const prevIndex = (currentIndex - 1 + creations.length) % creations.length;
+        setSelectedImage(creations[prevIndex]);
+    };
+
+    const handleNext = (e) => {
+        e.stopPropagation();
+        if (!selectedImage || creations.length === 0) return;
+        const currentIndex = creations.findIndex(c => c.id === selectedImage.id);
+        const nextIndex = (currentIndex + 1) % creations.length;
+        setSelectedImage(creations[nextIndex]);
+    };
+
+    const closeLightbox = () => {
+        setSelectedImage(null);
     };
 
     return (
@@ -97,9 +118,9 @@ export default function Labs() {
                         )}
                     </div>
 
-                    {loading && creations.length === 0 ? (
-                        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-                            <p className="text-secondary">Loading creations...</p>
+                    {loading ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+                            <LoadingSpinner />
                         </div>
                     ) : (
                         <div className="masonry-grid">
@@ -112,11 +133,6 @@ export default function Labs() {
                                     <img src={item.imageUrl} alt={item.title} loading="lazy" />
                                     <div className="masonry-item-overlay">
                                         <h3 className="masonry-item-title">{item.title}</h3>
-                                        <div className="masonry-item-categories">
-                                            {item.category.split(',').map((cat, i) => (
-                                                <span key={i} className="masonry-item-badge">{cat.trim()}</span>
-                                            ))}
-                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -139,10 +155,10 @@ export default function Labs() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => setSelectedImage(null)}
+                        onClick={closeLightbox}
                     >
-                        <button className="lightbox-close" onClick={() => setSelectedImage(null)}>
-                            <FiX />
+                        <button className="lightbox-nav lightbox-prev" onClick={handlePrev}>
+                            <FiChevronLeft />
                         </button>
                         <motion.div 
                             className="lightbox-content"
@@ -151,9 +167,15 @@ export default function Labs() {
                             exit={{ scale: 0.95 }}
                             onClick={(e) => e.stopPropagation()}
                         >
+                            <button className="lightbox-close" onClick={closeLightbox}>
+                                <FiX />
+                            </button>
                             <img src={selectedImage.imageUrl} alt={selectedImage.title} />
                             <h2 className="lightbox-title">{selectedImage.title}</h2>
                         </motion.div>
+                        <button className="lightbox-nav lightbox-next" onClick={handleNext}>
+                            <FiChevronRight />
+                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>
