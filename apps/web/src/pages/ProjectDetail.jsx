@@ -119,7 +119,7 @@ export default function ProjectDetail() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
             <Helmet>
-                <title>{project.title} | Afdal Ramdan Daman Huri</title>
+                <title>{project.title} - Afdal Ramdan Daman Huri</title>
                 <meta name="description" content={project.short_description || `View details for the project ${project.title} by Afdal Ramdan Daman Huri.`} />
             </Helmet>
             <div className="container animate-fade-in project-detail-page">

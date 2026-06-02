@@ -48,7 +48,7 @@ export default function About() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
             <Helmet>
-                <title>About | Afdal Ramdan Daman Huri</title>
+                <title>About - Afdal Ramdan Daman Huri</title>
                 <meta name="description" content="Learn more about Afdal Ramdan Daman Huri, experience, certifications, and UI/UX design tools." />
             </Helmet>
             <section className="about-bio">

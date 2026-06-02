@@ -58,7 +58,7 @@ export default function Home() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
             <Helmet>
-                <title>Afdal Ramdan Daman Huri | UI/UX Designer</title>
+                <title>Afdal Ramdan Daman Huri - UI/UX Designer</title>
                 <meta name="description" content="Portfolio of Afdal Ramdan Daman Huri, a passionate UI/UX Designer specializing in web and mobile app design, creating intuitive digital experiences." />
             </Helmet>
             <header className="home-hero">

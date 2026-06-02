@@ -192,7 +192,7 @@ export default function AiChat() {
     if (settings && !settings.isEnabled) {
         return (
             <div className="container" style={{ paddingTop: '120px', textAlign: 'center' }}>
-                <Helmet><title>AI Chat | Not Available</title></Helmet>
+                <Helmet><title>AI Chat - Not Available</title></Helmet>
                 <h2>AI Chat is currently resting ☕</h2>
                 <p className="text-secondary" style={{ marginTop: '16px' }}>Please check back later.</p>
             </div>
@@ -209,7 +209,7 @@ export default function AiChat() {
             exit={{ opacity: 0 }}
         >
             <Helmet>
-                <title>{settings?.assistantName || 'AI Chat'} | Afdal Ramdan</title>
+                <title>{settings?.assistantName || 'AI Chat'} - Afdal Ramdan</title>
                 <meta name="description" content="Chat with my AI assistant to learn more about my skills, experience, and projects." />
             </Helmet>
 

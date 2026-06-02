@@ -101,7 +101,7 @@ export default function Labs() {
     return (
         <>
             <Helmet>
-                <title>Labs | Afdal Ramdan</title>
+                <title>Labs - Afdal Ramdan</title>
                 <meta name="description" content="Explore my conceptual designs, experiments, and creative works." />
             </Helmet>
 
