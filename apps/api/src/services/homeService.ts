@@ -14,7 +14,7 @@ export const homeService = {
         heroHeadline?: string;
         ctaText?: string;
         ctaUrl?: string;
-        socialLinks?: { name: string; url: string }[];
+        socialLinks?: { name: string; url: string; hoverText?: string }[];
     }) {
         const [existing] = await db.select().from(homePage).limit(1);
 
@@ -43,6 +43,7 @@ export const homeService = {
                     data.socialLinks.map((link, index) => ({
                         name: link.name,
                         url: link.url,
+                        hoverText: link.hoverText || null,
                         sortOrder: index,
                     }))
                 );
