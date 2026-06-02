@@ -204,7 +204,7 @@
     font-weight: 400;
     margin-bottom: 16px;
     font-size: 14px;
-    color: var(--text-primary);
+    color: var(--text-secondary);
 }
 
 .radio-group {
