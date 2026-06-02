@@ -4,8 +4,15 @@ const CloudinaryUploadWidget = ({ onUploadSuccess, buttonText = "Upload Image", 
     const cloudinaryRef = useRef();
     const widgetRef = useRef();
 
+    const callbackRef = useRef(onUploadSuccess);
+    
+    useEffect(() => {
+        callbackRef.current = onUploadSuccess;
+    }, [onUploadSuccess]);
+
     useEffect(() => {
         const initWidget = () => {
+            if (widgetRef.current) return; // Prevent multiple initializations
             cloudinaryRef.current = window.cloudinary;
             widgetRef.current = cloudinaryRef.current.createUploadWidget({
                 cloudName: 'dd6rhidl4',
@@ -17,7 +24,7 @@ const CloudinaryUploadWidget = ({ onUploadSuccess, buttonText = "Upload Image", 
                 theme: 'minimal'
             }, function (error, result) {
                 if (!error && result && result.event === "success") {
-                    onUploadSuccess(result.info.secure_url);
+                    if (callbackRef.current) callbackRef.current(result.info.secure_url);
                 }
             });
         };
@@ -34,7 +41,7 @@ const CloudinaryUploadWidget = ({ onUploadSuccess, buttonText = "Upload Image", 
         } else if (window.cloudinary) {
             initWidget();
         }
-    }, [onUploadSuccess]);
+    }, []);
 
     return (
         <button 
