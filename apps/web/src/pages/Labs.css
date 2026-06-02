@@ -95,8 +95,9 @@
 }
 
 .category-pill:hover {
-    background: var(--border-color);
+    background: transparent;
     color: var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 .category-pill.active {
@@ -116,7 +117,16 @@
 }
 @media (max-width: 768px) {
     .masonry-grid { column-count: 2; }
-    .labs-page { padding-top: 56px; }
+    .labs-page { padding-top: 20px; }
+    
+    .labs-header {
+        position: sticky;
+        top: 64px;
+        z-index: 40;
+        background-color: var(--bg-primary);
+        margin: 0 -24px 24px -24px;
+        padding: 16px 24px;
+    }
     
     .labs-search {
         width: 160px; /* Make search smaller on mobile to fit categories */

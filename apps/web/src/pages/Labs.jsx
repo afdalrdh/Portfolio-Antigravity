@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { publicApi } from '../lib/api';
 import { FiSearch, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -17,6 +17,11 @@ export default function Labs() {
     
     // Lightbox
     const [selectedImage, setSelectedImage] = useState(null);
+
+    const scrollRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
     // Debounce search
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -49,6 +54,28 @@ export default function Labs() {
 
     const handleCategoryClick = (cat) => {
         setActiveCategory(prev => prev === cat ? '' : cat);
+    };
+
+    const handleMouseDown = (e) => {
+        setIsDragging(true);
+        setStartX(e.pageX - scrollRef.current.offsetLeft);
+        setScrollLeft(scrollRef.current.scrollLeft);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - scrollRef.current.offsetLeft;
+        const walk = (x - startX) * 2;
+        scrollRef.current.scrollLeft = scrollLeft - walk;
     };
 
     const handlePrev = (e) => {
@@ -99,7 +126,15 @@ export default function Labs() {
 
                         {categories.length > 0 && (
                             <div className="labs-categories-wrapper">
-                                <div className="labs-categories">
+                                <div 
+                                    className="labs-categories"
+                                    ref={scrollRef}
+                                    onMouseDown={handleMouseDown}
+                                    onMouseLeave={handleMouseLeave}
+                                    onMouseUp={handleMouseUp}
+                                    onMouseMove={handleMouseMove}
+                                    style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                                >
                                     <button 
                                         className={`category-pill ${activeCategory === '' ? 'active' : ''}`}
                                         onClick={() => setActiveCategory('')}
