@@ -159,7 +159,7 @@ export default function Labs() {
                                     className="labs-category-btn"
                                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                                 >
-                                    Category <FiChevronDown style={{ transform: isCategoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                                    {activeCategory ? activeCategory : 'Category'} <FiChevronDown style={{ transform: isCategoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                                 </button>
                                 
                                 <AnimatePresence>
