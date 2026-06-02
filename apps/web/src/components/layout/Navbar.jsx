@@ -76,8 +76,8 @@ export default function Navbar() {
                     {/* Desktop Nav Links */}
                     <div className="nav-links desktop-only">
                         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
-                        <Link to="/labs" className={location.pathname === '/labs' ? 'active' : ''}>Labs</Link>
                         <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
+                        <Link to="/labs" className={location.pathname === '/labs' ? 'active' : ''}>Labs</Link>
                         <Link to="/contact" className={`contact-link ${location.pathname === '/contact' ? 'active' : ''}`}>Contact</Link>
                         <Link to="/ai-chat" className={location.pathname === '/ai-chat' ? 'active' : ''}>AI Chat <span style={{fontSize: '12px'}}>✨</span></Link>
                     </div>
@@ -116,8 +116,8 @@ export default function Navbar() {
                         >
                             <div className="mobile-nav-links">
                                 <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                                <Link to="/labs" className={`nav-link ${location.pathname === '/labs' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Labs</Link>
                                 <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
+                                <Link to="/labs" className={`nav-link ${location.pathname === '/labs' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Labs</Link>
                                 <Link to="/contact" className={`contact-link ${location.pathname === '/contact' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
                                 <Link to="/ai-chat" className={`nav-link ai-chat-link ${location.pathname === '/ai-chat' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>AI Chat ✨</Link>
                             </div>
