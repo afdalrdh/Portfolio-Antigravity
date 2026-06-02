@@ -191,6 +191,15 @@ export default function Labs() {
                             <p className="text-secondary">No creations found.</p>
                         </div>
                     )}
+
+                    <footer className="home-footer">
+                        <p className="text-secondary text-sm">
+                            All designs on this website were created by Afdal Ramdan Daman Huri
+                        </p>
+                        <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
+                            © 2026 All rights reserved.
+                        </p>
+                    </footer>
                 </div>
             </motion.div>
 
