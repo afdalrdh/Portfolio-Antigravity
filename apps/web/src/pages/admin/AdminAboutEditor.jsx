@@ -143,11 +143,11 @@ export default function AdminAboutEditor() {
                                 <div className="block-body">
                                     <div className="form-group">
                                         <label>Tool Name</label>
-                                        <input type="text" className="form-input" value={tool.name} onChange={(e) => updateTool(index, 'name', e.target.value)} />
+                                        <input type="text" className="form-input" value={tool.name || ''} onChange={(e) => updateTool(index, 'name', e.target.value)} />
                                     </div>
                                     <div className="form-group" style={{ marginBottom: 0 }}>
                                         <label>React-Icon Code</label>
-                                        <input type="text" className="form-input" value={tool.iconCode} onChange={(e) => updateTool(index, 'iconCode', e.target.value)} placeholder="SiFigma" />
+                                        <input type="text" className="form-input" value={tool.iconCode || ''} onChange={(e) => updateTool(index, 'iconCode', e.target.value)} placeholder="SiFigma" />
                                     </div>
                                 </div>
                             </div>

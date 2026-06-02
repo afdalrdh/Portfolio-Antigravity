@@ -56,14 +56,20 @@
 
 .social-links a {
     color: var(--text-secondary);
-    font-size: 20px;
+    font-size: 22px;
     transition: all var(--transition-fast);
 }
 
 .social-links a:hover {
-    color: var(--text-primary);
     transform: translateY(-2px);
 }
+
+/* Custom hover colors for social links */
+.social-links a[aria-label="Instagram"]:hover { color: #E1306C; }
+.social-links a[aria-label="LinkedIn"]:hover { color: #0A66C2; }
+.social-links a[aria-label="Dribbble"]:hover { color: #EA4C89; }
+.social-links a[aria-label="Behance"]:hover { color: #1769ff; }
+.social-links a[aria-label*="CV"]:hover, .social-links a[aria-label*="Resume"]:hover { color: #10b981; }
 
 /* Projects Grid */
 .projects-grid {

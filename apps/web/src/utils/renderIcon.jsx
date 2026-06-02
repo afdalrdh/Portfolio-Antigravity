@@ -78,7 +78,7 @@ function DynamicIcon({ iconCode, ...props }) {
     if (IconComponent) return <IconComponent {...props} />;
 
     // Fallback while loading or if not found
-    return <span>{iconCode.slice(0, 2)}</span>;
+    return null;
 }
 
 /**
