@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { optimizeImage } from '../utils/optimizeImage';
 import { Helmet } from 'react-helmet-async';
 import { publicApi } from '../lib/api'
@@ -101,6 +102,13 @@ export default function Home() {
                     ))}
                 </div>
             </section>
+
+            <div style={{ textAlign: 'center', marginTop: '48px', marginBottom: '24px' }} className="delay-300 animate-fade-in">
+                <Link to="/labs" className="explore-button">
+                    Explore the Lab
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '2px' }}><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                </Link>
+            </div>
 
             <footer className="home-footer delay-300 animate-fade-in">
                 <p className="text-secondary text-sm">
