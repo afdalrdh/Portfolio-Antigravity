@@ -141,7 +141,7 @@ export default function Labs() {
                 <div className="labs-container">
                     
                     <div className="labs-header">
-                        <h1 className="labs-title">Experiments & Explorations 🧪</h1>
+                        <h1 className="labs-title">Experiments & Explorations 👨‍🔬</h1>
                         
                         <div className="labs-header-actions">
                             <div className="labs-search">
