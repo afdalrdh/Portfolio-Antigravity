@@ -101,6 +101,18 @@ export default function Labs() {
         });
     }, [allCreations, debouncedSearch, activeCategory]);
 
+    // Prevent background scrolling when lightbox is open
+    useEffect(() => {
+        if (selectedImage) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [selectedImage]);
+
     const handleCategorySelect = (catName) => {
         setActiveCategory(catName === 'All' ? '' : catName);
     };
