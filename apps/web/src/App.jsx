@@ -12,6 +12,7 @@ import ProjectsPage from './pages/ProjectsPage';
 import TestimonialsPage from './pages/TestimonialsPage';
 import ArticlesPage from './pages/ArticlesPage';
 import ContactPage from './pages/ContactPage';
+import NotFound from './pages/NotFound';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -41,7 +42,8 @@ export default function App() {
               <Route path="/artikel" element={<ArticlesPage />} />
               <Route path="/artikel/:articleSlug" element={<ArticlesPage />} />
               <Route path="/kontak" element={<ContactPage />} />
-              <Route path="*" element={<Home />} />
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <Footer />

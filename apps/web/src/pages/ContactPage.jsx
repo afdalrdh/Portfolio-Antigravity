@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import SectionTag from '../components/ui/SectionTag';
 import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
-import { FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInstagram } from 'react-icons/fa';
+import FormField from '../components/ui/FormField';
+import Breadcrumb from '../components/ui/Breadcrumb';
+import { FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInstagram, FaPhoneAlt } from 'react-icons/fa';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,13 +18,31 @@ export default function ContactPage() {
     message: '',
   });
 
-  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
+
+  const validate = () => {
+    const errs = {};
+    if (!formData.name.trim()) errs.name = 'Nama lengkap wajib diisi.';
+    if (!formData.phone.trim()) errs.phone = 'Nomor WhatsApp wajib diisi.';
+    if (!formData.location.trim()) errs.location = 'Lokasi proyek wajib diisi.';
+    if (!formData.message.trim()) errs.message = 'Detail pesan wajib diisi.';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Format text for WhatsApp API
-    const textMsg = `Halo PT Arsi Karya Unggul, saya ingin berkonsultasi mengenai proyek pembangunan:
+    if (status === 'loading' || status === 'success') return; // Prevent duplicate submission
+
+    if (!validate()) return;
+
+    setStatus('loading');
+
+    setTimeout(() => {
+      // Format text for WhatsApp API
+      const textMsg = `Halo PT Arsi Karya Unggul, saya ingin berkonsultasi mengenai proyek pembangunan:
 
 *Nama:* ${formData.name}
 *No. WhatsApp:* ${formData.phone}
@@ -35,14 +55,15 @@ export default function ContactPage() {
 ${formData.message}
 `;
 
-    const encodedMsg = encodeURIComponent(textMsg);
-    const waUrl = `https://wa.me/628997932802?text=${encodedMsg}`;
+      const encodedMsg = encodeURIComponent(textMsg);
+      const waUrl = `https://wa.me/628997932802?text=${encodedMsg}`;
 
-    setSubmitted(true);
-
-    // Open WhatsApp in new tab
-    window.open(waUrl, '_blank');
+      setStatus('success');
+      window.open(waUrl, '_blank');
+    }, 600);
   };
+
+  const generalWaUrl = `https://wa.me/628997932802?text=${encodeURIComponent("Hallo Arsi Karya, saya ingin konsultasi mengenai rencana proyek saya.")}`;
 
   return (
     <>
@@ -51,14 +72,15 @@ ${formData.message}
         description="Hubungi tim PT Arsi Karya Unggul untuk konsultasi gratis rencana pembangunan rumah, kontraktor umum, design & build, dan fabrikasi di Bandung."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 60px)', paddingBottom: '80px' }}>
+      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
         <div className="container">
+          <Breadcrumb items={[{ label: 'Kontak' }]} />
           <SectionTag light>HUBUNGI KAMI</SectionTag>
           <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
-            Konsultasi Proyek Anda
+            Diskusikan Rencana Proyek Anda
           </h1>
           <p style={{ fontSize: '1.15rem', color: 'var(--color-primary-200)', maxWidth: '680px' }}>
-            Tim teknis PT Arsi Karya Unggul siap mendiskusikan kebutuhan rencana pembangunan Anda secara transparan.
+            Arsi Karya siap membahas kebutuhan proyek dari tahap awal hingga pelaksanaan.
           </p>
         </div>
       </section>
@@ -66,10 +88,11 @@ ${formData.message}
       <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px' }}>
-            {/* Left Column: Direct Channels */}
+            
+            {/* Left Column: Direct Contact Info */}
             <div>
-              <SectionTag>KONTAK KAMI</SectionTag>
-              <h2>Informasi & Alamat Kantor</h2>
+              <SectionTag>INFORMASI KONTAK</SectionTag>
+              <h2>Kantor & Saluran Resmi</h2>
               <p style={{ marginTop: '16px', color: 'var(--color-neutral-500)', lineHeight: 1.6 }}>
                 Silakan hubungi kami melalui saluran komunikasi resmi di bawah ini atau kunjungi studio kantor kami di Bandung.
               </p>
@@ -93,7 +116,7 @@ ${formData.message}
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>WhatsApp / Telepon</h4>
-                    <a href="https://wa.me/628997932802" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}>
+                    <a href={generalWaUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}>
                       +62 899-7932-802
                     </a>
                   </div>
@@ -123,130 +146,141 @@ ${formData.message}
                   </div>
                 </div>
               </div>
+
+              <div style={{ marginTop: '36px' }}>
+                <Button
+                  href={generalWaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="whatsapp"
+                  style={{ padding: '14px 28px' }}
+                >
+                  Chat WhatsApp Direct
+                </Button>
+              </div>
             </div>
 
-            {/* Right Column: Multi-Field Consultation Form */}
+            {/* Right Column: Consultation Form */}
             <div style={{ backgroundColor: 'var(--color-neutral-50)', padding: '40px', borderRadius: 'var(--radius-card)', border: '1px solid var(--color-neutral-200)' }}>
               <h3 style={{ fontSize: '1.35rem', marginBottom: '8px' }}>Formulir Konsultasi Gratis</h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-400)', marginBottom: '24px' }}>
                 Lengkapi rincian proyek di bawah ini untuk terhubung langsung dengan tim kami via WhatsApp.
               </p>
 
-              {submitted && (
+              {status === 'success' && (
                 <div style={{ backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-400)', padding: '16px', borderRadius: '6px', marginBottom: '20px', fontSize: '0.9rem' }}>
-                  Formulir telah dikirim dan aplikasi WhatsApp Anda akan terbuka secara otomatis.
+                  Formulir berhasil dikirim! Aplikasi WhatsApp Anda akan terbuka secara otomatis.
                 </div>
               )}
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Nama Lengkap *</label>
-                  <input
-                    type="text"
+                <FormField
+                  label="Nama Lengkap"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  error={errors.name}
+                />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <FormField
+                    label="Nomor WhatsApp"
+                    name="phone"
+                    type="tel"
                     required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem' }}
+                    placeholder="0812xxxx"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    error={errors.phone}
+                  />
+
+                  <FormField
+                    label="Email (Opsional)"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Nomor WhatsApp *</label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="0812xxxx"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Email (Opsional)</label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem' }}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Layanan Yang Dibutuhkan *</label>
-                    <select
-                      value={formData.service}
-                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem', backgroundColor: '#ffffff' }}
-                    >
-                      <option value="Konstruksi (General Contractor)">Konstruksi (General Contractor)</option>
-                      <option value="Design & Build">Design & Build</option>
-                      <option value="Fabrikasi Struktur & Prafabrikasi">Fabrikasi Struktur</option>
-                      <option value="Pengadaan Barang">Pengadaan Barang</option>
-                      <option value="Renovasi Rumah / Gedung">Renovasi Rumah / Gedung</option>
-                      <option value="Pekerjaan Fasad ACP">Pekerjaan Fasad ACP</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Jenis Proyek *</label>
-                    <select
-                      value={formData.projectType}
-                      onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem', backgroundColor: '#ffffff' }}
-                    >
-                      <option value="Rumah Hunian">Rumah Hunian</option>
-                      <option value="Gedung Perkantoran">Gedung Perkantoran</option>
-                      <option value="Ruko / Komersial">Ruko / Komersial</option>
-                      <option value="Fasilitas Publik / Instansi">Fasilitas Publik / Instansi</option>
-                      <option value="Infrastruktur / Parkir">Infrastruktur / Parkir</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Lokasi Proyek *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Contoh: Bandung / Pekalongan"
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Perkiraan Budget (Opsional)</label>
-                    <input
-                      type="text"
-                      placeholder="Contoh: Rp 200 Juta - Rp 500 Juta"
-                      value={formData.budget}
-                      onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem' }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '6px' }}>Detail Pesan & Kebutuhan *</label>
-                  <textarea
+                  <FormField
+                    label="Layanan Yang Dibutuhkan"
+                    name="service"
+                    type="select"
                     required
-                    rows="4"
-                    placeholder="Jelaskan kebutuhan pembangunan atau pertanyaan Anda..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.9rem', fontFamily: 'inherit' }}
-                  ></textarea>
+                    value={formData.service}
+                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                    options={[
+                      'Konstruksi (General Contractor)',
+                      'Design & Build',
+                      'Fabrikasi Struktur & Prafabrikasi',
+                      'Pengadaan Barang',
+                      'Renovasi Rumah / Gedung',
+                      'Pekerjaan Fasad ACP'
+                    ]}
+                  />
+
+                  <FormField
+                    label="Jenis Proyek"
+                    name="projectType"
+                    type="select"
+                    required
+                    value={formData.projectType}
+                    onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                    options={[
+                      'Rumah Hunian',
+                      'Gedung Perkantoran',
+                      'Ruko / Komersial',
+                      'Fasilitas Publik / Instansi',
+                      'Infrastruktur / Parkir'
+                    ]}
+                  />
                 </div>
 
-                <Button type="submit" variant="primary" style={{ marginTop: '8px', justifyContent: 'center' }}>
-                  Kirim & Konsultasi Gratis (WhatsApp)
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <FormField
+                    label="Lokasi Proyek"
+                    name="location"
+                    required
+                    placeholder="Contoh: Bandung / Pekalongan"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    error={errors.location}
+                  />
+
+                  <FormField
+                    label="Perkiraan Budget (Opsional)"
+                    name="budget"
+                    placeholder="Contoh: Rp 200 Juta - Rp 500 Juta"
+                    value={formData.budget}
+                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                  />
+                </div>
+
+                <FormField
+                  label="Detail Pesan & Kebutuhan"
+                  name="message"
+                  type="textarea"
+                  required
+                  placeholder="Jelaskan kebutuhan pembangunan atau pertanyaan Anda..."
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  error={errors.message}
+                />
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={status === 'loading' || status === 'success'}
+                  style={{ marginTop: '8px', justifyContent: 'center' }}
+                >
+                  {status === 'loading' ? 'Mengirim...' : 'Konsultasi Gratis'}
                 </Button>
               </form>
             </div>
+
           </div>
         </div>
       </section>
