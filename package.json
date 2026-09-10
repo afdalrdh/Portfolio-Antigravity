@@ -13,7 +13,7 @@
         "db:seed": "npm run db:seed --workspace=api"
     },
     "engines": {
-        "node": ">=22.12.0"
+        "node": ">=18.0.0"
     },
     "dependencies": {
         "better-auth": "^1.2.0",
