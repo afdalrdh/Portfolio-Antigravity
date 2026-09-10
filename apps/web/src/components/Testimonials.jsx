@@ -7,19 +7,19 @@ export default function Testimonials() {
 
   const testimonials = [
     {
-      quote: "Ullamcorper auctor a, integer arcu ullamcorper ultrices. Pretium gravida nunc morbi etiam. Accumsan mauris, etiam rhoncus nulla id porta. In ullamcorper ut massa augue netus. Nunc at consequat.",
-      author: "REGINALD WEBB",
-      company: "Grand Carrefour Health",
+      quote: "Pengawasan mutu dan transparansi laporan berkala PT Arsi Karya Unggul memberikan rasa tenang selama seluruh proses pembangunan rumah kami.",
+      author: "MR. ERWAN",
+      company: "The Old Heritage Project",
     },
     {
-      quote: "Albion delivered our complex elementary school project two months ahead of schedule without a single compromise on build quality or safety compliance. Truly exceptional partners.",
-      author: "SARAH JENKINS",
-      company: "Cinder Dell District",
+      quote: "Eksekusi presisi fasad ACP dan peremajaan gedung kantor diselesaikan dengan sangat rapi dan tepat waktu sesuai standar instansi.",
+      author: "TIM TEKNIK KPPN",
+      company: "KPPN Pekalongan",
     },
     {
-      quote: "Their virtual design & construction BIM workflow saved our commercial office tower over $400k in potential rework costs. I recommend them unequivocally.",
-      author: "DAVID STERLING",
-      company: "Sterling Development Group",
+      quote: "Konsep Design & Build terbukti efisien. Perencanaan 3D hingga hasil fisik rumah hunian di Buah Batu persis sesuai ekspektasi kami.",
+      author: "IBU DEWI",
+      company: "The Verdant Pavilion",
     },
   ];
 

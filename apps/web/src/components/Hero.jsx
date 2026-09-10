@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowUpRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
   const videoMp4 = "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/6179fd5c38ec05cd8ff9df2b_background_video-transcode.mp4";
@@ -9,16 +10,16 @@ export default function Hero() {
 
   const bottomNavItems = [
     {
-      title: 'CONSTRUCTION',
-      link: '#services',
+      title: 'KONSTRUKSI',
+      link: '/layanan/konstruksi',
     },
     {
-      title: 'DEVELOPMENT',
-      link: '#services',
+      title: 'DESIGN & BUILD',
+      link: '/layanan/design-build',
     },
     {
-      title: 'ENGINEERING',
-      link: '#services',
+      title: 'FABRIKASI',
+      link: '/layanan/fabrikasi',
     },
   ];
 
@@ -99,7 +100,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             style={{
-              fontSize: 'clamp(3rem, 6.2vw, 5.2rem)',
+              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
               fontWeight: 800,
               lineHeight: 1.05,
               color: '#ffffff',
@@ -108,7 +109,7 @@ export default function Hero() {
               textShadow: '0 4px 20px rgba(0,0,0,0.5)',
             }}
           >
-            Together, let's build a better construction experience
+            Membangun Tuntas, Unggul Dalam Kualitas
           </motion.h1>
 
           <motion.div
@@ -117,8 +118,8 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}
           >
-            <a
-              href="#contact"
+            <Link
+              to="/kontak"
               className="btn-primary"
               style={{
                 padding: '16px 36px',
@@ -126,10 +127,10 @@ export default function Hero() {
                 fontWeight: 600,
               }}
             >
-              Get in Touch
-            </a>
-            <a
-              href="#projects"
+              Konsultasi Gratis
+            </Link>
+            <Link
+              to="/proyek"
               className="btn-outline-white"
               style={{
                 padding: '16px 36px',
@@ -137,8 +138,8 @@ export default function Hero() {
                 fontWeight: 600,
               }}
             >
-              Explore Our Work
-            </a>
+              Lihat Proyek
+            </Link>
           </motion.div>
         </div>
       </div>
@@ -164,9 +165,9 @@ export default function Hero() {
             }}
           >
             {bottomNavItems.map((item, idx) => (
-              <a
+              <Link
                 key={idx}
-                href={item.link}
+                to={item.link}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -179,12 +180,14 @@ export default function Hero() {
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderTopColor = 'var(--color-primary)';
                   e.currentTarget.style.color = 'var(--color-primary)';
-                  e.currentTarget.querySelector('.item-arrow').style.transform = 'translate(3px, -3px)';
+                  const arrow = e.currentTarget.querySelector('.item-arrow');
+                  if (arrow) arrow.style.transform = 'translate(3px, -3px)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderTopColor = 'rgba(255, 255, 255, 0.4)';
                   e.currentTarget.style.color = '#ffffff';
-                  e.currentTarget.querySelector('.item-arrow').style.transform = 'translate(0, 0)';
+                  const arrow = e.currentTarget.querySelector('.item-arrow');
+                  if (arrow) arrow.style.transform = 'translate(0, 0)';
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -206,7 +209,7 @@ export default function Hero() {
                     }}
                   />
                 </div>
-              </a>
+              </Link>
             ))}
           </motion.div>
         </div>

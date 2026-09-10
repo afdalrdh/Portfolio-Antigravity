@@ -1,16 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiCheckCircle, FiArrowRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 export default function About() {
   const aboutImg1 = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/6181b49dad041b569acca334_about_1.jpg";
   const aboutImg2 = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/6181bc9593b65751777cb76b_about_a4.jpg";
 
   const keyPoints = [
-    'High Precision Architectural Engineering',
-    'Sustainable & Eco-Friendly Construction Practices',
-    'Uncompromising Safety Standards & Regulatory Compliance',
-    'Transparent Project Timeline & On-time Delivery',
+    'Perencanaan Arsitektur & Struktur Presisi',
+    'Eksekusi Konstruksi Efisien & Terstruktur',
+    'Pengawasan Mutu Bahan & Standar Keselamatan',
+    'Transparansi Progres & Garansi Pemeliharaan',
   ];
 
   return (
@@ -65,7 +66,7 @@ export default function About() {
                 marginBottom: '28px',
               }}
             >
-              Arcu viverra ut quis gravida luctus. Scelerisque elit massa purus morbi pellentesque tincidunt nulla. Aliquet molestie felis consectetur cras. Sit est facilisi pharetra quisque.
+              PT Arsi Karya Unggul melayani jasa kontraktor umum, design & build, fabrikasi, dan pengadaan barang terpercaya berpusat di Kota Bandung.
             </p>
 
             {/* Checklist */}
@@ -80,10 +81,10 @@ export default function About() {
               ))}
             </div>
 
-            <a href="#services" className="btn-primary">
+            <Link to="/tentang-kami" className="btn-primary">
               <span>More About Us</span>
               <FiArrowRight />
-            </a>
+            </Link>
           </motion.div>
 
           {/* Right Column: Visual Composite Grid */}
@@ -125,7 +126,7 @@ export default function About() {
                 overflow: 'hidden',
                 border: '6px solid #ffffff',
                 boxShadow: '0 15px 30px rgba(0,86,151,0.2)',
-                display: 'none', // Shown on desktop via media query
+                display: 'none',
               }}
               className="about-secondary-img"
             >

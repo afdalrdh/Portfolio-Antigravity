@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export default function CTA() {
   const ctaPhoto = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/6180970fd098625c4087481a_contact_map.jpg";
@@ -60,8 +61,8 @@ export default function CTA() {
               Ready to work together?
             </h2>
 
-            <a
-              href="#contact"
+            <Link
+              to="/kontak"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -84,8 +85,8 @@ export default function CTA() {
                 e.currentTarget.style.color = 'var(--color-primary)';
               }}
             >
-              View Contacts
-            </a>
+              Konsultasi Gratis
+            </Link>
           </motion.div>
         </div>
       </div>

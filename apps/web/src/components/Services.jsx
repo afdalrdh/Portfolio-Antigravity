@@ -1,114 +1,103 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCheck, FiX, FiSettings, FiLayers, FiCompass, FiMaximize2 } from 'react-icons/fi';
+import { FiCheck, FiX, FiLayers, FiCompass, FiCpu, FiPackage } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 export default function Services() {
-  const [selectedService, setSelectedService] = useState(null);
-
-  const blueprintImg = "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/617b347a79be8351ce06894c_gallery_2.jpg";
+  const darkHeroBg = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618080f4f9f6974e44e99f07_services_hero.jpg";
 
   const galleryImages = [
-    {
-      url: "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/617b347a7150444c86b1ba9f_gallery_1.jpg",
-      alt: "Orange crane architectural structure against blue sky",
-    },
-    {
-      url: "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/617b347a79be8351ce06894c_gallery_2.jpg",
-      alt: "Construction worker on high rise scaffolding",
-    },
-    {
-      url: "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/617b347aaf53432b4dc3c71b_gallery_3.jpg",
-      alt: "Welding steel beam with sparks flying",
-    },
+    { url: "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/617b347a79be8351ce06894c_gallery_2.jpg", alt: "Construction site 1" },
+    { url: "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618083a2bd13460b57e750dd_gallery_1.jpg", alt: "Construction site 2" },
+    { url: "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618083d0bf813a48e78a632e_gallery_3.jpg", alt: "Construction site 3" },
   ];
 
   const servicesList = [
     {
-      id: 1,
       num: '01',
-      icon: <FiSettings style={{ fontSize: '1.35rem', color: '#1e293b' }} />,
-      title: 'Construction services',
-      desc: 'Eget odio non ac mi. Porttitor diam viverra est suspendisse. Fermentum est interdum.',
-      fullDesc: 'Comprehensive general contracting and construction management services tailored for modern infrastructure. We manage full building cycles from foundation to delivery with peak safety protocols.',
-      features: ['Structural Steel & Concrete', 'Site Supervision & Management', 'Safety & Regulatory Compliance', 'Turnkey Delivery Guarantee'],
+      title: 'Konstruksi (General Contractor)',
+      desc: 'Pekerjaan kontraktor umum untuk bangunan rumah, kantor, dan fasilitas umum dengan alur terstruktur.',
+      fullDesc: 'Jasa kontraktor umum profesional mengelola persiapan lahan, fondasi, struktur beton/baja, hingga finishing akhir.',
+      icon: <FiLayers style={{ fontSize: '1.4rem', color: '#1e293b' }} />,
+      features: ['Struktur Beton Bertulang', 'Instalasi Listrik & Sanitari', 'Pengawasan QC Lapangan'],
+      slug: 'konstruksi',
     },
     {
-      id: 2,
       num: '02',
-      icon: <FiLayers style={{ fontSize: '1.35rem', color: '#1e293b' }} />,
-      title: 'Interior construction',
-      desc: 'Lacus non ultrices diam, placerat eu, tincidunt pulvinar lacus. Felis dui aliquet.',
-      fullDesc: 'Transforming raw interior spaces into inspiring, high-performance environments. Specializing in corporate offices, medical facilities, retail centers, and luxury residences.',
-      features: ['Custom Millwork & Finishes', 'MEP Fit-out', 'Acoustical & Ceiling Solutions', 'Ergonomic Space Optimization'],
+      title: 'Design & Build',
+      desc: 'Layanan terpadu perencanaan Arsitektur, Desain Interior, dan Infrastruktur dalam satu pintu.',
+      fullDesc: 'Integrasi penuh antara perancangan gambar arsitektur dan pelaksanaan fisik lapangan untuk efisiensi budget.',
+      icon: <FiCompass style={{ fontSize: '1.4rem', color: '#1e293b' }} />,
+      features: ['Desain 3D Visualisasi', 'Gambar Kerja Detail', 'Satu Penanggung Jawab Penuh'],
+      slug: 'design-build',
     },
     {
-      id: 3,
       num: '03',
-      icon: <FiCompass style={{ fontSize: '1.35rem', color: '#1e293b' }} />,
-      title: 'Virtual design and construction',
-      desc: 'Lacus, pretium euismod ut tempus. Enim ante fermentum eget in id ridiculus.',
-      fullDesc: 'Leveraging state-of-the-art Building Information Modeling (BIM) to detect clashes before break-ground, optimize energy usage, and streamline construction scheduling.',
-      features: ['4D/5D BIM Modeling', 'Clash Detection Analysis', 'Laser Scanning & Site Mapping', 'Digital Twin Maintenance'],
+      title: 'Fabrikasi Struktur',
+      desc: 'Workshop fabrikasi komponen baja, kanopi, pagar arsitektural, dan prafabrikasi presisi.',
+      fullDesc: 'Pembuatan komponen struktur baja presisi di workshop pabrikasi siap rakit di lokasi proyek.',
+      icon: <FiCpu style={{ fontSize: '1.4rem', color: '#1e293b' }} />,
+      features: ['Fabrikasi Rangka Baja', 'Komponen Prafabrikasi', 'Coating Anti-Karat'],
+      slug: 'fabrikasi',
     },
     {
-      id: 4,
       num: '04',
-      icon: <FiMaximize2 style={{ fontSize: '1.35rem', color: '#1e293b' }} />,
-      title: 'Preconstruction services',
-      desc: 'Natoque in sed mauris, sagittis. Nec id elementum, diam varius pharetra. Ullamcorper.',
-      fullDesc: 'Laying the technical foundation for cost efficiency and feasibility. We deliver detailed cost estimation, value engineering, risk assessment, and supply chain procurement strategy.',
-      features: ['Detailed Cost Estimating', 'Value Engineering', 'Zoning & Permitting Assistance', 'Risk Mitigation Planning'],
+      title: 'Pengadaan Barang',
+      desc: 'Penyediaan material konstruksi dan perlengkapan proyek berstandar spesifikasi verified.',
+      fullDesc: 'Pengadaan material bangunan berkualitas tinggi untuk proyek instansi pemerintah dan swasta.',
+      icon: <FiPackage style={{ fontSize: '1.4rem', color: '#1e293b' }} />,
+      features: ['Suplai Material Verified', 'Sertifikasi Pabrikan', 'Pengiriman On-Time'],
+      slug: 'pengadaan-barang',
     },
   ];
 
-  return (
-    <section id="services" style={{ backgroundColor: '#0c1015', color: '#ffffff' }}>
-      {/* 1. Dark Banner Section ("We know how to deliver your vision") */}
-      <div style={{ padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
-        <div className="container">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '60px',
-              alignItems: 'center',
-            }}
-          >
-            {/* Left Photo: Blueprint Drawing */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              viewport={{ once: true }}
-              style={{
-                position: 'relative',
-                borderRadius: '4px',
-                overflow: 'hidden',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-              }}
-            >
-              <img
-                src={blueprintImg}
-                alt="Architect drafting blueprint"
-                style={{ width: '100%', height: '440px', objectFit: 'cover' }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(circle at right center, transparent 30%, #0c1015 95%)',
-                }}
-              />
-            </motion.div>
+  const [selectedService, setSelectedService] = useState(null);
 
-            {/* Right Text */}
+  return (
+    <section id="services" style={{ backgroundColor: '#ffffff' }}>
+      {/* 1. Dark Hero Section */}
+      <div
+        style={{
+          position: 'relative',
+          minHeight: '480px',
+          backgroundColor: '#0c1015',
+          color: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          overflow: 'hidden',
+          padding: '100px 0',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${darkHeroBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.35,
+            zIndex: 1,
+          }}
+        />
+
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(12, 16, 21, 0.4) 0%, rgba(12, 16, 21, 0.85) 100%)',
+            zIndex: 2,
+          }}
+        />
+
+        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+          <div style={{ maxWidth: '720px' }}>
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7 }}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="section-tag section-tag-light">WHAT WE DO</span>
+              <span className="section-tag section-tag-light">SERVICES</span>
 
               <h2
                 style={{
@@ -130,12 +119,12 @@ export default function Services() {
                   marginBottom: '36px',
                 }}
               >
-                Id proin feugiat vitae ipsum tincidunt velit egestas. Ac posuere volutpat consectetur donec eu sed. Tincidunt tortor ac consectetur aliquam aliquet pellentesque. Mollis in gravida diam pharetra consectetur.
+                PT Arsi Karya Unggul menghadirkan layanan konstruksi terpadu dengan eksekusi amanah dan profesional di Bandung.
               </p>
 
-              <a href="#services-list" className="btn-primary">
+              <Link to="/layanan" className="btn-primary">
                 Our Services
-              </a>
+              </Link>
             </motion.div>
           </div>
         </div>
@@ -175,7 +164,7 @@ export default function Services() {
         ))}
       </div>
 
-      {/* 3. 4-Column Services Grid with Static Square Icon Badges (NO hover animation) */}
+      {/* 3. 4-Column Services Grid with Static Square Icon Badges */}
       <div id="services-list" style={{ backgroundColor: '#ffffff', color: 'var(--color-text-main)', padding: '100px 0' }}>
         <div className="container">
           <div style={{ maxWidth: '720px', marginBottom: '60px' }}>
@@ -214,7 +203,7 @@ export default function Services() {
                 }}
                 onClick={() => setSelectedService(service)}
               >
-                {/* Static Square Icon Badge (No hover color shift) */}
+                {/* Static Square Icon Badge */}
                 <div
                   style={{
                     width: '48px',
@@ -320,7 +309,7 @@ export default function Services() {
                 {selectedService.fullDesc}
               </p>
 
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '12px' }}>Key Scope & Deliverables:</h4>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '12px' }}>Scope Utama:</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
                 {selectedService.features.map((f, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -330,14 +319,14 @@ export default function Services() {
                 ))}
               </div>
 
-              <a
-                href="#contact"
+              <Link
+                to={`/layanan/${selectedService.slug}`}
                 onClick={() => setSelectedService(null)}
                 className="btn-primary"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
-                Request Proposal
-              </a>
+                Lihat Detail Layanan
+              </Link>
             </motion.div>
           </motion.div>
         )}

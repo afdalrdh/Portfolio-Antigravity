@@ -1,18 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowUpRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 export default function Stats() {
   const statsList = [
-    { value: '47', label: 'Years of experience designing and building' },
-    { value: '1400+', label: 'Successfully completed projects' },
-    { value: '800+', label: 'Construction and engineering experts' },
-    { value: '12', label: 'Awards for excellence in construction' },
+    { value: '100%', label: 'Kontrol kualitas dan transparansi biaya' },
+    { value: '9+', label: 'Proyek terverifikasi diselesaikan' },
+    { value: '4', label: 'Pilar layanan utama (Konstruksi, Design & Build, Fabrikasi, Pengadaan)' },
+    { value: '100%', label: 'Komitmen waktu & serah terima BAST' },
   ];
 
   return (
     <section
-      id="about"
+      id="stats-section"
       style={{
         backgroundColor: '#f4f6f9',
         padding: '100px 0',
@@ -92,7 +93,7 @@ export default function Stats() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <span className="section-tag">WHY US</span>
+            <span className="section-tag">— WHY US</span>
 
             <h2
               style={{
@@ -103,7 +104,7 @@ export default function Stats() {
                 marginBottom: '24px',
               }}
             >
-              We create things that matter
+              Membangun dengan proses yang terstruktur & terukur
             </h2>
 
             <p
@@ -114,12 +115,12 @@ export default function Stats() {
                 marginBottom: '36px',
               }}
             >
-              Arcu viverra ut quis gravida luctus. Scelerisque elit massa purus morbi pellentesque tincidunt nulla. Aliquet molestie felis consectetur cras. Sit est facilisi pharetra quisque.
+              PT Arsi Karya Unggul memadukan manajemen konstruksi presisi dengan eksekusi efisien. Setiap proyek dikendalikan secara transparan untuk menghasilkan bangunan yang berkualitas dan tahan lama.
             </p>
 
-            <a href="#services" className="btn-primary">
+            <Link to="/tentang-kami" className="btn-primary">
               More About Us
-            </a>
+            </Link>
           </motion.div>
         </div>
       </div>

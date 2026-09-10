@@ -1,24 +1,28 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export default function Projects() {
-  const projectsData = [
+  const featuredProjects = [
     {
-      id: 1,
-      title: 'Grand Carrefour Medical Office Building',
-      category: 'Commercial',
+      id: "fasad-acp-kppn-pekalongan",
+      slug: "fasad-acp-kppn-pekalongan",
+      title: 'Pekerjaan Fasad ACP Gedung Kantor KPPN Pekalongan',
+      category: 'Fasad ACP & Eksterior',
       image: 'https://cdn.prod.website-files.com/617c7f1cf3cfc148fa75f653/617c808a33188a708bb59f4e_project_1.jpg',
     },
     {
-      id: 2,
-      title: 'Cinder Dell Elementary School District',
-      category: 'Educational',
+      id: "the-old-heritage-mr-erwan",
+      slug: "the-old-heritage-mr-erwan",
+      title: 'The Old Heritage Rumah Hunian Mr. Erwan',
+      category: 'Design & Build',
       image: 'https://cdn.prod.website-files.com/617c7f1cf3cfc148fa75f653/617c80667296857d53bc11e3_project_2.jpg',
     },
     {
-      id: 3,
-      title: 'The Office at Umber Centre North Carolina',
-      category: 'Commercial',
+      id: "the-verdant-pavilion-ibu-dewi",
+      slug: "the-verdant-pavilion-ibu-dewi",
+      title: 'The Verdant Pavilion Rumah Hunian Ibu Dewi',
+      category: 'Design & Build',
       image: 'https://cdn.prod.website-files.com/617c7f1cf3cfc148fa75f653/617c8025b78d08148237c09b_project_3.jpg',
     },
   ];
@@ -52,9 +56,9 @@ export default function Projects() {
           </div>
 
           <div>
-            <a href="#projects" className="btn-primary">
+            <Link to="/proyek" className="btn-primary">
               All Projects
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -66,71 +70,78 @@ export default function Projects() {
             gap: '32px',
           }}
         >
-          {projectsData.map((project) => (
-            <motion.div
+          {featuredProjects.map((project) => (
+            <Link
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.querySelector('.proj-card-img').style.transform = 'scale(1.06)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.querySelector('.proj-card-img').style.transform = 'scale(1)';
-              }}
+              to={`/proyek/${project.slug}`}
+              style={{ textDecoration: 'none' }}
             >
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
                 style={{
-                  height: '360px',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                  marginBottom: '20px',
-                  backgroundColor: '#e2e8f0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  const img = e.currentTarget.querySelector('.proj-card-img');
+                  if (img) img.style.transform = 'scale(1.06)';
+                }}
+                onMouseLeave={(e) => {
+                  const img = e.currentTarget.querySelector('.proj-card-img');
+                  if (img) img.style.transform = 'scale(1)';
                 }}
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="proj-card-img"
+                <div
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.5s ease',
+                    height: '360px',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                    marginBottom: '20px',
+                    backgroundColor: '#e2e8f0',
                   }}
-                />
-              </div>
+                >
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="proj-card-img"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.5s ease',
+                    }}
+                  />
+                </div>
 
-              <span
-                style={{
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: 'var(--color-text-muted)',
-                  marginBottom: '8px',
-                }}
-              >
-                {project.category}
-              </span>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: 'var(--color-text-muted)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  {project.category}
+                </span>
 
-              <h3
-                style={{
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: 'var(--color-text-main)',
-                  lineHeight: 1.3,
-                }}
-              >
-                {project.title}
-              </h3>
-            </motion.div>
+                <h3
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 700,
+                    color: 'var(--color-text-main)',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {project.title}
+                </h3>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>
