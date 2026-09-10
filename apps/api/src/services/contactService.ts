@@ -41,15 +41,20 @@ export const contactService = {
     },
 
     async sendMessage(data: {
-        firstName: string;
-        lastName: string;
+        name: string;
+        company?: string;
         email: string;
         phone: string;
-        projectType: string;
+        cooperationType: string;
+        projectType?: string;
+        location?: string;
+        budget?: string;
         message: string;
+        sourcePage?: string;
+        submittedAt?: string;
     }) {
         const [page] = await db.select().from(contactPage).limit(1);
-        const targetEmail = page?.email || 'afdalramdan@gmail.com';
+        const targetEmail = page?.email || 'arsikaryaunggul@gmail.com';
 
         if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
             console.warn('SMTP_EMAIL or SMTP_PASSWORD not set. Email not actually sent.');
@@ -67,17 +72,23 @@ export const contactService = {
         const mailOptions = {
             from: process.env.SMTP_EMAIL,
             to: targetEmail,
-            subject: `New Message: ${data.projectType} from ${data.firstName} ${data.lastName}`,
+            subject: `Pengajuan Kerja Sama Baru — ${data.name}`,
             text: `
-You received a new message from your portfolio website!
+Pengajuan Kerja Sama Baru — PT Arsi Karya Unggul
 
-Name: ${data.firstName} ${data.lastName}
+Nama Lengkap: ${data.name}
+Nama Perusahaan / Instansi: ${data.company || '-'}
 Email: ${data.email}
-Phone: ${data.phone}
-Project Type: ${data.projectType}
-
-Message:
+Nomor WhatsApp: ${data.phone}
+Jenis Kerja Sama: ${data.cooperationType}
+Jenis Proyek: ${data.projectType || '-'}
+Lokasi Proyek: ${data.location || '-'}
+Perkiraan Budget: ${data.budget || '-'}
+Pesan / Kebutuhan:
 ${data.message}
+
+Source Page: ${data.sourcePage || '/kontak'}
+Tanggal Pengajuan: ${data.submittedAt || new Date().toLocaleString('id-ID')}
             `
         };
 

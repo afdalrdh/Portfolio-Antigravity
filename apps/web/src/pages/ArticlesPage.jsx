@@ -3,13 +3,14 @@ import { Link, useParams } from 'react-router-dom';
 import SectionTag from '../components/ui/SectionTag';
 import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
+import Breadcrumb from '../components/ui/Breadcrumb';
 import { articlesData } from '../data/articlesData';
 
 export default function ArticlesPage() {
   const { articleSlug } = useParams();
   const [activeCat, setActiveCat] = useState('Semua');
 
-  // Single Article Reader View
+  // Single Article Reader View (/artikel/:slug)
   if (articleSlug) {
     const article = articlesData.find((a) => a.slug === articleSlug);
 
@@ -20,8 +21,10 @@ export default function ArticlesPage() {
             title={`${article.title} — PT Arsi Karya Unggul`}
             description={article.excerpt}
           />
-          <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 60px)', paddingBottom: '80px' }}>
+          <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
             <div className="container" style={{ maxWidth: '840px' }}>
+              {/* Detail Page Breadcrumb ONLY: Artikel > Article Title */}
+              <Breadcrumb items={[{ label: 'Artikel', to: '/artikel' }, { label: article.title }]} />
               <SectionTag light>{article.category} • {article.date}</SectionTag>
               <h1 style={{ color: '#ffffff', fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '16px', lineHeight: 1.2 }}>{article.title}</h1>
               <div style={{ fontSize: '0.9rem', color: 'var(--color-primary-200)' }}>Penulis: {article.author} • {article.readTime}</div>
@@ -39,12 +42,12 @@ export default function ArticlesPage() {
                 dangerouslySetInnerHTML={{ __html: article.content }}
               />
 
-              <div style={{ marginTop: '60px', paddingTop: '32px', borderTop: '1px solid var(--color-neutral-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ marginTop: '60px', paddingTop: '32px', borderTop: '1px solid var(--color-neutral-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                 <Button to="/artikel" variant="secondary">
                   Kembali ke Daftar Artikel
                 </Button>
                 <Button to="/kontak" variant="primary">
-                  Konsultasi Proyek
+                  Ajukan Kerja Sama
                 </Button>
               </div>
             </div>
@@ -54,7 +57,7 @@ export default function ArticlesPage() {
     }
   }
 
-  // Articles Directory View
+  // Articles Directory View (/artikel) — TOP-LEVEL HAS NO BREADCRUMB
   const categories = ['Semua', 'Konstruksi', 'Renovasi', 'Desain', 'Material', 'Project Story'];
 
   const filtered = activeCat === 'Semua'
@@ -68,7 +71,7 @@ export default function ArticlesPage() {
         description="Panduan, edukasi, dan informasi seputar renovasi rumah, jasa kontraktor, material bangunan, dan perencanaan budget."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 60px)', paddingBottom: '80px' }}>
+      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
         <div className="container">
           <SectionTag light>ARTIKEL & EDUKASI</SectionTag>
           <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
@@ -132,7 +135,7 @@ export default function ArticlesPage() {
                   </div>
                 </div>
                 <div style={{ padding: '0 24px 24px 24px' }}>
-                  <Button to={`/artikel/${art.slug}`} variant="text" showArrow>
+                  <Button to={`/artikel/${art.slug}`} variant="primary">
                     Baca Selengkapnya
                   </Button>
                 </div>

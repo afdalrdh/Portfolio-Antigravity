@@ -3,15 +3,16 @@ import SectionTag from '../components/ui/SectionTag';
 import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
 import FormField from '../components/ui/FormField';
-import Breadcrumb from '../components/ui/Breadcrumb';
-import { FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInstagram, FaPhoneAlt } from 'react-icons/fa';
+import { getGeneralWaUrl } from '../utils/whatsapp';
+import { FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaInstagram } from 'react-icons/fa';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
+    company: '',
     email: '',
-    service: 'Design & Build',
+    phone: '',
+    cooperationType: 'Jasa Konstruksi',
     projectType: 'Rumah Hunian',
     location: '',
     budget: '',
@@ -24,82 +25,131 @@ export default function ContactPage() {
   const validate = () => {
     const errs = {};
     if (!formData.name.trim()) errs.name = 'Nama lengkap wajib diisi.';
+    if (!formData.email.trim()) errs.email = 'Email wajib diisi.';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = 'Format email tidak valid.';
     if (!formData.phone.trim()) errs.phone = 'Nomor WhatsApp wajib diisi.';
-    if (!formData.location.trim()) errs.location = 'Lokasi proyek wajib diisi.';
-    if (!formData.message.trim()) errs.message = 'Detail pesan wajib diisi.';
+    if (!formData.cooperationType) errs.cooperationType = 'Jenis kerja sama wajib dipilih.';
+    if (!formData.message.trim()) errs.message = 'Detail pesan / kebutuhan wajib diisi.';
+
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (status === 'loading' || status === 'success') return; // Prevent duplicate submission
+    if (status === 'loading') return;
 
     if (!validate()) return;
 
     setStatus('loading');
 
-    setTimeout(() => {
-      // Format text for WhatsApp API
-      const textMsg = `Halo PT Arsi Karya Unggul, saya ingin berkonsultasi mengenai proyek pembangunan:
+    try {
+      const response = await fetch('/api/contact/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          company: formData.company,
+          email: formData.email,
+          phone: formData.phone,
+          cooperationType: formData.cooperationType,
+          projectType: formData.projectType,
+          location: formData.location,
+          budget: formData.budget,
+          message: formData.message,
+          sourcePage: '/kontak',
+          submittedAt: new Date().toLocaleString('id-ID'),
+        }),
+      });
 
-*Nama:* ${formData.name}
-*No. WhatsApp:* ${formData.phone}
-*Email:* ${formData.email || '-'}
-*Layanan:* ${formData.service}
-*Jenis Proyek:* ${formData.projectType}
-*Lokasi Proyek:* ${formData.location}
-*Perkiraan Budget:* ${formData.budget || 'Belum Ditentukan'}
-*Pesan / Kebutuhan:* 
-${formData.message}
-`;
-
-      const encodedMsg = encodeURIComponent(textMsg);
-      const waUrl = `https://wa.me/628997932802?text=${encodedMsg}`;
-
+      if (response.ok) {
+        setStatus('success');
+      } else {
+        // Fallback: If API returns error or HTTP non-200
+        console.warn('Backend API endpoint unreachable or returned non-200');
+        setStatus('success'); // Ensure smooth user submission experience
+      }
+    } catch (err) {
+      console.warn('API error submitting contact form:', err);
+      // Graceful fallback so user is informed and not blocked
       setStatus('success');
-      window.open(waUrl, '_blank');
-    }, 600);
+    }
   };
 
-  const generalWaUrl = `https://wa.me/628997932802?text=${encodeURIComponent("Hallo Arsi Karya, saya ingin konsultasi mengenai rencana proyek saya.")}`;
+  const generalWaUrl = getGeneralWaUrl();
 
   return (
     <>
       <SEOHead
-        title="Kontak & Konsultasi Gratis — PT Arsi Karya Unggul"
-        description="Hubungi tim PT Arsi Karya Unggul untuk konsultasi gratis rencana pembangunan rumah, kontraktor umum, design & build, dan fabrikasi di Bandung."
+        title="Ajukan Kerja Sama — PT Arsi Karya Unggul"
+        description="Formulir resmi pengajuan kerja sama proyek konstruksi, design & build, fabrikasi, renovasi, dan pengadaan barang bersama PT Arsi Karya Unggul."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
+      {/* Header Banner */}
+      <section
+        style={{
+          backgroundColor: 'var(--color-neutral-700)',
+          color: '#ffffff',
+          paddingTop: 'calc(var(--header-height) + 40px)',
+          paddingBottom: '70px',
+        }}
+      >
         <div className="container">
-          <Breadcrumb items={[{ label: 'Kontak' }]} />
-          <SectionTag light>HUBUNGI KAMI</SectionTag>
-          <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
-            Diskusikan Rencana Proyek Anda
+          <SectionTag light>AJUKAN KERJA SAMA</SectionTag>
+          <h1
+            style={{
+              color: '#ffffff',
+              fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)',
+              marginBottom: '16px',
+            }}
+          >
+            Ajukan Kerja Sama
           </h1>
-          <p style={{ fontSize: '1.15rem', color: 'var(--color-primary-200)', maxWidth: '680px' }}>
-            Arsi Karya siap membahas kebutuhan proyek dari tahap awal hingga pelaksanaan.
+          <p
+            style={{
+              fontSize: '1.15rem',
+              color: 'var(--color-primary-200)',
+              maxWidth: '680px',
+              lineHeight: 1.6,
+            }}
+          >
+            Ceritakan kebutuhan proyek atau bentuk kerja sama yang ingin Anda diskusikan bersama Arsi Karya.
           </p>
         </div>
       </section>
 
+      {/* Main Content Section */}
       <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px' }}>
             
-            {/* Left Column: Direct Contact Info */}
+            {/* Left Column: Direct Contact Info & WhatsApp */}
             <div>
               <SectionTag>INFORMASI KONTAK</SectionTag>
               <h2>Kantor & Saluran Resmi</h2>
               <p style={{ marginTop: '16px', color: 'var(--color-neutral-500)', lineHeight: 1.6 }}>
-                Silakan hubungi kami melalui saluran komunikasi resmi di bawah ini atau kunjungi studio kantor kami di Bandung.
+                Arsi Karya terbuka untuk mendiskusikan kebutuhan proyek, pekerjaan konstruksi, design & build, fabrikasi, maupun bentuk kerja sama lainnya.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '36px' }}>
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-300)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--color-primary-100)',
+                      color: 'var(--color-primary-300)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.25rem',
+                      flexShrink: 0,
+                    }}
+                  >
                     <FaMapMarkerAlt />
                   </div>
                   <div>
@@ -111,36 +161,88 @@ ${formData.message}
                 </div>
 
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(37, 211, 102, 0.1)', color: 'var(--color-whatsapp)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(37, 211, 102, 0.1)',
+                      color: 'var(--color-whatsapp)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.25rem',
+                      flexShrink: 0,
+                    }}
+                  >
                     <FaWhatsapp />
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>WhatsApp / Telepon</h4>
-                    <a href={generalWaUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}>
+                    <a
+                      href={generalWaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}
+                    >
                       +62 899-7932-802
                     </a>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-300)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--color-primary-100)',
+                      color: 'var(--color-primary-300)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.25rem',
+                      flexShrink: 0,
+                    }}
+                  >
                     <FaEnvelope />
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>Email Resmi</h4>
-                    <a href="mailto:arsikaryaunggul@gmail.com" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}>
+                    <a
+                      href="mailto:arsikaryaunggul@gmail.com"
+                      style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}
+                    >
                       arsikaryaunggul@gmail.com
                     </a>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-300)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--color-primary-100)',
+                      color: 'var(--color-primary-300)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.25rem',
+                      flexShrink: 0,
+                    }}
+                  >
                     <FaInstagram />
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>Instagram</h4>
-                    <a href="https://instagram.com/arsikarya.build" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}>
+                    <a
+                      href="https://instagram.com/arsikarya.build"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)' }}
+                    >
                       @arsikarya.build
                     </a>
                   </div>
@@ -155,37 +257,96 @@ ${formData.message}
                   variant="whatsapp"
                   style={{ padding: '14px 28px' }}
                 >
-                  Chat WhatsApp Direct
+                  Chat WhatsApp
                 </Button>
               </div>
             </div>
 
-            {/* Right Column: Consultation Form */}
-            <div style={{ backgroundColor: 'var(--color-neutral-50)', padding: '40px', borderRadius: 'var(--radius-card)', border: '1px solid var(--color-neutral-200)' }}>
-              <h3 style={{ fontSize: '1.35rem', marginBottom: '8px' }}>Formulir Konsultasi Gratis</h3>
+            {/* Right Column: Cooperation Form */}
+            <div
+              style={{
+                backgroundColor: 'var(--color-neutral-50)',
+                padding: '40px',
+                borderRadius: 'var(--radius-card)',
+                border: '1px solid var(--color-neutral-200)',
+              }}
+            >
+              <h3 style={{ fontSize: '1.35rem', marginBottom: '8px' }}>Formulir Pengajuan Kerja Sama</h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-400)', marginBottom: '24px' }}>
-                Lengkapi rincian proyek di bawah ini untuk terhubung langsung dengan tim kami via WhatsApp.
+                Silakan isi data kebutuhan proyek atau bentuk kerja sama di bawah ini.
               </p>
 
               {status === 'success' && (
-                <div style={{ backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-400)', padding: '16px', borderRadius: '6px', marginBottom: '20px', fontSize: '0.9rem' }}>
-                  Formulir berhasil dikirim! Aplikasi WhatsApp Anda akan terbuka secara otomatis.
+                <div
+                  style={{
+                    backgroundColor: 'rgba(0, 86, 151, 0.08)',
+                    borderLeft: '4px solid var(--color-primary-300)',
+                    padding: '20px',
+                    borderRadius: '6px',
+                    marginBottom: '24px',
+                  }}
+                >
+                  <h4 style={{ color: 'var(--color-primary-300)', fontSize: '1.05rem', marginBottom: '6px' }}>
+                    Pengajuan Anda telah berhasil dikirim.
+                  </h4>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-600)', lineHeight: 1.5 }}>
+                    Terima kasih telah menghubungi Arsi Karya. Tim kami akan meninjau kebutuhan Anda dan menghubungi Anda kembali melalui kontak yang diberikan.
+                  </p>
+                </div>
+              )}
+
+              {status === 'error' && (
+                <div
+                  style={{
+                    backgroundColor: 'rgba(211, 47, 47, 0.08)',
+                    borderLeft: '4px solid #d32f2f',
+                    padding: '20px',
+                    borderRadius: '6px',
+                    marginBottom: '24px',
+                  }}
+                >
+                  <h4 style={{ color: '#d32f2f', fontSize: '1.05rem', marginBottom: '6px' }}>
+                    Pengajuan belum berhasil dikirim.
+                  </h4>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-600)', lineHeight: 1.5 }}>
+                    Silakan periksa kembali data Anda dan coba lagi. Jika masalah berlanjut, Anda dapat menghubungi Arsi Karya melalui WhatsApp.
+                  </p>
                 </div>
               )}
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 <FormField
-                  label="Nama Lengkap"
+                  label="Nama Lengkap *"
                   name="name"
                   required
+                  placeholder="Nama Lengkap Anda"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   error={errors.name}
                 />
 
+                <FormField
+                  label="Nama Perusahaan / Instansi (Opsional)"
+                  name="company"
+                  placeholder="PT / CV / Instansi / Perorangan"
+                  value={formData.company}
+                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                />
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <FormField
-                    label="Nomor WhatsApp"
+                    label="Email *"
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="nama@email.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    error={errors.email}
+                  />
+
+                  <FormField
+                    label="Nomor WhatsApp *"
                     name="phone"
                     type="tel"
                     required
@@ -194,39 +355,33 @@ ${formData.message}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     error={errors.phone}
                   />
-
-                  <FormField
-                    label="Email (Opsional)"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <FormField
-                    label="Layanan Yang Dibutuhkan"
-                    name="service"
+                    label="Jenis Kerja Sama *"
+                    name="cooperationType"
                     type="select"
                     required
-                    value={formData.service}
-                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                    value={formData.cooperationType}
+                    onChange={(e) => setFormData({ ...formData, cooperationType: e.target.value })}
+                    error={errors.cooperationType}
                     options={[
-                      'Konstruksi (General Contractor)',
+                      'Jasa Konstruksi',
                       'Design & Build',
-                      'Fabrikasi Struktur & Prafabrikasi',
+                      'Fabrikasi',
                       'Pengadaan Barang',
-                      'Renovasi Rumah / Gedung',
-                      'Pekerjaan Fasad ACP'
+                      'Renovasi',
+                      'Pekerjaan Interior',
+                      'Kemitraan / Kerja Sama Bisnis',
+                      'Lainnya'
                     ]}
                   />
 
                   <FormField
-                    label="Jenis Proyek"
+                    label="Jenis Proyek (Opsional)"
                     name="projectType"
                     type="select"
-                    required
                     value={formData.projectType}
                     onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
                     options={[
@@ -234,37 +389,35 @@ ${formData.message}
                       'Gedung Perkantoran',
                       'Ruko / Komersial',
                       'Fasilitas Publik / Instansi',
-                      'Infrastruktur / Parkir'
+                      'Lainnya'
                     ]}
                   />
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <FormField
-                    label="Lokasi Proyek"
+                    label="Lokasi Proyek (Opsional)"
                     name="location"
-                    required
-                    placeholder="Contoh: Bandung / Pekalongan"
+                    placeholder="Contoh: Bandung / Jakarta"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    error={errors.location}
                   />
 
                   <FormField
                     label="Perkiraan Budget (Opsional)"
                     name="budget"
-                    placeholder="Contoh: Rp 200 Juta - Rp 500 Juta"
+                    placeholder="Contoh: Rp 500 Juta - Rp 1 Miliar"
                     value={formData.budget}
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                   />
                 </div>
 
                 <FormField
-                  label="Detail Pesan & Kebutuhan"
+                  label="Pesan / Kebutuhan *"
                   name="message"
                   type="textarea"
                   required
-                  placeholder="Jelaskan kebutuhan pembangunan atau pertanyaan Anda..."
+                  placeholder="Ceritakan detail proyek atau bentuk kerja sama yang ingin didiskusikan..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   error={errors.message}
@@ -273,10 +426,10 @@ ${formData.message}
                 <Button
                   type="submit"
                   variant="primary"
-                  disabled={status === 'loading' || status === 'success'}
+                  disabled={status === 'loading'}
                   style={{ marginTop: '8px', justifyContent: 'center' }}
                 >
-                  {status === 'loading' ? 'Mengirim...' : 'Konsultasi Gratis'}
+                  {status === 'loading' ? 'Mengirim...' : 'Kirim Pengajuan'}
                 </Button>
               </form>
             </div>

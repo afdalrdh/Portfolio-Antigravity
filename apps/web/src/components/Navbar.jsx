@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
 import Button from './ui/Button';
+import { getGeneralWaUrl } from '../utils/whatsapp';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,6 +20,8 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const generalWaUrl = getGeneralWaUrl();
 
   // Exact 7 Primary Navbar Items
   const navLinks = [
@@ -156,7 +159,14 @@ export default function Navbar() {
 
         {/* Right Primary CTA & Mobile Menu Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Button to="/kontak" variant="primary" className="desktop-cta" style={{ padding: '12px 22px' }}>
+          <Button
+            href={generalWaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="primary"
+            className="desktop-cta"
+            style={{ padding: '12px 22px' }}
+          >
             Konsultasi Gratis
           </Button>
 
@@ -233,7 +243,9 @@ export default function Navbar() {
             </div>
           ))}
           <Button
-            to="/kontak"
+            href={generalWaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             variant="primary"
             onClick={() => setMobileMenuOpen(false)}
             style={{ marginTop: '16px', justifyContent: 'center', width: '100%' }}

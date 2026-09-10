@@ -6,6 +6,7 @@ import Button from '../components/ui/Button';
 import Breadcrumb from '../components/ui/Breadcrumb';
 import Gallery from '../components/ui/Gallery';
 import { projectsData } from '../data/projectsData';
+import { getProjectWaUrl } from '../utils/whatsapp';
 
 export default function ProjectsPage() {
   const { projectSlug } = useParams();
@@ -20,9 +21,7 @@ export default function ProjectsPage() {
         (p) => p.id !== project.id && (p.category === project.category || p.location === project.location)
       );
 
-      const projectWaMsg = encodeURIComponent(
-        `Hallo Arsi Karya, saya tertarik dengan proyek ${project.title} dan ingin berkonsultasi mengenai proyek serupa.`
-      );
+      const projectWaUrl = getProjectWaUrl(project.title);
 
       return (
         <>
@@ -34,6 +33,7 @@ export default function ProjectsPage() {
           {/* Hero Banner */}
           <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '60px' }}>
             <div className="container">
+              {/* Detail Page Breadcrumb ONLY: Proyek > Project Name */}
               <Breadcrumb items={[{ label: 'Proyek', to: '/proyek' }, { label: project.title }]} />
               <SectionTag light>{project.category} • {project.year}</SectionTag>
               <h1 style={{ color: '#ffffff', fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '16px' }}>{project.title}</h1>
@@ -145,7 +145,7 @@ export default function ProjectsPage() {
                 </p>
                 <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <Button
-                    href={`https://wa.me/628997932802?text=${projectWaMsg}`}
+                    href={projectWaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     variant="whatsapp"
@@ -153,7 +153,7 @@ export default function ProjectsPage() {
                     Chat WhatsApp
                   </Button>
                   <Button to="/kontak" variant="dark" style={{ border: '1px solid rgba(255,255,255,0.4)' }}>
-                    Formulir Konsultasi
+                    Ajukan Kerja Sama
                   </Button>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function ProjectsPage() {
     }
   }
 
-  // Filter Categories
+  // Filter Categories Overview (/proyek) — TOP-LEVEL HAS NO BREADCRUMB
   const categories = ['Semua', 'Design & Build', 'Fasad & Eksterior', 'Finishing & Interior', 'Konstruksi & Maintenance', 'Infrastruktur'];
 
   const filteredProjects = activeCategory === 'Semua'
@@ -181,7 +181,6 @@ export default function ProjectsPage() {
 
       <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
         <div className="container">
-          <Breadcrumb items={[{ label: 'Proyek' }]} />
           <SectionTag light>PORTOFOLIO PROYEK</SectionTag>
           <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
             Rekam Jejak Pekerjaan

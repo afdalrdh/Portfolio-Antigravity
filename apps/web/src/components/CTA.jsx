@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Button from './ui/Button';
+import { getGeneralWaUrl } from '../utils/whatsapp';
 
 export default function CTA() {
   const ctaPhoto = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/6180970fd098625c4087481a_contact_map.jpg";
+  const generalWaUrl = getGeneralWaUrl();
 
   return (
     <section id="contact" style={{ backgroundColor: '#ffffff', padding: '60px 0' }}>
@@ -62,7 +64,9 @@ export default function CTA() {
             </h2>
 
             <Button
-              to="/kontak"
+              href={generalWaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               variant="dark"
               style={{
                 backgroundColor: '#ffffff',

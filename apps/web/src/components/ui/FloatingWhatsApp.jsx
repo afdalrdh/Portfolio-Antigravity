@@ -1,10 +1,9 @@
 import React from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { getGeneralWaUrl } from '../../utils/whatsapp';
 
 export default function FloatingWhatsApp() {
-  const waNumber = "628997932802";
-  const defaultMsg = encodeURIComponent("Hallo Arsi Karya, saya ingin konsultasi mengenai rencana proyek saya.");
-  const waUrl = `https://wa.me/${waNumber}?text=${defaultMsg}`;
+  const waUrl = getGeneralWaUrl();
 
   return (
     <a

@@ -7,6 +7,7 @@ import Breadcrumb from '../components/ui/Breadcrumb';
 import FAQ from '../components/ui/FAQ';
 import { servicesData, seoLandingServices } from '../data/servicesData';
 import { projectsData } from '../data/projectsData';
+import { getServiceWaUrl, getGeneralWaUrl } from '../utils/whatsapp';
 
 export default function ServicesPage() {
   const { serviceSlug } = useParams();
@@ -16,7 +17,6 @@ export default function ServicesPage() {
     const service = servicesData.find((s) => s.slug === serviceSlug) || seoLandingServices.find((s) => s.slug === serviceSlug);
 
     if (service) {
-      // Find related projects for this service
       const relatedProjects = projectsData.filter((p) =>
         p.category.toLowerCase().includes(service.title.split(' ')[0].toLowerCase()) ||
         p.title.toLowerCase().includes(service.slug.split('-')[0])
@@ -25,7 +25,7 @@ export default function ServicesPage() {
       const defaultFaqs = [
         {
           question: "Bagaimana alur awal pengajuan konsultasi?",
-          answer: "Anda dapat menghubungi kami via WhatsApp atau formulir kontak. Tim kami akan melakukan penjadwalan survey lokasi awal dan pembuatan indikatif RAB."
+          answer: "Anda dapat menghubungi kami via WhatsApp atau pengajuan kerja sama. Tim kami akan melakukan penjadwalan survey lokasi awal dan pembuatan indikatif RAB."
         },
         {
           question: "Bagaimana penentuan perkiraan biaya pekerjaan?",
@@ -38,6 +38,7 @@ export default function ServicesPage() {
       ];
 
       const faqsList = service.faqs && service.faqs.length > 0 ? service.faqs : defaultFaqs;
+      const serviceWaUrl = getServiceWaUrl(service.title);
 
       return (
         <>
@@ -49,6 +50,7 @@ export default function ServicesPage() {
           {/* Hero Header */}
           <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
             <div className="container">
+              {/* Detail Page Breadcrumb ONLY: Layanan > Service Name */}
               <Breadcrumb items={[{ label: 'Layanan', to: '/layanan' }, { label: service.title }]} />
               <SectionTag light>DETAIL LAYANAN</SectionTag>
               <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4vw, 3.5rem)', marginBottom: '16px' }}>{service.title}</h1>
@@ -194,7 +196,7 @@ export default function ServicesPage() {
                 </p>
                 <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <Button
-                    href={`https://wa.me/628997932802?text=${encodeURIComponent(`Hallo Arsi Karya, saya ingin berkonsultasi mengenai layanan ${service.title}.`)}`}
+                    href={serviceWaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     variant="whatsapp"
@@ -203,7 +205,7 @@ export default function ServicesPage() {
                     Chat WhatsApp
                   </Button>
                   <Button to="/kontak" variant="dark" style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '14px 28px' }}>
-                    Formulir Konsultasi
+                    Ajukan Kerja Sama
                   </Button>
                 </div>
               </div>
@@ -215,7 +217,7 @@ export default function ServicesPage() {
     }
   }
 
-  // Overview Services Directory Page (/layanan)
+  // Overview Services Directory Page (/layanan) — TOP-LEVEL HAS NO BREADCRUMB
   return (
     <>
       <SEOHead
@@ -225,7 +227,6 @@ export default function ServicesPage() {
 
       <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
         <div className="container">
-          <Breadcrumb items={[{ label: 'Layanan' }]} />
           <SectionTag light>LAYANAN KAMI</SectionTag>
           <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
             Empat Pilar Layanan Konstruksi

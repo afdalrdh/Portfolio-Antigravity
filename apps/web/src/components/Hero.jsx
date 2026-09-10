@@ -3,11 +3,14 @@ import { motion } from 'framer-motion';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import Button from './ui/Button';
+import { getGeneralWaUrl } from '../utils/whatsapp';
 
 export default function Hero() {
   const videoMp4 = "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/6179fd5c38ec05cd8ff9df2b_background_video-transcode.mp4";
   const videoWebm = "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/6179fd5c38ec05cd8ff9df2b_background_video-transcode.webm";
   const fallbackPoster = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/617b347a79be8351ce06894c_gallery_2.jpg";
+
+  const generalWaUrl = getGeneralWaUrl();
 
   const bottomNavItems = [
     {
@@ -119,10 +122,20 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}
           >
-            <Button to="/kontak" variant="primary" style={{ padding: '16px 36px', fontSize: '1rem' }}>
+            <Button
+              href={generalWaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="primary"
+              style={{ padding: '16px 36px', fontSize: '1rem' }}
+            >
               Konsultasi Gratis
             </Button>
-            <Button to="/proyek" variant="dark" style={{ border: '1px solid rgba(255, 255, 255, 0.4)', padding: '16px 36px', fontSize: '1rem' }}>
+            <Button
+              to="/proyek"
+              variant="dark"
+              style={{ border: '1px solid rgba(255, 255, 255, 0.4)', padding: '16px 36px', fontSize: '1rem' }}
+            >
               Lihat Proyek
             </Button>
           </motion.div>
