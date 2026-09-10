@@ -93,7 +93,7 @@ export default function Stats() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <span className="section-tag">— WHY US</span>
+            <span className="section-tag">WHO WE ARE</span>
 
             <h2
               style={{

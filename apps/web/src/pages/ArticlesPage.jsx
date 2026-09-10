@@ -4,6 +4,7 @@ import SectionTag from '../components/ui/SectionTag';
 import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
 import Breadcrumb from '../components/ui/Breadcrumb';
+import HeroBanner from '../components/ui/HeroBanner';
 import { articlesData } from '../data/articlesData';
 
 export default function ArticlesPage() {
@@ -21,18 +22,37 @@ export default function ArticlesPage() {
             title={`${article.title} — PT Arsi Karya Unggul`}
             description={article.excerpt}
           />
-          <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
-            <div className="container" style={{ maxWidth: '840px' }}>
-              {/* Detail Page Breadcrumb ONLY: Artikel > Article Title */}
-              <Breadcrumb items={[{ label: 'Artikel', to: '/artikel' }, { label: article.title }]} />
-              <SectionTag light>{article.category} • {article.date}</SectionTag>
-              <h1 style={{ color: '#ffffff', fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '16px', lineHeight: 1.2 }}>{article.title}</h1>
-              <div style={{ fontSize: '0.9rem', color: 'var(--color-primary-200)' }}>Penulis: {article.author} • {article.readTime}</div>
-            </div>
-          </section>
+          {/* Dark Architectural Hero Banner */}
+          <HeroBanner
+            bgImage={article.thumbnail}
+            overlayOpacity={0.65}
+            imageAlt={article.title}
+            breadcrumbItems={[{ label: 'Artikel', to: '/artikel' }]}
+            tag={`${article.category} • ${article.date}`}
+            title={article.title}
+            subtitle={`Penulis: ${article.author} • ${article.readTime}`}
+          />
 
-          <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
+          <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)', paddingTop: '40px' }}>
             <div className="container" style={{ maxWidth: '840px' }}>
+              
+              {/* Top Back Navigation */}
+              <Link 
+                to="/artikel" 
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  marginBottom: '24px', 
+                  color: 'var(--color-primary-300)', 
+                  fontWeight: 700, 
+                  fontSize: '0.9rem',
+                  textDecoration: 'none'
+                }}
+              >
+                ← Kembali ke Artikel
+              </Link>
+
               <div style={{ height: '380px', backgroundColor: 'var(--color-neutral-200)', borderRadius: '8px', overflow: 'hidden', marginBottom: '40px' }}>
                 <img src={article.thumbnail} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
@@ -44,7 +64,7 @@ export default function ArticlesPage() {
 
               <div style={{ marginTop: '60px', paddingTop: '32px', borderTop: '1px solid var(--color-neutral-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                 <Button to="/artikel" variant="secondary">
-                  Kembali ke Daftar Artikel
+                  Kembali ke Artikel
                 </Button>
                 <Button to="/kontak" variant="primary">
                   Ajukan Kerja Sama
@@ -71,17 +91,13 @@ export default function ArticlesPage() {
         description="Panduan, edukasi, dan informasi seputar renovasi rumah, jasa kontraktor, material bangunan, dan perencanaan budget."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
-        <div className="container">
-          <SectionTag light>ARTIKEL & EDUKASI</SectionTag>
-          <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
-            Wawasan & Edukasi Pembangunan
-          </h1>
-          <p style={{ fontSize: '1.15rem', color: 'var(--color-primary-200)', maxWidth: '680px' }}>
-            Informasi praktis seputar dunia konstruksi, tren arsitektur, dan tips perencanaan anggaran proyek.
-          </p>
-        </div>
-      </section>
+      <HeroBanner
+        bgImage="/projects/project_4.jpg"
+        overlayOpacity={0.65}
+        tag="ARTIKEL & EDUKASI"
+        title="Wawasan & Edukasi Pembangunan"
+        subtitle="Informasi praktis seputar dunia konstruksi, tren arsitektur, dan tips perencanaan anggaran proyek."
+      />
 
       <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
         <div className="container">
@@ -124,7 +140,12 @@ export default function ArticlesPage() {
               >
                 <div>
                   <div style={{ height: '220px', backgroundColor: 'var(--color-neutral-200)', overflow: 'hidden' }}>
-                    <img src={art.thumbnail} alt={art.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img 
+                      src={art.thumbnail} 
+                      alt={art.title} 
+                      onError={(e) => { e.currentTarget.src = '/projects/project_2.jpg'; }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
                   </div>
                   <div style={{ padding: '24px' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--color-primary-300)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>

@@ -1,6 +1,6 @@
 import { db } from '../db/index.js';
 import { projects, projectBlocks } from '../db/schema/project.js';
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 
 type BlockInput = {
     type: string;
@@ -17,10 +17,21 @@ type ProjectInput = {
     category?: string;
     slug: string;
     company?: string;
+    location?: string;
     year?: string;
+    clientContext?: string;
+    arsiKaryaRole?: string;
+    description?: string;
+    scope?: string;
+    process?: string;
     liveLink?: string;
     coverImageUrl?: string;
+    coverImageId?: string;
+    gallery?: any[];
+    published?: boolean;
     visibility?: string;
+    seoTitle?: string;
+    seoDescription?: string;
     sortOrder?: number;
     blocks?: BlockInput[];
 };
@@ -28,9 +39,9 @@ type ProjectInput = {
 export const projectService = {
     async listProjects(onlyPublic = false) {
         if (onlyPublic) {
-            return db.select().from(projects).where(eq(projects.visibility, 'public')).orderBy(projects.sortOrder, projects.createdAt);
+            return db.select().from(projects).where(eq(projects.published, true)).orderBy(projects.sortOrder, desc(projects.createdAt));
         }
-        return db.select().from(projects).orderBy(projects.sortOrder, projects.createdAt);
+        return db.select().from(projects).orderBy(projects.sortOrder, desc(projects.createdAt));
     },
 
     async getProjectBySlug(slug: string) {
@@ -48,15 +59,27 @@ export const projectService = {
     },
 
     async createProject(data: ProjectInput) {
+        const publishedVal = data.published !== undefined ? data.published : (data.visibility === 'public');
         const [project] = await db.insert(projects).values({
             title: data.title,
             category: data.category,
             slug: data.slug,
             company: data.company,
+            location: data.location,
             year: data.year,
+            clientContext: data.clientContext,
+            arsiKaryaRole: data.arsiKaryaRole,
+            description: data.description,
+            scope: data.scope,
+            process: data.process,
             liveLink: data.liveLink,
             coverImageUrl: data.coverImageUrl,
-            visibility: data.visibility || 'draft',
+            coverImageId: data.coverImageId,
+            gallery: data.gallery || [],
+            published: publishedVal,
+            visibility: publishedVal ? 'public' : 'draft',
+            seoTitle: data.seoTitle,
+            seoDescription: data.seoDescription,
             sortOrder: data.sortOrder || 0,
         }).returning();
 
@@ -83,20 +106,34 @@ export const projectService = {
         const [existing] = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
         if (!existing) return null;
 
+        const publishedVal = data.published !== undefined
+            ? data.published
+            : (data.visibility !== undefined ? (data.visibility === 'public') : existing.published);
+
         await db.update(projects).set({
             title: data.title ?? existing.title,
             category: data.category ?? existing.category,
             slug: data.slug ?? existing.slug,
             company: data.company ?? existing.company,
+            location: data.location ?? existing.location,
             year: data.year ?? existing.year,
+            clientContext: data.clientContext ?? existing.clientContext,
+            arsiKaryaRole: data.arsiKaryaRole ?? existing.arsiKaryaRole,
+            description: data.description ?? existing.description,
+            scope: data.scope ?? existing.scope,
+            process: data.process ?? existing.process,
             liveLink: data.liveLink ?? existing.liveLink,
             coverImageUrl: data.coverImageUrl ?? existing.coverImageUrl,
-            visibility: data.visibility ?? existing.visibility,
+            coverImageId: data.coverImageId ?? existing.coverImageId,
+            gallery: data.gallery ?? existing.gallery,
+            published: publishedVal,
+            visibility: publishedVal ? 'public' : 'draft',
+            seoTitle: data.seoTitle ?? existing.seoTitle,
+            seoDescription: data.seoDescription ?? existing.seoDescription,
             sortOrder: data.sortOrder ?? existing.sortOrder,
             updatedAt: new Date(),
         }).where(eq(projects.id, id));
 
-        // Replace blocks if provided
         if (data.blocks) {
             await db.delete(projectBlocks).where(eq(projectBlocks.projectId, id));
             if (data.blocks.length > 0) {

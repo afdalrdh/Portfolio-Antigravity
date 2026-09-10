@@ -1,0 +1,115 @@
+.admin-media-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.media-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.media-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.media-thumb-container {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background: #f3f4f6;
+    overflow: hidden;
+}
+
+.media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-overlay-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.media-card:hover .media-overlay-actions {
+    opacity: 1;
+}
+
+.btn-overlay {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #ffffff;
+    color: #111827;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.media-card-info {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.media-public-id {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.media-meta-row {
+    font-size: 0.75rem;
+    color: #6b7280;
+    display: flex;
+    gap: 6px;
+}
+
+.btn-delete-media {
+    margin-top: 6px;
+    background: none;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-media:hover {
+    background: #fef2f2;
+}

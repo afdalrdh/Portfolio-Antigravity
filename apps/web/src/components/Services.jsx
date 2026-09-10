@@ -4,12 +4,22 @@ import { FiCheck, FiX, FiLayers, FiCompass, FiCpu, FiPackage } from 'react-icons
 import Button from './ui/Button';
 
 export default function Services() {
-  const darkHeroBg = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618080f4f9f6974e44e99f07_services_hero.jpg";
-
   const galleryImages = [
-    { url: "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/617b347a79be8351ce06894c_gallery_2.jpg", alt: "Construction site 1" },
-    { url: "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618083a2bd13460b57e750dd_gallery_1.jpg", alt: "Construction site 2" },
-    { url: "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618083d0bf813a48e78a632e_gallery_3.jpg", alt: "Construction site 3" },
+    { 
+      url: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop", 
+      fallback: "/projects/project_8.jpg",
+      alt: "Konstruksi Baja & Fabrikasi Lapangan 1" 
+    },
+    { 
+      url: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?q=80&w=1200&auto=format&fit=crop", 
+      fallback: "/projects/gallery_1.jpg",
+      alt: "Pembangunan Gedung & Scaffolding 2" 
+    },
+    { 
+      url: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop", 
+      fallback: "/projects/gallery_3.jpg",
+      alt: "Pengelasan Presisi & Finishing 3" 
+    },
   ];
 
   const servicesList = [
@@ -54,118 +64,161 @@ export default function Services() {
   const [selectedService, setSelectedService] = useState(null);
 
   return (
-    <section id="services" style={{ backgroundColor: '#ffffff' }}>
-      {/* 1. Dark Hero Section */}
+    <section id="services" style={{ backgroundColor: '#ffffff', width: '100%', overflow: 'hidden' }}>
+      {/* 1. 100% Full Viewport Width Dark Split Banner (Matching Albion Reference) */}
       <div
         style={{
           position: 'relative',
-          minHeight: '480px',
           backgroundColor: '#0c1015',
           color: '#ffffff',
-          display: 'flex',
-          alignItems: 'center',
+          width: '100%',
           overflow: 'hidden',
-          padding: '100px 0',
         }}
       >
         <div
           style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${darkHeroBg})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.35,
-            zIndex: 1,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+            gap: '0',
+            width: '100%',
+            alignItems: 'stretch',
           }}
-        />
-
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(180deg, rgba(12, 16, 21, 0.4) 0%, rgba(12, 16, 21, 0.85) 100%)',
-            zIndex: 2,
-          }}
-        />
-
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <div style={{ maxWidth: '720px' }}>
-            <motion.div
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <span className="section-tag section-tag-light">SERVICES</span>
-
-              <h2
-                style={{
-                  fontSize: 'clamp(2.4rem, 4vw, 3.5rem)',
-                  fontWeight: 800,
-                  color: '#ffffff',
-                  lineHeight: 1.1,
-                  marginBottom: '24px',
-                }}
-              >
-                We know how to deliver your vision
-              </h2>
-
-              <p
-                style={{
-                  fontSize: '1.05rem',
-                  color: '#cbd5e1',
-                  lineHeight: 1.7,
-                  marginBottom: '36px',
-                }}
-              >
-                PT Arsi Karya Unggul menghadirkan layanan konstruksi terpadu dengan eksekusi amanah dan profesional di Bandung.
-              </p>
-
-              <Button to="/layanan" variant="primary">
-                Our Services
-              </Button>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. 3-Photo Showcase Bar */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '16px',
-          padding: '0 16px',
-        }}
-      >
-        {galleryImages.map((img, idx) => (
+        >
+          {/* Left Column: Full-bleed Architect Blueprint Photo with Smooth Dark Fade */}
           <div
-            key={idx}
             style={{
-              height: '340px',
+              position: 'relative',
+              height: '420px',
               overflow: 'hidden',
-              borderRadius: '4px',
             }}
           >
             <img
-              src={img.url}
-              alt={img.alt}
+              src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop"
+              alt="Architect drafting blueprints"
+              onError={(e) => {
+                e.currentTarget.src = '/projects/project_1.jpg';
+              }}
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                transition: 'transform 0.5s ease',
+                display: 'block',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.06)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to right, rgba(12, 16, 21, 0) 30%, rgba(12, 16, 21, 0.95) 100%)',
+              }}
             />
           </div>
-        ))}
+
+          {/* Right Column: Dark Text Content & CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            style={{
+              padding: 'clamp(48px, 6vw, 80px)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            }}
+          >
+            <span className="section-tag section-tag-light">WHAT WE DO</span>
+
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 4vw, 3.5rem)',
+                fontWeight: 800,
+                color: '#ffffff',
+                lineHeight: 1.1,
+                marginBottom: '20px',
+                letterSpacing: '-0.5px',
+              }}
+            >
+              We know how to deliver your vision
+            </h2>
+
+            <p
+              style={{
+                fontSize: '1rem',
+                color: '#cbd5e1',
+                lineHeight: 1.7,
+                marginBottom: '32px',
+                maxWidth: '520px',
+              }}
+            >
+              PT Arsi Karya Unggul menghadirkan layanan konstruksi terpadu dengan eksekusi amanah dan profesional di Bandung.
+            </p>
+
+            <Button
+              to="/layanan"
+              variant="primary"
+              showArrow={true}
+              style={{
+                backgroundColor: 'var(--color-primary-300)',
+                color: '#ffffff',
+                borderColor: 'var(--color-primary-300)',
+                fontWeight: 700,
+              }}
+            >
+              Our Services
+            </Button>
+          </motion.div>
+        </div>
       </div>
 
-      {/* 3. 4-Column Services Grid with Static Square Icon Badges */}
-      <div id="services-list" style={{ backgroundColor: '#ffffff', color: 'var(--color-text-main)', padding: '100px 0' }}>
+      {/* 2. 100% Full Viewport Width 3-Photo Showcase Bar */}
+      <div
+        style={{
+          width: '100%',
+          padding: '16px',
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '16px',
+            width: '100%',
+          }}
+        >
+          {galleryImages.map((img, idx) => (
+            <div
+              key={idx}
+              style={{
+                height: '360px',
+                overflow: 'hidden',
+                borderRadius: '4px',
+              }}
+            >
+              <img
+                src={img.url}
+                alt={img.alt}
+                onError={(e) => {
+                  e.currentTarget.src = img.fallback;
+                }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'transform 0.5s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. 4-Column Services Grid */}
+      <div id="services-list" style={{ backgroundColor: '#ffffff', color: 'var(--color-text-main)', padding: '96px 0' }}>
         <div className="container">
           <div style={{ maxWidth: '720px', marginBottom: '60px' }}>
             <span className="section-tag">OUR EXPERTISE</span>

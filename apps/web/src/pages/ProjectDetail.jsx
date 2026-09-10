@@ -1,160 +1,212 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { optimizeImage } from '../utils/optimizeImage';
-import { Helmet } from 'react-helmet-async'
-import { useParams, Link } from 'react-router-dom'
-import { publicApi } from '../lib/api'
-import LoadingSpinner from '../components/ui/LoadingSpinner'
-import './ProjectDetail.css'
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+import { useParams, Link } from 'react-router-dom';
+import { publicApi } from '../lib/api';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import Gallery from '../components/ui/Gallery';
+import CTA from '../components/CTA';
+import { projectsData } from '../data/projectsData';
+import './ProjectDetail.css';
 
 export default function ProjectDetail() {
-    const { slug } = useParams()
-    const [project, setProject] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    const [showScrollTop, setShowScrollTop] = useState(false)
+    const { slug } = useParams();
+    const [project, setProject] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!slug) return
+        if (!slug) return;
+        setLoading(true);
         publicApi.getProject(slug)
             .then((data) => {
-                setProject(data)
+                if (data) setProject(data);
             })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false))
-    }, [slug])
+            .catch(() => {
+                const fallback = projectsData.find(p => p.slug === slug || p.id === slug);
+                if (fallback) setProject(fallback);
+            })
+            .finally(() => setLoading(false));
+    }, [slug]);
 
-    useEffect(() => {
-        const handleScroll = () => setShowScrollTop(window.scrollY > 300)
-        window.addEventListener('scroll', handleScroll)
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
+    if (loading) return <LoadingSpinner />;
 
-    const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+    const currentProject = project || projectsData.find(p => p.slug === slug || p.id === slug);
 
-    if (loading) {
-        return <LoadingSpinner />
-    }
-
-    if (error || !project) {
+    if (!currentProject) {
         return (
-            <div className="container" style={{ paddingTop: '120px', textAlign: 'center' }}>
-                <h2>Project not found</h2>
-                <p className="text-secondary">The project you're looking for doesn't exist or is not published.</p>
-                <Link to="/" className="text-accent" style={{ marginTop: '16px', display: 'inline-block' }}>&larr; Back to home</Link>
+            <div className="container" style={{ paddingTop: '140px', paddingBottom: '100px', textAlign: 'center' }}>
+                <h2>Proyek Tidak Ditemukan</h2>
+                <p className="text-secondary">Proyek yang Anda cari tidak tersedia atau belum diterbitkan.</p>
+                <Link to="/proyek" className="btn-base btn-primary" style={{ marginTop: '24px' }}>
+                    &larr; Kembali ke Portofolio
+                </Link>
             </div>
-        )
+        );
     }
 
-    const renderBlock = (block) => {
-        switch (block.type) {
-            case 'narrative':
-                return (
-                    <section key={block.id} className="pd-narrative animate-fade-in" style={{ marginTop: '64px' }}>
-                        <h2 className="pd-narrative-title text-secondary">{block.title}</h2>
-                        <p className="pd-narrative-text">{block.text}</p>
-                    </section>
-                )
-            case 'image_main':
-                return (
-                    <div key={block.id} className="pd-main-image animate-fade-in hover-lift" style={{ marginTop: '40px' }}>
-                        <img src={optimizeImage(block.imageUrl)} alt={project.title} loading="lazy" />
-                    </div>
-                )
-            case 'image_grid':
-                return (
-                    <div key={block.id} className="pd-grid-images animate-fade-in" style={{ marginTop: '40px' }}>
-                        {block.imageUrl && (
-                            <div className="pd-image-card hover-lift">
-                                <img src={optimizeImage(block.imageUrl)} alt="Detail 1" loading="lazy" />
-                            </div>
-                        )}
-                        {block.imageUrl2 && (
-                            <div className="pd-image-card hover-lift">
-                                <img src={optimizeImage(block.imageUrl2)} alt="Detail 2" loading="lazy" />
-                            </div>
-                        )}
-                    </div>
-                )
-            case 'design_system':
-                return (
-                    <section key={block.id} className="pd-design-system animate-fade-in" style={{ marginTop: '40px' }}>
-                        <div className="pd-colors">
-                            <h2 className="ds-title">Brand Colors</h2>
-                            <div className="color-grid">
-                                {(block.colors || []).map((color, i) => (
-                                    <div key={i} className="color-swatch" style={{ background: color }}>
-                                        <span className="color-label" style={{ color: i >= 4 ? '#fff' : undefined }}>{color}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        {block.fontFamily && (
-                            <div className="pd-typography">
-                                <div className="typo-left">
-                                    <div className="typo-aa">Aa</div>
-                                    <div className="typo-name">{block.fontFamily}</div>
-                                    <p className="typo-desc">Primary Typeface used for clear legibility and modern aesthetic.</p>
-                                </div>
-                                <div className="typo-right">
-                                    <div className="typo-weight" style={{ fontWeight: 400 }}>Regular - The quick brown fox jumps over the lazy dog</div>
-                                    <div className="typo-weight" style={{ fontWeight: 500 }}>Medium - The quick brown fox jumps over the lazy dog</div>
-                                    <div className="typo-weight" style={{ fontWeight: 600 }}>SemiBold - The quick brown fox jumps over the lazy dog</div>
-                                    <div className="typo-weight" style={{ fontWeight: 700 }}>Bold - The quick brown fox jumps over the lazy dog</div>
-                                </div>
-                            </div>
-                        )}
-                    </section>
-                )
-            default:
-                return null
+    const coverImg = currentProject.coverImageUrl || currentProject.thumbnail || '/projects/project_1.jpg';
+    const galleryList = Array.isArray(currentProject.gallery) && currentProject.gallery.length > 0 
+        ? currentProject.gallery.map(g => typeof g === 'string' ? g : g.url) 
+        : [coverImg];
+
+    const renderRichTextContent = () => {
+        const raw = currentProject.description || '';
+        const isHtml = /<[a-z][\s\S]*>/i.test(raw);
+
+        if (isHtml) {
+            return <div className="rich-text-block w-richtext" dangerouslySetInnerHTML={{ __html: raw }} />;
         }
-    }
+
+        return (
+            <div className="rich-text-block w-richtext">
+                <p>{raw}</p>
+                {currentProject.scope && (
+                    <>
+                        <h3>Ruang Lingkup Teknis & Spesifikasi</h3>
+                        <p>{currentProject.scope}</p>
+                    </>
+                )}
+                {currentProject.process && (
+                    <>
+                        <h3>Metodologi Eksekusi & Tahapan Pengerjaan</h3>
+                        <p>{currentProject.process}</p>
+                    </>
+                )}
+                {currentProject.features && currentProject.features.length > 0 && (
+                    <>
+                        <h3>Keunggulan & Fitur Utama Pekerjaan</h3>
+                        <ul role="list">
+                            {currentProject.features.map((feat, idx) => (
+                                <li key={idx}>{feat}</li>
+                            ))}
+                        </ul>
+                    </>
+                )}
+            </div>
+        );
+    };
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
         >
             <Helmet>
-                <title>{project.title} - Afdal Ramdan</title>
-                <meta name="description" content={project.short_description || `View details for the project ${project.title} by Afdal Ramdan.`} />
+                <title>{currentProject.title} — PT Arsi Karya Unggul</title>
+                <meta name="description" content={currentProject.seoDescription || currentProject.description} />
             </Helmet>
-            <div className="container animate-fade-in project-detail-page">
-                <header className="pd-header delay-100 animate-fade-in">
-                    <Link to="/" className="back-button">&larr; Back to home</Link>
-                    <h1 className="pd-title">
-                        {project.title} {project.category && <span>{project.category}</span>}
-                    </h1>
-                    <p className="pd-meta">
-                        {project.company} {project.year}
-                        {project.liveLink && (
-                            <><span style={{ margin: '0 8px', color: 'var(--text-secondary)' }}>·</span><a href={project.liveLink} target="_blank" rel="noreferrer">{project.liveLink}</a></>
-                        )}
-                    </p>
-                </header>
-                
-                <hr className="pd-divider delay-100 animate-fade-in" />
 
-                {(project.blocks || []).map(renderBlock)}
-
-                <footer className="home-footer">
-                    <p className="text-secondary text-sm">
-                        All designs on this website were created by Afdal Ramdan Daman Huri
-                    </p>
-                    <p className="text-secondary text-sm" style={{ textAlign: 'right' }}>
-                        © 2026 All rights reserved.
-                    </p>
-                </footer>
+            {/* Albion Top Cover Image (Full Width Banner) */}
+            <div style={{ width: '100%', paddingTop: 'var(--header-height)', backgroundColor: '#0a0a0a', overflow: 'hidden' }}>
+                <img 
+                    src={coverImg} 
+                    alt={currentProject.title} 
+                    style={{
+                        width: '100%',
+                        maxHeight: '520px',
+                        objectFit: 'cover',
+                        display: 'block',
+                    }}
+                />
             </div>
 
-            {showScrollTop && (
-                <button className="scroll-top-btn animate-fade-in" onClick={scrollToTop} aria-label="Scroll to top">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>
-                </button>
-            )}
+            <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)', paddingTop: '48px' }}>
+                <div className="container" style={{ maxWidth: '980px' }}>
+                    
+                    {/* Top Back Navigation */}
+                    <Link 
+                        to="/proyek" 
+                        style={{ 
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            gap: '8px', 
+                            marginBottom: '24px', 
+                            color: 'var(--color-primary-300)', 
+                            fontWeight: 700, 
+                            fontSize: '0.9rem',
+                            textDecoration: 'none'
+                        }}
+                    >
+                        ← Kembali ke Proyek
+                    </Link>
+
+                    {/* Title Header */}
+                    <div style={{ marginBottom: '32px' }}>
+                        <h1 
+                            style={{ 
+                                fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', 
+                                fontWeight: 800, 
+                                color: 'var(--color-neutral-700)', 
+                                lineHeight: 1.12, 
+                                marginTop: '8px',
+                                letterSpacing: '-0.02em' 
+                            }}
+                        >
+                            {currentProject.title}
+                        </h1>
+                    </div>
+
+                    {/* Project Specification Metadata Panel */}
+                    <div 
+                        style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                            gap: '24px', 
+                            backgroundColor: 'var(--color-neutral-50)', 
+                            padding: '28px 32px', 
+                            borderRadius: 'var(--radius-card)', 
+                            border: '1px solid var(--color-neutral-200)',
+                            marginBottom: '48px'
+                        }}
+                    >
+                        <div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Jenis Proyek</span>
+                            <div style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>{currentProject.category || '-'}</div>
+                        </div>
+
+                        <div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Lokasi</span>
+                            <div style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>{currentProject.location || '-'}</div>
+                        </div>
+
+                        <div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Tahun</span>
+                            <div style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>{currentProject.year || '-'}</div>
+                        </div>
+
+                        <div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Pemberi Kerja / Klien</span>
+                            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>
+                                {currentProject.clientContext || currentProject.companyListed || currentProject.company || 'PT Arsi Karya Unggul'}
+                            </div>
+                        </div>
+
+                        {(currentProject.arsiKaryaRole || currentProject.roleDisclosure) && (
+                            <div style={{ gridColumn: '1 / -1', borderTop: '1px solid var(--color-neutral-200)', paddingTop: '16px', marginTop: '4px' }}>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-primary-300)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>Peran Resmi Arsi Karya</span>
+                                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)', marginTop: '4px' }}>
+                                    {currentProject.arsiKaryaRole || currentProject.roleDisclosure}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Rich Text Editorial Block (Albion WYSIWYG Content) */}
+                    {renderRichTextContent()}
+
+                    {/* Gallery Component */}
+                    {galleryList.length > 0 && (
+                        <div style={{ marginTop: '48px', marginBottom: '60px' }}>
+                            <Gallery images={galleryList} title="Dokumentasi Visual & Foto Lapangan" />
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Albion CTA Section at bottom */}
+            <CTA />
         </motion.div>
-    )
+    );
 }

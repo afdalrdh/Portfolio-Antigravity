@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { authClient } from '../../lib/authClient';
+import { 
+    FiHome, 
+    FiFolder, 
+    FiBriefcase, 
+    FiFileText, 
+    FiMessageSquare, 
+    FiInbox, 
+    FiImage, 
+    FiSettings, 
+    FiLogOut, 
+    FiMenu, 
+    FiX,
+    FiExternalLink
+} from 'react-icons/fi';
 import './AdminLayout.css';
 
 export default function AdminLayout() {
@@ -8,9 +22,10 @@ export default function AdminLayout() {
     const navigate = useNavigate();
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     useEffect(() => {
-        document.title = "Admin - Afdal Ramdan";
+        document.title = "Admin CMS — Arsi Karya";
         authClient.getSession()
             .then((data) => {
                 if (!data || !data.session) {
@@ -23,6 +38,11 @@ export default function AdminLayout() {
             .finally(() => setLoading(false));
     }, [navigate]);
 
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileOpen(false);
+    }, [location.pathname]);
+
     const handleLogout = async () => {
         await authClient.signOut();
         navigate('/admin/login');
@@ -30,87 +50,164 @@ export default function AdminLayout() {
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
-                <p className="text-secondary">Checking session...</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#fafafa' }}>
+                <p style={{ color: '#666', fontSize: '0.95rem' }}>Checking admin session...</p>
             </div>
         );
     }
 
     if (!session) return null;
 
+    const isActive = (path) => {
+        if (path === '/admin/dashboard' || path === '/admin') {
+            return location.pathname === '/admin' || location.pathname === '/admin/dashboard';
+        }
+        return location.pathname.startsWith(path);
+    };
+
+    const getPageTitle = () => {
+        const path = location.pathname;
+        if (path === '/admin' || path === '/admin/dashboard') return 'Dashboard Operational';
+        if (path.startsWith('/admin/projects')) return path.includes('/new') ? 'Tambah Proyek' : path.includes('/edit') ? 'Edit Proyek' : 'Kelola Proyek';
+        if (path.startsWith('/admin/services')) return path.includes('/edit') ? 'Edit Layanan' : path.includes('/new') ? 'Tambah Layanan' : 'Kelola Layanan';
+        if (path.startsWith('/admin/articles')) return path.includes('/new') ? 'Tulis Artikel' : path.includes('/edit') ? 'Edit Artikel' : 'Kelola Artikel';
+        if (path.startsWith('/admin/testimonials')) return 'Kelola Testimoni';
+        if (path.startsWith('/admin/inquiries')) return path.includes('/') && path !== '/admin/inquiries' ? 'Detail Pengajuan' : 'Pengajuan Kerja Sama';
+        if (path.startsWith('/admin/media')) return 'Media Library';
+        if (path.startsWith('/admin/settings')) return 'Pengaturan Website';
+        return 'Admin CMS';
+    };
+
     return (
         <div className="admin-layout">
-            <aside className="admin-sidebar" aria-label="Sidebar Navigation">
-                <div className="admin-brand">
-                    <Link to="/admin">
-                        <strong>CMS</strong> HQ
-                    </Link>
+            {/* Mobile Header / Drawer Toggle */}
+            <header className="admin-mobile-bar">
+                <div className="admin-brand-mobile">
+                    <strong>ARSI KARYA</strong> CMS
                 </div>
+                <button 
+                    className="admin-mobile-toggle"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                    aria-label="Toggle Navigation"
+                >
+                    {mobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+                </button>
+            </header>
+
+            {/* Sidebar Navigation */}
+            <aside className={`admin-sidebar ${mobileOpen ? 'mobile-show' : ''}`} aria-label="Sidebar Navigation">
+                <div className="admin-brand">
+                    <Link to="/admin/dashboard">
+                        <strong>ARSI KARYA</strong> CMS
+                    </Link>
+                    <span className="brand-badge">ADMIN</span>
+                </div>
+
                 <nav className="admin-nav">
-                    <p className="admin-nav-heading">CMS</p>
                     <Link
-                        to="/admin"
-                        className={`admin-nav-link ${location.pathname === '/admin' ? 'active' : ''}`}
+                        to="/admin/dashboard"
+                        className={`admin-nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}
                     >
-                        Projects
+                        <FiHome size={18} />
+                        <span>Dashboard</span>
                     </Link>
-                    <p className="admin-nav-heading">PAGES</p>
+
+                    <p className="admin-nav-heading">KONTEN</p>
                     <Link
-                        to="/admin/home"
-                        className={`admin-nav-link ${location.pathname === '/admin/home' ? 'active' : ''}`}
+                        to="/admin/projects"
+                        className={`admin-nav-link ${isActive('/admin/projects') ? 'active' : ''}`}
                     >
-                        Home Page
-                    </Link>
-                    <Link
-                        to="/admin/labs"
-                        className={`admin-nav-link ${location.pathname === '/admin/labs' ? 'active' : ''}`}
-                    >
-                        Labs Page
+                        <FiFolder size={18} />
+                        <span>Proyek</span>
                     </Link>
                     <Link
-                        to="/admin/about"
-                        className={`admin-nav-link ${location.pathname === '/admin/about' ? 'active' : ''}`}
+                        to="/admin/services"
+                        className={`admin-nav-link ${isActive('/admin/services') ? 'active' : ''}`}
                     >
-                        About Page
+                        <FiBriefcase size={18} />
+                        <span>Layanan</span>
                     </Link>
                     <Link
-                        to="/admin/contact"
-                        className={`admin-nav-link ${location.pathname === '/admin/contact' ? 'active' : ''}`}
+                        to="/admin/articles"
+                        className={`admin-nav-link ${isActive('/admin/articles') ? 'active' : ''}`}
                     >
-                        Contact Page
+                        <FiFileText size={18} />
+                        <span>Artikel</span>
                     </Link>
                     <Link
-                        to="/admin/ai-chat"
-                        className={`admin-nav-link ${location.pathname === '/admin/ai-chat' ? 'active' : ''}`}
+                        to="/admin/testimonials"
+                        className={`admin-nav-link ${isActive('/admin/testimonials') ? 'active' : ''}`}
                     >
-                        AI Chat Settings
+                        <FiMessageSquare size={18} />
+                        <span>Testimoni</span>
                     </Link>
+
+                    <p className="admin-nav-heading">LEADS</p>
                     <Link
-                        to="/"
-                        className="admin-nav-link text-secondary"
-                        style={{ marginTop: '16px' }}
+                        to="/admin/inquiries"
+                        className={`admin-nav-link ${isActive('/admin/inquiries') ? 'active' : ''}`}
                     >
-                        &larr; Back to Site
+                        <FiInbox size={18} />
+                        <span>Pengajuan Kerja Sama</span>
                     </Link>
+
+                    <p className="admin-nav-heading">MEDIA</p>
+                    <Link
+                        to="/admin/media"
+                        className={`admin-nav-link ${isActive('/admin/media') ? 'active' : ''}`}
+                    >
+                        <FiImage size={18} />
+                        <span>Media</span>
+                    </Link>
+
+                    <p className="admin-nav-heading">WEBSITE</p>
+                    <Link
+                        to="/admin/settings"
+                        className={`admin-nav-link ${isActive('/admin/settings') ? 'active' : ''}`}
+                    >
+                        <FiSettings size={18} />
+                        <span>Pengaturan</span>
+                    </Link>
+
+                    <a
+                        href="/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="admin-nav-link external-link"
+                        style={{ marginTop: 'auto' }}
+                    >
+                        <FiExternalLink size={18} />
+                        <span>Lihat Website</span>
+                    </a>
+
                     <button
                         onClick={handleLogout}
-                        className="admin-nav-link text-secondary"
-                        style={{ marginTop: 'auto', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '10px 16px', width: '100%', color: '#ff3b30' }}
+                        className="admin-nav-link logout-btn"
                     >
-                        Logout
+                        <FiLogOut size={18} />
+                        <span>Logout</span>
                     </button>
                 </nav>
             </aside>
+
+            {/* Mobile backdrop overlay */}
+            {mobileOpen && (
+                <div 
+                    className="admin-sidebar-overlay" 
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
+            {/* Main Content Area */}
             <main className="admin-main">
                 <header className="admin-header">
-                    <h2 className="admin-page-title">
-                        {location.pathname.includes('/new') ? 'Create Project' : 'Dashboard'}
-                    </h2>
+                    <h2 className="admin-page-title">{getPageTitle()}</h2>
                     <div className="admin-profile">
-                        <span className="admin-avatar">{session?.user?.name?.[0] || 'A'}</span>
+                        <span className="admin-user-name">{session?.user?.name || session?.user?.email || 'Admin'}</span>
+                        <span className="admin-avatar">{session?.user?.name?.[0]?.toUpperCase() || 'A'}</span>
                     </div>
                 </header>
-                <div className="admin-content animate-fade-in">
+                <div className="admin-content">
                     <Outlet />
                 </div>
             </main>

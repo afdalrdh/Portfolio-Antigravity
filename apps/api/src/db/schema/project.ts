@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, jsonb, boolean } from 'drizzle-orm/pg-core';
 
 export const projects = pgTable('projects', {
     id: serial('id').primaryKey(),
@@ -6,10 +6,21 @@ export const projects = pgTable('projects', {
     category: text('category'),
     slug: text('slug').notNull().unique(),
     company: text('company'),
+    location: text('location'),
     year: text('year'),
+    clientContext: text('client_context'),
+    arsiKaryaRole: text('arsi_karya_role'),
+    description: text('description'),
+    scope: text('scope'),
+    process: text('process'),
     liveLink: text('live_link'),
     coverImageUrl: text('cover_image_url'),
-    visibility: text('visibility').notNull().default('draft'), // 'public' | 'draft' | 'private'
+    coverImageId: text('cover_image_id'),
+    gallery: jsonb('gallery').$type<any[]>(),
+    published: boolean('published').notNull().default(true),
+    visibility: text('visibility').notNull().default('public'), // 'public' | 'draft' | 'private'
+    seoTitle: text('seo_title'),
+    seoDescription: text('seo_description'),
     sortOrder: integer('sort_order').notNull().default(0),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),

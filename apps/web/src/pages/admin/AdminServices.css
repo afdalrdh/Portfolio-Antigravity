@@ -1,0 +1,17 @@
+.admin-services-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.warning-placeholder {
+    background: #fffbe6 !important;
+    border-color: #ffe58f !important;
+    color: #d46b08 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.65rem;
+}

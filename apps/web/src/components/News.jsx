@@ -1,29 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { publicApi } from '../lib/api';
+
+const DEFAULT_NEWS = [
+  {
+    id: "cara-menentukan-kebutuhan-jasa-konstruksi",
+    slug: "cara-menentukan-kebutuhan-jasa-konstruksi",
+    title: 'Cara Menentukan Kebutuhan Jasa Konstruksi untuk Proyek Anda',
+    excerpt: 'Memulai proyek pembangunan membutuhkan pemahaman mendasar mengenai scope pekerjaan dan penentuan jenis kontraktor.',
+  },
+  {
+    id: "apa-yang-perlu-disiapkan-sebelum-renovasi-rumah",
+    slug: "apa-yang-perlu-disiapkan-sebelum-renovasi-rumah",
+    title: 'Apa yang Perlu Disiapkan Sebelum Memulai Renovasi Rumah?',
+    excerpt: 'Renovasi rumah tanpa perencanaan matang sering memicu masalah kebocoran biaya dan waktu. Simak persiapan penting.',
+  },
+  {
+    id: "design-and-build-satu-alur-perencanaan-eksekusi",
+    slug: "design-and-build-satu-alur-perencanaan-eksekusi",
+    title: 'Design & Build: Satu Alur dari Perencanaan hingga Pelaksanaan',
+    excerpt: 'Pelajari efisiensi biaya dan kemudahan kontrol proyek dalam satu komando terpadu perencanaan dan konstruksi.',
+  },
+];
 
 export default function News() {
-  const newsList = [
-    {
-      id: "cara-menentukan-kebutuhan-jasa-konstruksi",
-      slug: "cara-menentukan-kebutuhan-jasa-konstruksi",
-      title: 'Cara Menentukan Kebutuhan Jasa Konstruksi untuk Proyek Anda',
-      excerpt: 'Memulai proyek pembangunan membutuhkan pemahaman mendasar mengenai scope pekerjaan dan penentuan jenis kontraktor.',
-    },
-    {
-      id: "apa-yang-perlu-disiapkan-sebelum-renovasi-rumah",
-      slug: "apa-yang-perlu-disiapkan-sebelum-renovasi-rumah",
-      title: 'Apa yang Perlu Disiapkan Sebelum Memulai Renovasi Rumah?',
-      excerpt: 'Renovasi rumah tanpa perencanaan matang sering memicu masalah kebocoran biaya dan waktu. Simak persiapan penting.',
-    },
-    {
-      id: "design-and-build-satu-alur-perencanaan-eksekusi",
-      slug: "design-and-build-satu-alur-perencanaan-eksekusi",
-      title: 'Design & Build: Satu Alur dari Perencanaan hingga Pelaksanaan',
-      excerpt: 'Pelajari efisiensi biaya dan kemudahan kontrol proyek dalam satu komando terpadu perencanaan dan konstruksi.',
-    },
-  ];
+  const [newsList, setNewsList] = useState(DEFAULT_NEWS);
+
+  useEffect(() => {
+    publicApi.getArticles()
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.slice(0, 3).map(a => ({
+            id: a.id || a.slug,
+            slug: a.slug,
+            title: a.title,
+            excerpt: a.excerpt || a.content?.substring(0, 120) || '',
+          }));
+          setNewsList(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="news" className="section-padding" style={{ backgroundColor: '#ffffff' }}>

@@ -1,32 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Button from './ui/Button';
+import { publicApi } from '../lib/api';
+
+const DEFAULT_PROJECTS = [
+  {
+    id: "fasad-acp-kppn-pekalongan",
+    slug: "fasad-acp-kppn-pekalongan",
+    title: 'Pekerjaan Fasad ACP Gedung Kantor KPPN Pekalongan',
+    category: 'Fasad ACP & Eksterior',
+    image: '/projects/project_1.jpg',
+  },
+  {
+    id: "the-old-heritage-mr-erwan",
+    slug: "the-old-heritage-mr-erwan",
+    title: 'The Old Heritage Rumah Hunian Mr. Erwan',
+    category: 'Design & Build',
+    image: '/projects/project_2.jpg',
+  },
+  {
+    id: "the-verdant-pavilion-ibu-dewi",
+    slug: "the-verdant-pavilion-ibu-dewi",
+    title: 'The Verdant Pavilion Rumah Hunian Ibu Dewi',
+    category: 'Design & Build',
+    image: '/projects/project_4.jpg',
+  },
+];
 
 export default function Projects() {
-  const featuredProjects = [
-    {
-      id: "fasad-acp-kppn-pekalongan",
-      slug: "fasad-acp-kppn-pekalongan",
-      title: 'Pekerjaan Fasad ACP Gedung Kantor KPPN Pekalongan',
-      category: 'Fasad ACP & Eksterior',
-      image: 'https://cdn.prod.website-files.com/617c7f1cf3cfc148fa75f653/617c808a33188a708bb59f4e_project_1.jpg',
-    },
-    {
-      id: "the-old-heritage-mr-erwan",
-      slug: "the-old-heritage-mr-erwan",
-      title: 'The Old Heritage Rumah Hunian Mr. Erwan',
-      category: 'Design & Build',
-      image: 'https://cdn.prod.website-files.com/617c7f1cf3cfc148fa75f653/617c80667296857d53bc11e3_project_2.jpg',
-    },
-    {
-      id: "the-verdant-pavilion-ibu-dewi",
-      slug: "the-verdant-pavilion-ibu-dewi",
-      title: 'The Verdant Pavilion Rumah Hunian Ibu Dewi',
-      category: 'Design & Build',
-      image: 'https://cdn.prod.website-files.com/617c7f1cf3cfc148fa75f653/617c8025b78d08148237c09b_project_3.jpg',
-    },
-  ];
+  const [featuredProjects, setFeaturedProjects] = useState(DEFAULT_PROJECTS);
+
+  useEffect(() => {
+    publicApi.getProjects()
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.slice(0, 3).map(p => ({
+            id: p.id || p.slug,
+            slug: p.slug,
+            title: p.title,
+            category: p.category || 'Portfolio',
+            image: p.coverImageUrl || DEFAULT_PROJECTS[0].image,
+          }));
+          setFeaturedProjects(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="projects" className="section-padding" style={{ backgroundColor: '#f4f6f9', borderTop: '1px solid var(--color-border)' }}>

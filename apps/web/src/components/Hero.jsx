@@ -8,7 +8,6 @@ import { getGeneralWaUrl } from '../utils/whatsapp';
 export default function Hero() {
   const videoMp4 = "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/6179fd5c38ec05cd8ff9df2b_background_video-transcode.mp4";
   const videoWebm = "https://cdn.prod.website-files.com/6175e5f51349efa3b3120baa/6179fd5c38ec05cd8ff9df2b_background_video-transcode.webm";
-  const fallbackPoster = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/617b347a79be8351ce06894c_gallery_2.jpg";
 
   const generalWaUrl = getGeneralWaUrl();
 
@@ -43,7 +42,7 @@ export default function Hero() {
         overflow: 'hidden',
       }}
     >
-      {/* Background HTML5 Video */}
+      {/* Background HTML5 Video — direct autoplay without static poster image */}
       <div
         style={{
           position: 'absolute',
@@ -60,7 +59,7 @@ export default function Hero() {
           loop
           muted
           playsInline
-          poster={fallbackPoster}
+          preload="auto"
           style={{
             width: '100%',
             height: '100%',
@@ -85,7 +84,7 @@ export default function Hero() {
         />
       </div>
 
-      {/* Main Center Content */}
+      {/* Main Left-Aligned Content */}
       <div
         className="container"
         style={{
@@ -93,52 +92,51 @@ export default function Hero() {
           zIndex: 10,
           flexGrow: 1,
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          width: '100%',
           paddingTop: '80px',
-          paddingBottom: '60px',
+          paddingBottom: '40px',
         }}
       >
-        <div style={{ maxWidth: '840px' }}>
+        <div style={{ width: '100%', maxWidth: '1050px', textAlign: 'left', marginLeft: 0, marginRight: 'auto' }}>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             style={{
-              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
+              fontSize: 'clamp(2.6rem, 5.2vw, 4.6rem)',
               fontWeight: 800,
-              lineHeight: 1.05,
+              lineHeight: 1.1,
               color: '#ffffff',
               letterSpacing: '-0.02em',
-              marginBottom: '36px',
+              marginBottom: '24px',
               textShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              textAlign: 'left',
             }}
           >
-            Membangun Tuntas, Unggul Dalam Kualitas
+            Membangun Tuntas,<br />
+            Unggul Dalam Kualitas
           </motion.h1>
 
-          <motion.div
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}
+            style={{
+              fontSize: 'clamp(1rem, 1.35vw, 1.15rem)',
+              color: 'rgba(255, 255, 255, 0.85)',
+              maxWidth: '780px',
+              lineHeight: 1.6,
+              margin: 0,
+              fontWeight: 400,
+              textAlign: 'left',
+            }}
           >
-            <Button
-              href={generalWaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="primary"
-              style={{ padding: '16px 36px', fontSize: '1rem' }}
-            >
-              Konsultasi Gratis
-            </Button>
-            <Button
-              to="/proyek"
-              variant="dark"
-              style={{ border: '1px solid rgba(255, 255, 255, 0.4)', padding: '16px 36px', fontSize: '1rem' }}
-            >
-              Lihat Proyek
-            </Button>
-          </motion.div>
+            Proses yang terstruktur, komunikasi yang jelas, dan kualitas yang terjaga<br />
+            untuk mewujudkan proyek Anda dengan lebih tenang dan terarah.
+          </motion.p>
         </div>
       </div>
 

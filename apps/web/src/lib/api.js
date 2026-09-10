@@ -28,8 +28,15 @@ export const publicApi = {
     getHome: () => api('/home'),
     getAbout: () => api('/about'),
     getContact: () => api('/contact'),
+    submitInquiry: (data) => api('/inquiries', { method: 'POST', body: JSON.stringify(data) }),
     getProjects: () => api('/projects'),
     getProject: (slug) => api(`/projects/${slug}`),
+    getServices: () => api('/services'),
+    getService: (slug) => api(`/services/${slug}`),
+    getArticles: () => api('/articles'),
+    getArticle: (slug) => api(`/articles/${slug}`),
+    getTestimonials: () => api('/testimonials'),
+    getSettings: () => api('/settings'),
     getAiChatSettings: () => api('/ai-chat/settings'),
     getCreations: (search = '', category = '') => {
         const query = new URLSearchParams();
@@ -42,6 +49,7 @@ export const publicApi = {
 };
 
 export const adminApi = {
+    getStats: () => api('/admin/stats'),
     getHome: () => api('/admin/home'),
     updateHome: (data) => api('/admin/home', { method: 'PUT', body: JSON.stringify(data) }),
     getAbout: () => api('/admin/about'),
@@ -54,6 +62,44 @@ export const adminApi = {
     updateProject: (id, data) => api(`/admin/projects/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteProject: (id) => api(`/admin/projects/${id}`, { method: 'DELETE' }),
     reorderProjects: (projectIds) => api('/admin/projects/reorder', { method: 'POST', body: JSON.stringify({ projectIds }) }),
+    
+    // Services CMS
+    getServices: () => api('/admin/services'),
+    getService: (id) => api(`/admin/services/${id}`),
+    createService: (data) => api('/admin/services', { method: 'POST', body: JSON.stringify(data) }),
+    updateService: (id, data) => api(`/admin/services/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteService: (id) => api(`/admin/services/${id}`, { method: 'DELETE' }),
+
+    // Articles CMS
+    getArticles: () => api('/admin/articles'),
+    getArticle: (id) => api(`/admin/articles/${id}`),
+    createArticle: (data) => api('/admin/articles', { method: 'POST', body: JSON.stringify(data) }),
+    updateArticle: (id, data) => api(`/admin/articles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteArticle: (id) => api(`/admin/articles/${id}`, { method: 'DELETE' }),
+
+    // Testimonials CMS
+    getTestimonials: () => api('/admin/testimonials'),
+    getTestimonial: (id) => api(`/admin/testimonials/${id}`),
+    createTestimonial: (data) => api('/admin/testimonials', { method: 'POST', body: JSON.stringify(data) }),
+    updateTestimonial: (id, data) => api(`/admin/testimonials/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteTestimonial: (id) => api(`/admin/testimonials/${id}`, { method: 'DELETE' }),
+
+    // Inquiries CMS
+    getInquiries: () => api('/admin/inquiries'),
+    getInquiry: (id) => api(`/admin/inquiries/${id}`),
+    updateInquiryStatus: (id, status) => api(`/admin/inquiries/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
+    deleteInquiry: (id) => api(`/admin/inquiries/${id}`, { method: 'DELETE' }),
+
+    // Media Library
+    getMedia: () => api('/admin/media'),
+    saveMedia: (data) => api('/admin/media', { method: 'POST', body: JSON.stringify(data) }),
+    deleteMedia: (id) => api(`/admin/media/${id}`, { method: 'DELETE' }),
+
+    // Site Settings
+    getSettings: () => api('/admin/settings'),
+    updateSettings: (data) => api('/admin/settings', { method: 'PUT', body: JSON.stringify(data) }),
+
+    // AI Chat & Labs
     getAiChat: () => api('/admin/ai-chat'),
     getAiChatLogs: () => api('/admin/ai-chat/logs'),
     updateAiChat: (data) => api('/admin/ai-chat', { method: 'PUT', body: JSON.stringify(data) }),

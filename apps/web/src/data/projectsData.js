@@ -92,8 +92,8 @@ export const projectsData = [
     location: "Jl. Binagriya Raya, Pekalongan",
     companyListed: "Mitra / PT Arsi Karya Unggul",
     roleDisclosure: "Pekerjaan Infrastruktur Pengaspalan & Pelapisan Jalan.",
-    thumbnail: "/projects/project_1.jpg",
-    gallery: ["/projects/project_1.jpg"],
+    thumbnail: "/projects/project_7.jpg",
+    gallery: ["/projects/project_7.jpg"],
     description: "Pekerjaan perataan, pengerasan fondasi, dan pengaspalan hotmix akses jalan komplek rumah dinas untuk daya tahan jangka panjang.",
     features: ["Aspal Hotmix AC-WC", "Pemadatan Tandem Roller", "Drainase Samping Presisi"]
   },
@@ -106,8 +106,8 @@ export const projectsData = [
     location: "Pekalongan, Jawa Tengah",
     companyListed: "Mitra / PT Arsi Karya Unggul",
     roleDisclosure: "Pekerjaan Penataan Area Parkir & Perkerasan Paving Block.",
-    thumbnail: "/projects/project_2.jpg",
-    gallery: ["/projects/project_2.jpg"],
+    thumbnail: "/projects/project_8.jpg",
+    gallery: ["/projects/project_8.jpg"],
     description: "Pengembangan dan penataan lahan parkir dinas menggunakan paving block K-300 lengkap dengan kanopi pelindung dan marka jalan.",
     features: ["Paving Block Heavy Duty K-300", "Kanopi Rangka Baja", "Marka Parkir & Pembatas"]
   },
@@ -120,8 +120,8 @@ export const projectsData = [
     location: "Pekalongan, Jawa Tengah",
     companyListed: "Mitra / PT Arsi Karya Unggul",
     roleDisclosure: "Pekerjaan Penambahan Nilai Gedung & Rehabilitasi Bangunan.",
-    thumbnail: "/projects/project_3.jpg",
-    gallery: ["/projects/project_3.jpg"],
+    thumbnail: "/projects/project_6.jpg",
+    gallery: ["/projects/project_6.jpg"],
     description: "Renovasi menyeluruh struktur atap, perbaikan dinding basah, serta pembaruan sanitari pada 3 unit rumah dinas instansi.",
     features: ["Peremajaan Rangka Atap Baja Ringan", "Waterproofing Dinding & Rooftop", "Sanitari & Instalasi Air Baru"]
   }

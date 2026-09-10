@@ -1,29 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { publicApi } from '../lib/api';
+
+const DEFAULT_TESTIMONIALS = [
+  {
+    quote: "Pengawasan mutu dan transparansi laporan berkala PT Arsi Karya Unggul memberikan rasa tenang selama seluruh proses pembangunan rumah kami.",
+    author: "MR. ERWAN",
+    company: "The Old Heritage Project",
+  },
+  {
+    quote: "Eksekusi presisi fasad ACP dan peremajaan gedung kantor diselesaikan dengan sangat rapi dan tepat waktu sesuai standar instansi.",
+    author: "TIM TEKNIK KPPN",
+    company: "KPPN Pekalongan",
+  },
+  {
+    quote: "Konsep Design & Build terbukti efisien. Perencanaan 3D hingga hasil fisik rumah hunian di Buah Batu persis sesuai ekspektasi kami.",
+    author: "IBU DEWI",
+    company: "The Verdant Pavilion",
+  },
+];
 
 export default function Testimonials() {
   const bgImg = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/617c967a42c0beed800a8b23_contact.jpg";
 
-  const testimonials = [
-    {
-      quote: "Pengawasan mutu dan transparansi laporan berkala PT Arsi Karya Unggul memberikan rasa tenang selama seluruh proses pembangunan rumah kami.",
-      author: "MR. ERWAN",
-      company: "The Old Heritage Project",
-    },
-    {
-      quote: "Eksekusi presisi fasad ACP dan peremajaan gedung kantor diselesaikan dengan sangat rapi dan tepat waktu sesuai standar instansi.",
-      author: "TIM TEKNIK KPPN",
-      company: "KPPN Pekalongan",
-    },
-    {
-      quote: "Konsep Design & Build terbukti efisien. Perencanaan 3D hingga hasil fisik rumah hunian di Buah Batu persis sesuai ekspektasi kami.",
-      author: "IBU DEWI",
-      company: "The Verdant Pavilion",
-    },
-  ];
-
+  const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    publicApi.getTestimonials()
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map(t => ({
+            quote: t.quote,
+            author: t.clientName?.toUpperCase() || 'KLIEN ARSI KARYA',
+            company: t.clientRole || t.projectName || 'Arsi Karya Project',
+          }));
+          setTestimonials(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section
@@ -111,15 +128,15 @@ export default function Testimonials() {
                     fontWeight: 400,
                   }}
                 >
-                  "{testimonials[currentIndex].quote}"
+                  "{testimonials[currentIndex]?.quote}"
                 </p>
 
                 <div>
                   <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', letterSpacing: '0.05em' }}>
-                    {testimonials[currentIndex].author}
+                    {testimonials[currentIndex]?.author}
                   </h4>
                   <p style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500 }}>
-                    {testimonials[currentIndex].company}
+                    {testimonials[currentIndex]?.company}
                   </p>
                 </div>
               </motion.div>

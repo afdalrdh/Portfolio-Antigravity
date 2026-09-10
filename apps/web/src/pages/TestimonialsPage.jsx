@@ -1,118 +1,158 @@
-import React, { useState } from 'react';
-import SectionTag from '../components/ui/SectionTag';
+import React, { useState, useEffect } from 'react';
 import SEOHead from '../components/ui/SEOHead';
-import Button from '../components/ui/Button';
-import { publishedTestimonials, submitTestimonialLocal } from '../data/testimonialsData';
+import HeroBanner from '../components/ui/HeroBanner';
+import { publicApi } from '../lib/api';
+import { DEFAULT_CLIENT_TESTIMONIALS } from '../data/testimonialsData';
 
 export default function TestimonialsPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    project: '',
-    rating: 5,
-    message: '',
-  });
+  const [testimonials, setTestimonials] = useState(DEFAULT_CLIENT_TESTIMONIALS);
 
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    submitTestimonialLocal(formData);
-    setSubmitted(true);
-  };
+  useEffect(() => {
+    publicApi.getTestimonials()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTestimonials(data);
+        }
+      })
+      .catch(() => {
+        // Fallback to DEFAULT_CLIENT_TESTIMONIALS
+      });
+  }, []);
 
   return (
     <>
       <SEOHead
-        title="Testimoni Klien & Ulasan — PT Arsi Karya Unggul"
-        description="Ulasan pengalaman klien dan mitra dalam bekerjasama dengan PT Arsi Karya Unggul."
+        title="Testimoni Klien — PT Arsi Karya Unggul"
+        description="Ulasan dan testimoni langsung pengalaman klien bekerja sama dengan PT Arsi Karya Unggul."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 60px)', paddingBottom: '80px' }}>
-        <div className="container">
-          <SectionTag light>TESTIMONI KLIEN</SectionTag>
-          <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
-            Pengalaman Bekerjasama
-          </h1>
-          <p style={{ fontSize: '1.15rem', color: 'var(--color-primary-200)', maxWidth: '680px' }}>
-            Transparansi ulasan dan integritas tinggi dalam setiap pengerjaan proyek konstruksi.
-          </p>
-        </div>
-      </section>
+      {/* Dark Architectural Hero Banner */}
+      <HeroBanner
+        bgImage="/projects/project_6.jpg"
+        overlayOpacity={0.65}
+        tag="TESTIMONI KLIEN"
+        title="Pengalaman Bekerjasama"
+        subtitle="Kepuasan dan kepercayan klien adalah tolok ukur utama keberhasilan pengerjaan proyek kami."
+      />
 
-      <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
+      <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-50)' }}>
         <div className="container">
-          {publishedTestimonials.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
-              {publishedTestimonials.map((t) => (
-                <div key={t.id} style={{ padding: '32px', backgroundColor: 'var(--color-neutral-50)', borderRadius: '8px', border: '1px solid var(--color-neutral-200)' }}>
-                  <p style={{ fontStyle: 'italic', fontSize: '1rem', marginBottom: '20px' }}>"{t.quote}"</p>
-                  <strong>{t.clientName}</strong>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--color-neutral-400)' }}>{t.projectTitle}</div>
+          {/* Section Header with Accent Bar */}
+          <div style={{ marginBottom: '48px' }}>
+            <h2
+              style={{
+                fontSize: 'clamp(2.2rem, 3.8vw, 3rem)',
+                fontWeight: 800,
+                color: 'var(--color-neutral-800)',
+                lineHeight: 1.15,
+                margin: '0 0 12px 0',
+              }}
+            >
+              Testimoni Client
+            </h2>
+            <div
+              style={{
+                width: '60px',
+                height: '3px',
+                backgroundColor: '#c48b59',
+                borderRadius: '2px',
+              }}
+            />
+          </div>
+
+          {/* Testimonial Cards Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
+              gap: '32px',
+            }}
+          >
+            {testimonials.map((t) => (
+              <div
+                key={t.id}
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderRadius: '16px',
+                  border: '1px solid var(--color-neutral-200)',
+                  padding: '32px',
+                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'stretch',
+                  gap: '24px',
+                }}
+              >
+                {/* Left Side: Quote, Divider, Name, Profession */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <p
+                    style={{
+                      fontSize: '0.95rem',
+                      lineHeight: 1.7,
+                      color: 'var(--color-neutral-600)',
+                      margin: 0,
+                    }}
+                  >
+                    {t.quote}
+                  </p>
+
+                  <div style={{ marginTop: '24px' }}>
+                    <div
+                      style={{
+                        width: '36px',
+                        height: '2px',
+                        backgroundColor: '#c48b59',
+                        marginBottom: '16px',
+                      }}
+                    />
+                    <h4
+                      style={{
+                        fontSize: '1.15rem',
+                        fontWeight: 800,
+                        color: 'var(--color-neutral-800)',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {t.clientName}
+                    </h4>
+                    <p
+                      style={{
+                        fontSize: '0.85rem',
+                        color: 'var(--color-neutral-400)',
+                        margin: 0,
+                      }}
+                    >
+                      {t.clientRole || t.projectName || 'Klien PT Arsi Karya Unggul'}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 60px auto' }}>
-              <h2>Komitmen Kepuasan Klien</h2>
-              <p style={{ color: 'var(--color-neutral-400)', marginTop: '12px', lineHeight: 1.6 }}>
-                Halaman ulasan ini diperbarui secara berkala berdasarkan kiriman ulasan resmi klien yang telah menyelesaikan serah terima proyek (BAST).
-              </p>
-            </div>
-          )}
 
-          {/* Review Submission Form */}
-          <div style={{ maxWidth: '640px', margin: '0 auto', backgroundColor: 'var(--color-neutral-50)', padding: '40px', borderRadius: 'var(--radius-card)', border: '1px solid var(--color-neutral-200)' }}>
-            <h3 style={{ fontSize: '1.35rem', marginBottom: '12px' }}>Formulir Pengalaman Bekerjasama</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-400)', marginBottom: '28px' }}>
-              Pernah menggunakan jasa konstruksi atau Design & Build PT Arsi Karya Unggul? Bagikan pengalaman Anda di bawah ini:
-            </p>
-
-            {submitted ? (
-              <div style={{ backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-400)', padding: '20px', borderRadius: '6px', textAlign: 'center' }}>
-                <strong>Terima kasih atas ulasan Anda!</strong><br />
-                Pesan Anda telah dikirim dan akan melalui verifikasi tim sebelum ditampilkan secara publik.
+                {/* Right Side: Photo */}
+                <div
+                  style={{
+                    width: '180px',
+                    minWidth: '180px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    backgroundColor: 'var(--color-neutral-100)',
+                  }}
+                >
+                  <img
+                    src={t.imageUrl || '/projects/project_2.jpg'}
+                    alt={t.clientName}
+                    onError={(e) => {
+                      e.currentTarget.src = '/projects/project_2.jpg';
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                </div>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px' }}>Nama Lengkap / Instansi *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.95rem' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px' }}>Nama Proyek / Pekerjaan *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Renovasi Rumah / Pekerjaan Fasad"
-                    value={formData.project}
-                    onChange={(e) => setFormData({ ...formData, project: e.target.value })}
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.95rem' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px' }}>Ulasan / Pengalaman Bekerjasama *</label>
-                  <textarea
-                    required
-                    rows="4"
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.95rem', fontFamily: 'inherit' }}
-                  ></textarea>
-                </div>
-
-                <Button type="submit" variant="primary" style={{ marginTop: '8px' }}>
-                  Kirim Ulasan Resmi
-                </Button>
-              </form>
-            )}
+            ))}
           </div>
         </div>
       </section>

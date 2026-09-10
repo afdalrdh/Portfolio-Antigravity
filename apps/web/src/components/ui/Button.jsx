@@ -22,6 +22,7 @@ export default function Button({
   let variantClass = 'btn-primary';
   if (variant === 'secondary') variantClass = 'btn-secondary';
   if (variant === 'dark') variantClass = 'btn-dark';
+  if (variant === 'outline-light') variantClass = 'btn-outline-light';
   if (variant === 'text') variantClass = 'btn-text';
   if (variant === 'whatsapp') variantClass = 'btn-whatsapp';
 

@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SectionTag from '../components/ui/SectionTag';
 import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
-import Breadcrumb from '../components/ui/Breadcrumb';
 import Gallery from '../components/ui/Gallery';
+import HeroBanner from '../components/ui/HeroBanner';
+import CTA from '../components/CTA';
 import { projectsData } from '../data/projectsData';
 import { getProjectWaUrl } from '../utils/whatsapp';
+import { publicApi } from '../lib/api';
 
 export default function ProjectsPage() {
   const { projectSlug } = useParams();
   const [activeCategory, setActiveCategory] = useState('Semua');
+  const [apiProject, setApiProject] = useState(null);
+  const [loading, setLoading] = useState(Boolean(projectSlug));
+
+  useEffect(() => {
+    if (projectSlug) {
+      setLoading(true);
+      publicApi.getProject(projectSlug)
+        .then((data) => {
+          if (data) setApiProject(data);
+        })
+        .catch(() => {
+          // fallback to static projectsData
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [projectSlug]);
 
   // Single Project Detail View (/proyek/:slug)
   if (projectSlug) {
-    const project = projectsData.find((p) => p.slug === projectSlug);
+    const fallbackProject = projectsData.find((p) => p.slug === projectSlug);
+    const project = apiProject || fallbackProject;
 
     if (project) {
       const relatedProjects = projectsData.filter(
@@ -22,112 +41,189 @@ export default function ProjectsPage() {
       );
 
       const projectWaUrl = getProjectWaUrl(project.title);
+      const coverImg = project.coverImageUrl || project.thumbnail || '/projects/project_1.jpg';
+      const galleryList = Array.isArray(project.gallery) && project.gallery.length > 0 
+        ? project.gallery.map(g => typeof g === 'string' ? g : g.url) 
+        : [coverImg];
+
+      const renderRichTextContent = () => {
+        const raw = project.description || '';
+        const isHtml = /<[a-z][\s\S]*>/i.test(raw);
+
+        if (isHtml) {
+          return <div className="rich-text-block w-richtext" dangerouslySetInnerHTML={{ __html: raw }} />;
+        }
+
+        return (
+          <div className="rich-text-block w-richtext">
+            <p>{raw}</p>
+            {project.scope && (
+              <>
+                <h3>Ruang Lingkup Teknis & Spesifikasi</h3>
+                <p>{project.scope}</p>
+              </>
+            )}
+            {project.process && (
+              <>
+                <h3>Metodologi Eksekusi & Tahapan Pengerjaan</h3>
+                <p>{project.process}</p>
+              </>
+            )}
+            {project.features && project.features.length > 0 && (
+              <>
+                <h3>Keunggulan & Fitur Utama Pekerjaan</h3>
+                <ul role="list">
+                  {project.features.map((feat, idx) => (
+                    <li key={idx}>{feat}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        );
+      };
 
       return (
         <>
           <SEOHead
             title={`${project.title} — PT Arsi Karya Unggul`}
-            description={project.description}
+            description={project.seoDescription || project.description}
           />
 
-          {/* Hero Banner */}
-          <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '60px' }}>
-            <div className="container">
-              {/* Detail Page Breadcrumb ONLY: Proyek > Project Name */}
-              <Breadcrumb items={[{ label: 'Proyek', to: '/proyek' }, { label: project.title }]} />
-              <SectionTag light>{project.category} • {project.year}</SectionTag>
-              <h1 style={{ color: '#ffffff', fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '16px' }}>{project.title}</h1>
-              <p style={{ fontSize: '1.1rem', color: 'var(--color-primary-200)' }}>{project.location}</p>
-            </div>
-          </section>
+          {/* Albion Top Cover Image (Full Width Banner) */}
+          <div style={{ width: '100%', paddingTop: 'var(--header-height)', backgroundColor: '#0a0a0a', overflow: 'hidden' }}>
+            <img 
+              src={coverImg} 
+              alt={project.title} 
+              style={{
+                width: '100%',
+                maxHeight: '520px',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          </div>
 
-          <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
-            <div className="container" style={{ maxWidth: '960px' }}>
+          <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)', paddingTop: '48px' }}>
+            <div className="container" style={{ maxWidth: '980px' }}>
               
-              {/* Project Cover & Overview Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', marginBottom: '48px' }}>
-                <div style={{ height: '380px', backgroundColor: 'var(--color-neutral-200)', borderRadius: '8px', overflow: 'hidden' }}>
-                  <img src={project.thumbnail} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
+              {/* Top Back Navigation */}
+              <Link 
+                to="/proyek" 
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  marginBottom: '24px', 
+                  color: 'var(--color-primary-300)', 
+                  fontWeight: 700, 
+                  fontSize: '0.9rem',
+                  textDecoration: 'none'
+                }}
+              >
+                ← Kembali ke Proyek
+              </Link>
 
-                {/* Project Info Sidebar */}
-                <div style={{ backgroundColor: 'var(--color-neutral-50)', padding: '32px', borderRadius: 'var(--radius-card)', border: '1px solid var(--color-neutral-200)' }}>
-                  <h3 style={{ fontSize: '1.25rem', marginBottom: '20px', color: 'var(--color-primary-300)' }}>Informasi Proyek</h3>
-                  
-                  <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.925rem' }}>
-                    <li>
-                      <strong style={{ color: 'var(--color-neutral-700)' }}>Jenis Proyek:</strong><br />
-                      {project.category}
-                    </li>
-                    <li>
-                      <strong style={{ color: 'var(--color-neutral-700)' }}>Lokasi Terverifikasi:</strong><br />
-                      {project.location}
-                    </li>
-                    <li>
-                      <strong style={{ color: 'var(--color-neutral-700)' }}>Tahun Pengerjaan:</strong><br />
-                      {project.year}
-                    </li>
-                    <li>
-                      <strong style={{ color: 'var(--color-neutral-700)' }}>Keterangan Entitas Listed:</strong><br />
-                      {project.companyListed || 'PT Arsi Karya Unggul'}
-                    </li>
-                    <li>
-                      <strong style={{ color: 'var(--color-neutral-700)' }}>Keterangan Peran:</strong><br />
-                      <span style={{ fontStyle: 'italic', color: 'var(--color-neutral-500)' }}>{project.roleDisclosure}</span>
-                    </li>
-                  </ul>
-                </div>
+              {/* Title Header */}
+              <div style={{ marginBottom: '32px' }}>
+                <h1 
+                  style={{ 
+                    fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', 
+                    fontWeight: 800, 
+                    color: 'var(--color-neutral-700)', 
+                    lineHeight: 1.12, 
+                    marginTop: '8px',
+                    letterSpacing: '-0.02em' 
+                  }}
+                >
+                  {project.title}
+                </h1>
               </div>
 
-              {/* Description */}
-              <div style={{ marginBottom: '40px' }}>
-                <SectionTag>DESKRIPSI KELENGKAPAN</SectionTag>
-                <h2>Gambaran Umum Pekerjaan</h2>
-                <p style={{ fontSize: '1.05rem', lineHeight: 1.8, color: 'var(--color-neutral-500)', marginTop: '16px' }}>
-                  {project.description}
-                </p>
-              </div>
+              {/* Project Specification Metadata Panel */}
+              <div 
+                style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                  gap: '24px', 
+                  backgroundColor: 'var(--color-neutral-50)', 
+                  padding: '28px 32px', 
+                  borderRadius: 'var(--radius-card)', 
+                  border: '1px solid var(--color-neutral-200)',
+                  marginBottom: '48px'
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Jenis Proyek</span>
+                  <div style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>{project.category || '-'}</div>
+                </div>
 
-              {/* Features / Scope */}
-              {project.features && (
-                <div style={{ marginBottom: '40px' }}>
-                  <SectionTag>SPESIFIKASI PEKERJAAN</SectionTag>
-                  <h2>Ruang Lingkup Teknis</h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginTop: '20px' }}>
-                    {project.features.map((f, idx) => (
-                      <div key={idx} style={{ backgroundColor: 'var(--color-neutral-50)', padding: '16px 20px', borderRadius: '6px', border: '1px solid var(--color-neutral-200)', fontSize: '0.95rem', fontWeight: 600 }}>
-                        ✓ {f}
-                      </div>
-                    ))}
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Lokasi</span>
+                  <div style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>{project.location || '-'}</div>
+                </div>
+
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Tahun</span>
+                  <div style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>{project.year || '-'}</div>
+                </div>
+
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Pemberi Kerja / Klien</span>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-neutral-700)', marginTop: '4px' }}>
+                    {project.clientContext || project.companyListed || project.company || 'PT Arsi Karya Unggul'}
                   </div>
+                </div>
+
+                {(project.arsiKaryaRole || project.roleDisclosure) && (
+                  <div style={{ gridColumn: '1 / -1', borderTop: '1px solid var(--color-neutral-200)', paddingTop: '16px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-primary-300)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>Peran Resmi Arsi Karya</span>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-neutral-700)', marginTop: '4px' }}>
+                      {project.arsiKaryaRole || project.roleDisclosure}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Rich Text Editorial Block (Albion WYSIWYG Content) */}
+              {renderRichTextContent()}
+
+              {/* Gallery Component */}
+              {galleryList.length > 0 && (
+                <div style={{ marginTop: '48px', marginBottom: '60px' }}>
+                  <Gallery images={galleryList} title="Dokumentasi Visual & Foto Lapangan" />
                 </div>
               )}
 
-              {/* Gallery Component */}
-              <Gallery images={project.gallery || [project.thumbnail]} title="Dokumentasi Visual Proyek" />
-
-              {/* Related Service Link */}
-              <div style={{ marginTop: '48px', backgroundColor: 'var(--color-primary-100)', padding: '24px', borderRadius: 'var(--radius-card)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                  <h4 style={{ fontSize: '1.05rem', color: 'var(--color-primary-400)', marginBottom: '4px' }}>Tertarik dengan Layanan Kategori Ini?</h4>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-600)', margin: 0 }}>Lihat rincian scope teknis dan metodologi layanan terkait.</p>
-                </div>
-                <Button to="/layanan" variant="primary">
-                  Lihat Seluruh Layanan
-                </Button>
-              </div>
-
               {/* Related Projects */}
               {relatedProjects.length > 0 && (
-                <div style={{ marginTop: '56px' }}>
-                  <SectionTag>PROYEK LAINNYA</SectionTag>
-                  <h2 style={{ marginBottom: '24px' }}>Portofolio Terkait</h2>
+                <div style={{ marginTop: '64px', borderTop: '1px solid var(--color-neutral-200)', paddingTop: '48px' }}>
+                  <SectionTag>PORTOFOLIO TERKAIT</SectionTag>
+                  <h2 style={{ marginBottom: '28px', fontSize: '1.8rem' }}>Proyek Lainnya</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
                     {relatedProjects.slice(0, 3).map((rp) => (
                       <Link key={rp.id} to={`/proyek/${rp.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div style={{ backgroundColor: 'var(--color-neutral-50)', padding: '20px', borderRadius: '8px', border: '1px solid var(--color-neutral-200)' }}>
-                          <h4 style={{ fontSize: '1rem', marginBottom: '6px' }}>{rp.title}</h4>
-                          <span style={{ fontSize: '0.8rem', color: 'var(--color-neutral-400)' }}>{rp.location} • {rp.year}</span>
+                        <div 
+                          style={{ 
+                            backgroundColor: 'var(--color-neutral-50)', 
+                            padding: '24px', 
+                            borderRadius: 'var(--radius-card)', 
+                            border: '1px solid var(--color-neutral-200)',
+                            height: '100%',
+                            transition: 'transform 0.2s ease, border-color 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--color-primary-300)';
+                            e.currentTarget.style.transform = 'translateY(-3px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--color-neutral-200)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
+                        >
+                          <span style={{ fontSize: '0.8rem', color: 'var(--color-primary-300)', fontWeight: 700, textTransform: 'uppercase' }}>{rp.category}</span>
+                          <h4 style={{ fontSize: '1.05rem', margin: '8px 0 6px', fontWeight: 700, lineHeight: 1.3 }}>{rp.title}</h4>
+                          <span style={{ fontSize: '0.825rem', color: 'var(--color-neutral-400)' }}>{rp.location} • {rp.year}</span>
                         </div>
                       </Link>
                     ))}
@@ -135,31 +231,11 @@ export default function ProjectsPage() {
                 </div>
               )}
 
-              {/* Consultation CTA */}
-              <div style={{ marginTop: '56px', textAlign: 'center', backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', padding: '48px 32px', borderRadius: 'var(--radius-card)' }}>
-                <h3 style={{ color: '#ffffff', fontSize: '1.6rem', marginBottom: '12px' }}>
-                  Ingin Berkonsultasi Mengenai Proyek Serupa?
-                </h3>
-                <p style={{ color: '#EFEFEA', fontSize: '1rem', marginBottom: '28px', maxWidth: '600px', margin: '0 auto 28px auto' }}>
-                  Hubungi tim PT Arsi Karya Unggul untuk mendiskusikan rencana pembangunan dan perkiraan anggaran Anda.
-                </p>
-                <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <Button
-                    href={projectWaUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="whatsapp"
-                  >
-                    Chat WhatsApp
-                  </Button>
-                  <Button to="/kontak" variant="dark" style={{ border: '1px solid rgba(255,255,255,0.4)' }}>
-                    Ajukan Kerja Sama
-                  </Button>
-                </div>
-              </div>
-
             </div>
           </section>
+
+          {/* Albion CTA Banner Section at bottom */}
+          <CTA />
         </>
       );
     }
@@ -179,17 +255,13 @@ export default function ProjectsPage() {
         description="Daftar rekam jejak pekerjaan proyek PT Arsi Karya Unggul di bidang konstruksi, fasad ACP, rumah hunian, interior, dan pengaspalan jalan."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
-        <div className="container">
-          <SectionTag light>PORTOFOLIO PROYEK</SectionTag>
-          <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
-            Rekam Jejak Pekerjaan
-          </h1>
-          <p style={{ fontSize: '1.15rem', color: 'var(--color-primary-200)', maxWidth: '680px' }}>
-            Pengalaman proyek nyata dengan keterbukaan entitas pelaksana dan penanganan mutu profesional.
-          </p>
-        </div>
-      </section>
+      <HeroBanner
+        bgImage="/projects/project_1.jpg"
+        overlayOpacity={0.65}
+        tag="PORTOFOLIO PROYEK"
+        title="Rekam Jejak Pekerjaan"
+        subtitle="Pengalaman proyek nyata dengan keterbukaan entitas pelaksana dan penanganan mutu profesional."
+      />
 
       <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
         <div className="container">
@@ -216,7 +288,7 @@ export default function ProjectsPage() {
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
             {filteredProjects.map((proj) => (
               <div
                 key={proj.id}
@@ -232,16 +304,18 @@ export default function ProjectsPage() {
               >
                 <div>
                   <div style={{ height: '220px', backgroundColor: 'var(--color-neutral-200)', overflow: 'hidden' }}>
-                    <img src={proj.thumbnail} alt={proj.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img 
+                      src={proj.thumbnail} 
+                      alt={proj.title} 
+                      onError={(e) => { e.currentTarget.src = '/projects/project_1.jpg'; }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
                   </div>
                   <div style={{ padding: '24px' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--color-primary-300)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
                       {proj.category} • {proj.year}
                     </div>
-                    <h2 style={{ fontSize: '1.25rem', marginBottom: '8px', lineHeight: 1.3 }}>{proj.title}</h2>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-neutral-400)', fontStyle: 'italic', marginBottom: '16px' }}>
-                      {proj.roleDisclosure}
-                    </p>
+                    <h2 style={{ fontSize: '1.25rem', marginBottom: '12px', lineHeight: 1.3 }}>{proj.title}</h2>
                     <p style={{ fontSize: '0.9rem', color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
                       {proj.description.substring(0, 100)}...
                     </p>

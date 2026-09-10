@@ -5,6 +5,11 @@ import { contactService } from '../services/contactService.js';
 import { projectService } from '../services/projectService.js';
 import { aiChatService } from '../services/aiChatService.js';
 import { labsService } from '../services/labsService.js';
+import { servicesService } from '../services/servicesService.js';
+import { articleService } from '../services/articleService.js';
+import { testimonialService } from '../services/testimonialService.js';
+import { inquiryService } from '../services/inquiryService.js';
+import { siteSettingsService } from '../services/siteSettingsService.js';
 
 const router = Router();
 
@@ -41,13 +46,18 @@ router.get('/contact', async (_req, res) => {
     }
 });
 
-// Contact form submission
-router.post('/contact/send', async (req, res) => {
+// Contact form / Inquiry submission
+router.post('/inquiries', async (req, res) => {
     try {
-        const result = await contactService.sendMessage(req.body);
-        res.json(result);
+        const { nama, email, whatsapp } = req.body;
+        if (!nama || !email || !whatsapp) {
+            res.status(400).json({ error: 'Nama, Email, dan WhatsApp wajib diisi' });
+            return;
+        }
+        const record = await inquiryService.createInquiry(req.body);
+        res.status(201).json({ success: true, inquiry: record });
     } catch (error: any) {
-        console.error('Error sending message:', error);
+        console.error('Error creating inquiry:', error);
         res.status(500).json({ error: error.message || 'Internal server error' });
     }
 });
@@ -67,13 +77,87 @@ router.get('/projects', async (_req, res) => {
 router.get('/projects/:slug', async (req, res) => {
     try {
         const project = await projectService.getProjectBySlug(req.params.slug);
-        if (!project || project.visibility !== 'public') {
+        if (!project || (project.published === false && project.visibility !== 'public')) {
             res.status(404).json({ error: 'Project not found' });
             return;
         }
         res.json(project);
     } catch (error) {
         console.error('Error fetching project:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// List published services
+router.get('/services', async (_req, res) => {
+    try {
+        const data = await servicesService.listServices(true);
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching services:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Single service by slug
+router.get('/services/:slug', async (req, res) => {
+    try {
+        const service = await servicesService.getServiceBySlug(req.params.slug);
+        if (!service || !service.published) {
+            res.status(404).json({ error: 'Service not found' });
+            return;
+        }
+        res.json(service);
+    } catch (error) {
+        console.error('Error fetching service:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// List published articles
+router.get('/articles', async (_req, res) => {
+    try {
+        const data = await articleService.listArticles(true);
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching articles:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Single article by slug
+router.get('/articles/:slug', async (req, res) => {
+    try {
+        const article = await articleService.getArticleBySlug(req.params.slug);
+        if (!article || !article.published) {
+            res.status(404).json({ error: 'Article not found' });
+            return;
+        }
+        res.json(article);
+    } catch (error) {
+        console.error('Error fetching article:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// List approved and published testimonials
+router.get('/testimonials', async (_req, res) => {
+    try {
+        const data = await testimonialService.listTestimonials(true);
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching testimonials:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Site settings
+router.get('/settings', async (_req, res) => {
+    try {
+        const data = await siteSettingsService.getSettings();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching settings:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -89,7 +173,7 @@ router.get('/ai-chat/settings', async (_req, res) => {
     }
 });
 
-// AI Chat - chat completion (SSE streaming)
+// AI Chat completion
 router.post('/ai-chat', async (req, res) => {
     try {
         const { messages, sessionId, language } = req.body;

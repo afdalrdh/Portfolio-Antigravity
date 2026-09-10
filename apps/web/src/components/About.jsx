@@ -32,19 +32,7 @@ export default function About() {
             transition={{ duration: 0.7 }}
             viewport={{ once: true }}
           >
-            <span
-              style={{
-                display: 'inline-block',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: 'var(--color-text-muted)',
-                marginBottom: '16px',
-              }}
-            >
-              — WHY US
-            </span>
+            <span className="section-tag">WHY US</span>
 
             <h2
               style={{

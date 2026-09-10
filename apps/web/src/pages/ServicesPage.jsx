@@ -5,9 +5,24 @@ import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
 import Breadcrumb from '../components/ui/Breadcrumb';
 import FAQ from '../components/ui/FAQ';
+import HeroBanner from '../components/ui/HeroBanner';
 import { servicesData, seoLandingServices } from '../data/servicesData';
 import { projectsData } from '../data/projectsData';
 import { getServiceWaUrl, getGeneralWaUrl } from '../utils/whatsapp';
+
+const serviceImagesMap = {
+  'konstruksi': '/projects/project_1.jpg',
+  'design-build': '/projects/project_2.jpg',
+  'fabrikasi': '/projects/project_3.jpg',
+  'pengadaan-barang': '/projects/project_4.jpg',
+  'renovasi-rumah': '/projects/project_2.jpg',
+  'kanopi': '/projects/project_3.jpg',
+  'kolam-renang': '/projects/project_4.jpg',
+  'finishing-rumah': '/projects/project_3.jpg',
+  'fasad-rumah': '/projects/project_1.jpg',
+  'pengecatan': '/projects/project_5.jpg',
+  'desain-interior': '/projects/project_5.jpg',
+};
 
 export default function ServicesPage() {
   const { serviceSlug } = useParams();
@@ -47,20 +62,37 @@ export default function ServicesPage() {
             description={service.shortDesc || service.fullDesc}
           />
 
-          {/* Hero Header */}
-          <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
-            <div className="container">
-              {/* Detail Page Breadcrumb ONLY: Layanan > Service Name */}
-              <Breadcrumb items={[{ label: 'Layanan', to: '/layanan' }, { label: service.title }]} />
-              <SectionTag light>DETAIL LAYANAN</SectionTag>
-              <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4vw, 3.5rem)', marginBottom: '16px' }}>{service.title}</h1>
-              <p style={{ fontSize: '1.15rem', color: '#EFEFEA', maxWidth: '750px' }}>{service.shortDesc}</p>
-            </div>
-          </section>
+          {/* Dark Architectural Hero Banner */}
+          <HeroBanner
+            bgImage={serviceImagesMap[service.slug] || '/projects/project_1.jpg'}
+            overlayOpacity={0.65}
+            imageAlt={service.title}
+            breadcrumbItems={[{ label: 'Layanan', to: '/layanan' }]}
+            tag="DETAIL LAYANAN"
+            title={service.title}
+            subtitle={service.shortDesc}
+          />
 
-          <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>
+          <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)', paddingTop: '40px' }}>
             <div className="container" style={{ maxWidth: '960px' }}>
               
+              {/* Top Back Navigation */}
+              <Link 
+                to="/layanan" 
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  marginBottom: '24px', 
+                  color: 'var(--color-primary-300)', 
+                  fontWeight: 700, 
+                  fontSize: '0.9rem',
+                  textDecoration: 'none'
+                }}
+              >
+                ← Kembali ke Layanan
+              </Link>
+
               {/* Introduction */}
               <div style={{ marginBottom: '48px' }}>
                 <SectionTag>PENJELASAN UTAMA</SectionTag>
@@ -225,17 +257,13 @@ export default function ServicesPage() {
         description="Empat layanan utama PT Arsi Karya Unggul: Kontraktor Umum / Konstruksi, Design & Build (Arsitektur & Interior), Fabrikasi Struktur, dan Pengadaan Barang di Bandung."
       />
 
-      <section style={{ backgroundColor: 'var(--color-neutral-700)', color: '#ffffff', paddingTop: 'calc(var(--header-height) + 40px)', paddingBottom: '70px' }}>
-        <div className="container">
-          <SectionTag light>LAYANAN KAMI</SectionTag>
-          <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', marginBottom: '16px' }}>
-            Empat Pilar Layanan Konstruksi
-          </h1>
-          <p style={{ fontSize: '1.15rem', color: 'var(--color-primary-200)', maxWidth: '680px' }}>
-            Layanan konstruksi terpadu dengan standar kontrol kualitas presisi dan pengelolaan transparan.
-          </p>
-        </div>
-      </section>
+      <HeroBanner
+        bgImage="/projects/project_2.jpg"
+        overlayOpacity={0.65}
+        tag="LAYANAN KAMI"
+        title="Empat Pilar Layanan Konstruksi"
+        subtitle="Layanan konstruksi terpadu dengan standar kontrol kualitas presisi dan pengelolaan transparan."
+      />
 
       {/* 4 Core Primary Services */}
       <section className="section-padding" style={{ backgroundColor: 'var(--color-neutral-0)' }}>

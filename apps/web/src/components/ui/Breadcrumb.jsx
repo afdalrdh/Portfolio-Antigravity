@@ -11,22 +11,38 @@ export default function Breadcrumb({ items = [] }) {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
+        gap: '6px',
         fontSize: '0.85rem',
-        color: 'var(--color-neutral-300)',
+        color: 'rgba(255, 255, 255, 0.8)',
         marginBottom: '20px',
         flexWrap: 'wrap',
       }}
     >
       {items.map((item, idx) => (
         <React.Fragment key={idx}>
-          {idx > 0 && <FiChevronRight style={{ fontSize: '0.75rem', color: 'var(--color-neutral-400)' }} />}
           {item.to ? (
-            <Link to={item.to} style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>
-              {item.label}
+            <Link 
+              to={item.to} 
+              style={{ 
+                color: 'rgba(255, 255, 255, 0.85)', 
+                textDecoration: 'none',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'color 0.2s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)')}
+            >
+              <span>{item.label}</span>
+              <FiChevronRight style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)' }} />
             </Link>
           ) : (
-            <span style={{ color: 'var(--color-primary-200)', fontWeight: 600 }}>{item.label}</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#ffffff', fontWeight: 600 }}>{item.label}</span>
+              <FiChevronRight style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)' }} />
+            </div>
           )}
         </React.Fragment>
       ))}

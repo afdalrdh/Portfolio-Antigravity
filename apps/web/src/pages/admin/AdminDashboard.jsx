@@ -1,131 +1,259 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import { FiFolder, FiFileText, FiMessageSquare, FiInbox, FiArrowRight, FiCheckCircle, FiClock, FiEye } from 'react-icons/fi';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
-    const [projects, setProjects] = useState([]);
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isOrderChanged, setIsOrderChanged] = useState(false);
-    const [savingOrder, setSavingOrder] = useState(false);
+    const [error, setError] = useState(null);
 
-    const fetchProjects = () => {
-        adminApi.getProjects()
-            .then(data => {
-                setProjects(data);
-                setIsOrderChanged(false);
-            })
-            .catch(console.error)
-            .finally(() => setLoading(false));
+    const fetchStats = async () => {
+        try {
+            setLoading(true);
+            const data = await adminApi.getStats();
+            setStats(data);
+        } catch (err) {
+            console.error('Failed to load stats:', err);
+            setError(err.message || 'Gagal memuat statistik dashboard');
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
-        fetchProjects();
+        fetchStats();
     }, []);
 
-    const handleDelete = async (id, title) => {
-        if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
-        try {
-            await adminApi.deleteProject(id);
-            fetchProjects();
-        } catch (err) {
-            alert('Failed to delete project: ' + err.message);
-        }
-    };
-
-    const moveProjectUp = (index) => {
-        if (index === 0) return;
-        const newProjects = [...projects];
-        [newProjects[index - 1], newProjects[index]] = [newProjects[index], newProjects[index - 1]];
-        setProjects(newProjects);
-        setIsOrderChanged(true);
-    };
-
-    const moveProjectDown = (index) => {
-        if (index === projects.length - 1) return;
-        const newProjects = [...projects];
-        [newProjects[index + 1], newProjects[index]] = [newProjects[index], newProjects[index + 1]];
-        setProjects(newProjects);
-        setIsOrderChanged(true);
-    };
-
-    const handleSaveOrder = async () => {
-        setSavingOrder(true);
-        try {
-            await adminApi.reorderProjects(projects.map(p => p.id));
-            setIsOrderChanged(false);
-            alert('Order saved successfully!');
-        } catch (err) {
-            alert('Failed to save order: ' + err.message);
-        } finally {
-            setSavingOrder(false);
-        }
-    };
-
     if (loading) {
-        return <div style={{ padding: '40px', textAlign: 'center' }}><p className="text-secondary">Loading projects...</p></div>;
+        return (
+            <div style={{ padding: '60px 0', textAlign: 'center', color: '#666' }}>
+                <p>Memuat statistik operasional...</p>
+            </div>
+        );
     }
 
+    if (error) {
+        return (
+            <div className="error-box">
+                <p>{error}</p>
+                <button onClick={fetchStats} className="btn-outline" style={{ marginTop: '12px' }}>Coba Lagi</button>
+            </div>
+        );
+    }
+
+    const { projects, articles, testimonials, inquiries, recentInquiries, recentProjects } = stats || {};
+
+    const getInquiryStatusBadge = (status) => {
+        switch (status) {
+            case 'new': return <span className="status-pill status-new">Baru</span>;
+            case 'reviewing': return <span className="status-pill status-reviewing">Ditinjau</span>;
+            case 'contacted': return <span className="status-pill status-contacted">Sudah Dihubungi</span>;
+            case 'qualified': return <span className="status-pill status-qualified">Qualified</span>;
+            case 'closed': return <span className="status-pill status-closed">Selesai</span>;
+            default: return <span className="status-pill">{status}</span>;
+        }
+    };
+
     return (
-        <div className="admin-dashboard">
-            <div className="dashboard-header">
+        <div className="admin-dashboard-view">
+            {/* Quick Action Top Bar */}
+            <div className="dashboard-welcome">
                 <div>
-                    <h3 className="section-title">Projects</h3>
-                    <p className="text-secondary section-subtitle">Manage your portfolio projects</p>
+                    <h3 className="welcome-heading">Selamat Datang di Admin Panel Arsi Karya</h3>
+                    <p className="welcome-text">Ringkasan status operasional website dan leads pengajuan kerja sama terkini.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                    {isOrderChanged && (
-                        <button className="btn-outline" onClick={handleSaveOrder} disabled={savingOrder}>
-                            {savingOrder ? 'Saving...' : 'Save Order'}
-                        </button>
-                    )}
-                    <Link to="/admin/projects/new" className="btn-primary">
-                        Create New Project
+                <div className="welcome-actions">
+                    <Link to="/admin/projects/new" className="btn-cms btn-cms-primary">
+                        + Tambah Proyek
+                    </Link>
+                    <Link to="/admin/articles/new" className="btn-cms btn-cms-outline">
+                        + Tulis Artikel
                     </Link>
                 </div>
             </div>
 
-            <div className="dashboard-table-container">
-                <table className="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Project Title</th>
-                            <th>Company</th>
-                            <th>Year</th>
-                            <th>Status</th>
-                            <th>Order</th>
-                            <th className="text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {projects.map((project, index) => (
-                            <tr key={project.id}>
-                                <td className="font-medium">{project.title}</td>
-                                <td className="text-secondary">{project.company || '-'}</td>
-                                <td className="text-secondary">{project.year || '-'}</td>
-                                <td>
-                                    <span className={`status-badge ${project.visibility === 'public' ? 'published' : 'draft'}`}>
-                                        {project.visibility === 'public' ? 'Published' : 'Draft'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <button onClick={() => moveProjectUp(index)} disabled={index === 0} style={{ opacity: index === 0 ? 0.3 : 1, cursor: index === 0 ? 'not-allowed' : 'pointer', background: 'none', border: 'none' }}>↑</button>
-                                        <button onClick={() => moveProjectDown(index)} disabled={index === projects.length - 1} style={{ opacity: index === projects.length - 1 ? 0.3 : 1, cursor: index === projects.length - 1 ? 'not-allowed' : 'pointer', background: 'none', border: 'none' }}>↓</button>
-                                    </div>
-                                </td>
-                                <td className="text-right table-actions">
-                                    <Link to={`/admin/projects/${project.id}/edit`} className="action-link edit">Edit</Link>
-                                    <span className="action-divider">|</span>
-                                    <button className="action-link delete" onClick={() => handleDelete(project.id, project.title)}>Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                        {projects.length === 0 && (
-                            <tr><td colSpan="5" style={{ textAlign: 'center', padding: '40px' }} className="text-secondary">No projects yet. Create your first project!</td></tr>
-                        )}
-                    </tbody>
-                </table>
+            {/* Metrics Overview Cards */}
+            <div className="stats-grid">
+                {/* Projects Card */}
+                <div className="stat-card">
+                    <div className="stat-card-header">
+                        <span className="stat-icon icon-projects"><FiFolder /></span>
+                        <Link to="/admin/projects" className="stat-link">Kelola &rarr;</Link>
+                    </div>
+                    <div className="stat-card-body">
+                        <span className="stat-number">{projects?.total || 0}</span>
+                        <span className="stat-label">Total Proyek</span>
+                    </div>
+                    <div className="stat-card-footer">
+                        <span><strong>{projects?.published || 0}</strong> Terbit</span>
+                        <span>•</span>
+                        <span><strong>{projects?.drafts || 0}</strong> Draft</span>
+                    </div>
+                </div>
+
+                {/* Articles Card */}
+                <div className="stat-card">
+                    <div className="stat-card-header">
+                        <span className="stat-icon icon-articles"><FiFileText /></span>
+                        <Link to="/admin/articles" className="stat-link">Kelola &rarr;</Link>
+                    </div>
+                    <div className="stat-card-body">
+                        <span className="stat-number">{articles?.total || 0}</span>
+                        <span className="stat-label">Total Artikel</span>
+                    </div>
+                    <div className="stat-card-footer">
+                        <span><strong>{articles?.published || 0}</strong> Terbit</span>
+                        <span>•</span>
+                        <span><strong>{articles?.drafts || 0}</strong> Draft</span>
+                    </div>
+                </div>
+
+                {/* Testimonials Card */}
+                <div className="stat-card">
+                    <div className="stat-card-header">
+                        <span className="stat-icon icon-testimonials"><FiMessageSquare /></span>
+                        <Link to="/admin/testimonials" className="stat-link">Kelola &rarr;</Link>
+                    </div>
+                    <div className="stat-card-body">
+                        <span className="stat-number">{testimonials?.total || 0}</span>
+                        <span className="stat-label">Total Testimoni</span>
+                    </div>
+                    <div className="stat-card-footer">
+                        <span><strong>{testimonials?.published || 0}</strong> Publik</span>
+                        <span>•</span>
+                        <span><strong>{testimonials?.pending || 0}</strong> Perlu Persetujuan</span>
+                    </div>
+                </div>
+
+                {/* Inquiries Card */}
+                <div className="stat-card highlight">
+                    <div className="stat-card-header">
+                        <span className="stat-icon icon-inquiries"><FiInbox /></span>
+                        <Link to="/admin/inquiries" className="stat-link">Lihat Semua &rarr;</Link>
+                    </div>
+                    <div className="stat-card-body">
+                        <span className="stat-number">{inquiries?.new || 0}</span>
+                        <span className="stat-label">Pengajuan Baru (Belum Ditinjau)</span>
+                    </div>
+                    <div className="stat-card-footer">
+                        <span>Total: <strong>{inquiries?.total || 0}</strong> Leads</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Inquiry Status Breakdown */}
+            <div className="inquiry-status-row">
+                <div className="status-box">
+                    <span className="status-count">{inquiries?.new || 0}</span>
+                    <span className="status-title">Baru</span>
+                </div>
+                <div className="status-box">
+                    <span className="status-count">{inquiries?.reviewing || 0}</span>
+                    <span className="status-title">Ditinjau</span>
+                </div>
+                <div className="status-box">
+                    <span className="status-count">{inquiries?.contacted || 0}</span>
+                    <span className="status-title">Sudah Dihubungi</span>
+                </div>
+                <div className="status-box">
+                    <span className="status-count">{inquiries?.qualified || 0}</span>
+                    <span className="status-title">Qualified</span>
+                </div>
+                <div className="status-box">
+                    <span className="status-count">{inquiries?.closed || 0}</span>
+                    <span className="status-title">Selesai</span>
+                </div>
+            </div>
+
+            {/* Content Tables Section */}
+            <div className="dashboard-grid">
+                {/* Recent Inquiries */}
+                <div className="dashboard-panel">
+                    <div className="panel-header">
+                        <h4>Pengajuan Kerja Sama Terbaru</h4>
+                        <Link to="/admin/inquiries" className="panel-link">Lihat Semua</Link>
+                    </div>
+                    <div className="panel-table-wrap">
+                        <table className="panel-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>WhatsApp</th>
+                                    <th>Jenis Proyek</th>
+                                    <th>Status</th>
+                                    <th className="text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentInquiries && recentInquiries.length > 0 ? (
+                                    recentInquiries.map((inq) => (
+                                        <tr key={inq.id}>
+                                            <td className="font-semibold">{inq.nama}</td>
+                                            <td>{inq.whatsapp}</td>
+                                            <td>{inq.jenisProyek || inq.jenisKerjasama || '-'}</td>
+                                            <td>{getInquiryStatusBadge(inq.status)}</td>
+                                            <td className="text-right">
+                                                <Link to={`/admin/inquiries/${inq.id}`} className="btn-table-action">
+                                                    Detail
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="empty-table-cell">Belum ada pengajuan kerja sama.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Recent Projects */}
+                <div className="dashboard-panel">
+                    <div className="panel-header">
+                        <h4>Proyek Portofolio Terbaru</h4>
+                        <Link to="/admin/projects" className="panel-link">Lihat Semua</Link>
+                    </div>
+                    <div className="panel-table-wrap">
+                        <table className="panel-table">
+                            <thead>
+                                <tr>
+                                    <th>Judul Proyek</th>
+                                    <th>Kategori</th>
+                                    <th>Status</th>
+                                    <th className="text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentProjects && recentProjects.length > 0 ? (
+                                    recentProjects.map((p) => (
+                                        <tr key={p.id}>
+                                            <td className="font-semibold">{p.title}</td>
+                                            <td>{p.category || '-'}</td>
+                                            <td>
+                                                <span className={`status-pill ${p.published ? 'status-published' : 'status-draft'}`}>
+                                                    {p.published ? 'Terbit' : 'Draft'}
+                                                </span>
+                                            </td>
+                                            <td className="text-right">
+                                                <Link to={`/admin/projects/${p.id}/edit`} className="btn-table-action">
+                                                    Edit
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className="empty-table-cell">Belum ada proyek.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     );
