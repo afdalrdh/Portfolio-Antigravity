@@ -1,32 +1,53 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Stats from './components/Stats';
-import About from './components/About';
-import Services from './components/Services';
-import Projects from './components/Projects';
-import Testimonials from './components/Testimonials';
-import News from './components/News';
-import CTA from './components/CTA';
 import Footer from './components/Footer';
+import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
 
-function App() {
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-bg-light)' }}>
-      <Navbar />
-      <main style={{ flexGrow: 1 }}>
-        <Hero />
-        <Stats />
-        <About />
-        <Services />
-        <Projects />
-        <Testimonials />
-        <News />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
-  );
+import Home from './pages/Home';
+import AboutPage from './pages/AboutPage';
+import ServicesPage from './pages/ServicesPage';
+import ProjectsPage from './pages/ProjectsPage';
+import TestimonialsPage from './pages/TestimonialsPage';
+import ArticlesPage from './pages/ArticlesPage';
+import ContactPage from './pages/ContactPage';
+
+// Scroll to top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
 }
 
-export default App;
+export default function App() {
+  return (
+    <HelmetProvider>
+      <Router>
+        <ScrollToTop />
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff' }}>
+          <Navbar />
+          <main style={{ flexGrow: 1 }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/tentang-kami" element={<AboutPage />} />
+              <Route path="/layanan" element={<ServicesPage />} />
+              <Route path="/layanan/:serviceSlug" element={<ServicesPage />} />
+              <Route path="/proyek" element={<ProjectsPage />} />
+              <Route path="/proyek/:projectSlug" element={<ProjectsPage />} />
+              <Route path="/testimoni" element={<TestimonialsPage />} />
+              <Route path="/artikel" element={<ArticlesPage />} />
+              <Route path="/artikel/:articleSlug" element={<ArticlesPage />} />
+              <Route path="/kontak" element={<ContactPage />} />
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </main>
+          <Footer />
+          <FloatingWhatsApp />
+        </div>
+      </Router>
+    </HelmetProvider>
+  );
+}

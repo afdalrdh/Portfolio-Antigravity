@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
+import Button from './ui/Button';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -18,12 +20,27 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Exact 7 Primary Navbar Items
   const navLinks = [
-    { name: 'Home', href: '#home', hasDropdown: true },
-    { name: 'Services', href: '#services' },
-    { name: 'News', href: '#news' },
-    { name: 'About', href: '#about' },
-    { name: 'Projects', href: '#projects' },
+    { name: 'Beranda', to: '/' },
+    { name: 'Tentang Kami', to: '/tentang-kami' },
+    {
+      name: 'Layanan',
+      to: '/layanan',
+      hasDropdown: true,
+      subItems: [
+        { name: 'Kontraktor Umum / Konstruksi', to: '/layanan/konstruksi' },
+        { name: 'Design & Build', to: '/layanan/design-build' },
+        { name: 'Fabrikasi Struktur & Prafabrikasi', to: '/layanan/fabrikasi' },
+        { name: 'Pengadaan Barang', to: '/layanan/pengadaan-barang' },
+        { name: 'Renovasi Rumah & Bangunan', to: '/layanan/renovasi-rumah' },
+        { name: 'Fasad ACP & Arsitektural', to: '/layanan/fasad-rumah' },
+      ],
+    },
+    { name: 'Proyek', to: '/proyek' },
+    { name: 'Testimoni', to: '/testimoni' },
+    { name: 'Artikel', to: '/artikel' },
+    { name: 'Kontak', to: '/kontak' },
   ];
 
   return (
@@ -37,7 +54,7 @@ export default function Navbar() {
         height: 'var(--header-height)',
         backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.98)' : '#ffffff',
         backdropFilter: 'blur(10px)',
-        borderBottom: isScrolled ? '1px solid var(--color-border)' : '1px solid rgba(0,0,0,0.06)',
+        borderBottom: isScrolled ? '1px solid var(--color-neutral-200)' : '1px solid rgba(0,0,0,0.06)',
         boxShadow: isScrolled ? '0 4px 20px rgba(0,0,0,0.05)' : 'none',
         transition: 'all 0.3s ease',
         display: 'flex',
@@ -46,23 +63,23 @@ export default function Navbar() {
     >
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         {/* Logo */}
-        <a href="#home" style={{ display: 'flex', alignItems: 'center' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
           <img
             src="/logo.png"
-            alt="Albion Logo"
+            alt="PT Arsi Karya Unggul Logo"
             style={{
               height: '42px',
               objectFit: 'contain',
             }}
           />
-        </a>
+        </Link>
 
         {/* Desktop Nav Links */}
         <nav
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '32px',
+            gap: '28px',
           }}
           className="desktop-nav"
         >
@@ -73,58 +90,75 @@ export default function Navbar() {
               onMouseEnter={() => link.hasDropdown && setActiveDropdown(true)}
               onMouseLeave={() => link.hasDropdown && setActiveDropdown(false)}
             >
-              <a
-                href={link.href}
-                style={{
-                  fontSize: '0.95rem',
-                  fontWeight: 700,
-                  color: 'var(--color-text-main)',
+              <NavLink
+                to={link.to}
+                className={({ isActive }) => (isActive ? 'active-nav-item' : '')}
+                style={({ isActive }) => ({
+                  fontSize: '0.925rem',
+                  fontWeight: isActive ? 700 : 600,
+                  color: isActive ? 'var(--color-primary-300)' : 'var(--color-neutral-700)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   padding: '8px 0',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
+                  letterSpacing: '0.01em',
+                })}
               >
                 {link.name}
                 {link.hasDropdown && <FiChevronDown style={{ fontSize: '0.9rem', transition: 'transform 0.2s ease', transform: activeDropdown ? 'rotate(180deg)' : 'rotate(0deg)' }} />}
-              </a>
+              </NavLink>
 
+              {/* Sub-services Dropdown under Layanan */}
               {link.hasDropdown && activeDropdown && (
                 <div
                   style={{
                     position: 'absolute',
                     top: '100%',
-                    left: 0,
+                    left: '-16px',
                     backgroundColor: '#ffffff',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                    borderRadius: '4px',
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.12)',
+                    borderRadius: 'var(--radius-card)',
                     padding: '12px 0',
-                    minWidth: '160px',
-                    border: '1px solid var(--color-border)',
+                    minWidth: '260px',
+                    border: '1px solid var(--color-neutral-200)',
+                    zIndex: 1010,
                   }}
                 >
-                  <a href="#home" style={{ display: 'block', padding: '8px 20px', fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-primary)' }}>Home Option A</a>
-                  <a href="#about" style={{ display: 'block', padding: '8px 20px', fontSize: '0.9rem', fontWeight: 500, color: 'var(--color-text-main)' }}>Home Option B</a>
-                  <a href="#services" style={{ display: 'block', padding: '8px 20px', fontSize: '0.9rem', fontWeight: 500, color: 'var(--color-text-main)' }}>Home Option C</a>
+                  {link.subItems.map((sub, sIdx) => (
+                    <Link
+                      key={sIdx}
+                      to={sub.to}
+                      style={{
+                        display: 'block',
+                        padding: '10px 20px',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        color: 'var(--color-neutral-600)',
+                        transition: 'background 0.2s ease, color 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--color-primary-100)';
+                        e.currentTarget.style.color = 'var(--color-primary-400)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = 'var(--color-neutral-600)';
+                      }}
+                    >
+                      {sub.name}
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
           ))}
         </nav>
 
-        {/* Right CTA & Mobile Toggle */}
+        {/* Right Primary CTA & Mobile Menu Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <a
-            href="#contact"
-            className="btn-primary desktop-cta"
-            style={{
-              padding: '12px 24px',
-            }}
-          >
-            Get in Touch
-          </a>
+          <Button to="/kontak" variant="primary" className="desktop-cta" style={{ padding: '12px 22px' }}>
+            Konsultasi Gratis
+          </Button>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -132,7 +166,7 @@ export default function Navbar() {
             style={{
               display: 'none',
               fontSize: '1.8rem',
-              color: 'var(--color-text-main)',
+              color: 'var(--color-neutral-700)',
               padding: '4px',
             }}
             aria-label="Toggle Navigation"
@@ -151,39 +185,61 @@ export default function Navbar() {
             left: 0,
             right: 0,
             backgroundColor: '#ffffff',
-            borderBottom: '1px solid var(--color-border)',
+            borderBottom: '1px solid var(--color-neutral-200)',
             boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px',
+            gap: '12px',
+            maxHeight: 'calc(100vh - var(--header-height))',
+            overflowY: 'auto',
             zIndex: 999,
           }}
         >
           {navLinks.map((link, idx) => (
-            <a
-              key={idx}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontSize: '1.05rem',
-                fontWeight: 600,
-                color: 'var(--color-text-main)',
-                padding: '8px 0',
-                borderBottom: '1px solid #f0f0f0',
-              }}
-            >
-              {link.name}
-            </a>
+            <div key={idx}>
+              <Link
+                to={link.to}
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: 'var(--color-neutral-700)',
+                  display: 'block',
+                  padding: '10px 0',
+                  borderBottom: '1px solid var(--color-neutral-100)',
+                }}
+              >
+                {link.name}
+              </Link>
+              {link.hasDropdown && (
+                <div style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  {link.subItems.map((sub, sIdx) => (
+                    <Link
+                      key={sIdx}
+                      to={sub.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      style={{
+                        fontSize: '0.875rem',
+                        color: 'var(--color-neutral-400)',
+                        padding: '4px 0',
+                      }}
+                    >
+                      • {sub.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
-          <a
-            href="#contact"
+          <Button
+            to="/kontak"
+            variant="primary"
             onClick={() => setMobileMenuOpen(false)}
-            className="btn-primary"
-            style={{ marginTop: '12px', justifyContent: 'center' }}
+            style={{ marginTop: '16px', justifyContent: 'center', width: '100%' }}
           >
-            Get in Touch
-          </a>
+            Konsultasi Gratis
+          </Button>
         </div>
       )}
 
