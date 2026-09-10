@@ -1,79 +1,32 @@
-import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
-import Home from './pages/Home'
-import About from './pages/About'
-import ProjectDetail from './pages/ProjectDetail'
-import Labs from './pages/Labs'
-import AiChat from './pages/AiChat'
-import Contact from './pages/Contact'
-import Navbar from './components/layout/Navbar'
-import AdminLayout from './components/admin/AdminLayout'
-import AdminDashboard from './pages/admin/AdminDashboard'
-import AdminProjectEditor from './pages/admin/AdminProjectEditor'
-import AdminHomeEditor from './pages/admin/AdminHomeEditor'
-import AdminAboutEditor from './pages/admin/AdminAboutEditor'
-import AdminContactEditor from './pages/admin/AdminContactEditor'
-import AdminAiChatEditor from './pages/admin/AdminAiChatEditor'
-import AdminLabsEditor from './pages/admin/AdminLabsEditor'
-import AdminLogin from './pages/admin/AdminLogin'
-const ClientLayout = () => (
-    <>
-        <Navbar />
-        <main>
-            <Outlet />
-        </main>
-    </>
-);
-
-import { Analytics } from '@vercel/analytics/react';
-
-import { HelmetProvider } from 'react-helmet-async';
-
-const AnimatedRoutes = () => {
-    const location = useLocation();
-    
-    return (
-        <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-                {/* Client Routes */}
-                <Route element={<ClientLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/project/:slug" element={<ProjectDetail />} />
-                    <Route path="/labs" element={<Labs />} />
-                    <Route path="/ai-chat" element={<AiChat />} />
-                    <Route path="/contact" element={<Contact />} />
-                </Route>
-
-                {/* Admin Routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="projects/new" element={<AdminProjectEditor />} />
-                    <Route path="projects/:id/edit" element={<AdminProjectEditor />} />
-                    <Route path="home" element={<AdminHomeEditor />} />
-                    <Route path="labs" element={<AdminLabsEditor />} />
-                    <Route path="about" element={<AdminAboutEditor />} />
-                    <Route path="contact" element={<AdminContactEditor />} />
-                    <Route path="ai-chat" element={<AdminAiChatEditor />} />
-                </Route>
-            </Routes>
-        </AnimatePresence>
-    );
-};
-
-import FloatingAiButton from './components/layout/FloatingAiButton';
+import React from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Stats from './components/Stats';
+import About from './components/About';
+import Services from './components/Services';
+import Projects from './components/Projects';
+import Testimonials from './components/Testimonials';
+import News from './components/News';
+import CTA from './components/CTA';
+import Footer from './components/Footer';
 
 function App() {
-    return (
-        <HelmetProvider>
-            <Router>
-                <AnimatedRoutes />
-                <FloatingAiButton />
-            </Router>
-            <Analytics />
-        </HelmetProvider>
-    )
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-bg-light)' }}>
+      <Navbar />
+      <main style={{ flexGrow: 1 }}>
+        <Hero />
+        <Stats />
+        <About />
+        <Services />
+        <Projects />
+        <Testimonials />
+        <News />
+        <CTA />
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
-export default App
+export default App;
