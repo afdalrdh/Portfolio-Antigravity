@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import Button from './ui/Button';
 
 export default function CTA() {
   const ctaPhoto = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/6180970fd098625c4087481a_contact_map.jpg";
@@ -38,7 +38,7 @@ export default function CTA() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
             style={{
-              backgroundColor: 'var(--color-primary)',
+              backgroundColor: 'var(--color-primary-300)',
               color: '#ffffff',
               padding: 'clamp(40px, 5vw, 64px)',
               display: 'flex',
@@ -61,32 +61,17 @@ export default function CTA() {
               Ready to work together?
             </h2>
 
-            <Link
+            <Button
               to="/kontak"
+              variant="dark"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 backgroundColor: '#ffffff',
-                color: 'var(--color-primary)',
-                fontWeight: 600,
-                fontSize: '0.95rem',
-                padding: '14px 28px',
-                borderRadius: '4px',
-                transition: 'all 0.25s ease',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-dark)';
-                e.currentTarget.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
-                e.currentTarget.style.color = 'var(--color-primary)';
+                color: 'var(--color-primary-300)',
+                border: 'none',
               }}
             >
               Konsultasi Gratis
-            </Link>
+            </Button>
           </motion.div>
         </div>
       </div>

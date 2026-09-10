@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowUpRight } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import Button from './ui/Button';
 
 export default function Stats() {
   const statsList = [
@@ -118,9 +118,9 @@ export default function Stats() {
               PT Arsi Karya Unggul memadukan manajemen konstruksi presisi dengan eksekusi efisien. Setiap proyek dikendalikan secara transparan untuk menghasilkan bangunan yang berkualitas dan tahan lama.
             </p>
 
-            <Link to="/tentang-kami" className="btn-primary">
+            <Button to="/tentang-kami" variant="primary">
               More About Us
-            </Link>
+            </Button>
           </motion.div>
         </div>
       </div>

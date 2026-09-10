@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheck, FiX, FiLayers, FiCompass, FiCpu, FiPackage } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import Button from './ui/Button';
 
 export default function Services() {
   const darkHeroBg = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/618080f4f9f6974e44e99f07_services_hero.jpg";
@@ -122,9 +122,9 @@ export default function Services() {
                 PT Arsi Karya Unggul menghadirkan layanan konstruksi terpadu dengan eksekusi amanah dan profesional di Bandung.
               </p>
 
-              <Link to="/layanan" className="btn-primary">
+              <Button to="/layanan" variant="primary">
                 Our Services
-              </Link>
+              </Button>
             </motion.div>
           </div>
         </div>
@@ -299,7 +299,7 @@ export default function Services() {
                 <div style={{ width: '40px', height: '40px', backgroundColor: '#f0f4f8', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {selectedService.icon}
                 </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-primary-300)' }}>
                   SERVICE {selectedService.num}
                 </span>
               </div>
@@ -313,20 +313,20 @@ export default function Services() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
                 {selectedService.features.map((f, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <FiCheck style={{ color: 'var(--color-primary)' }} />
+                    <FiCheck style={{ color: 'var(--color-primary-300)' }} />
                     <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{f}</span>
                   </div>
                 ))}
               </div>
 
-              <Link
+              <Button
                 to={`/layanan/${selectedService.slug}`}
                 onClick={() => setSelectedService(null)}
-                className="btn-primary"
+                variant="primary"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
                 Lihat Detail Layanan
-              </Link>
+              </Button>
             </motion.div>
           </motion.div>
         )}

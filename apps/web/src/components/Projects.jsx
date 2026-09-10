@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import Button from './ui/Button';
 
 export default function Projects() {
   const featuredProjects = [
@@ -56,9 +57,9 @@ export default function Projects() {
           </div>
 
           <div>
-            <Link to="/proyek" className="btn-primary">
+            <Button to="/proyek" variant="primary">
               All Projects
-            </Link>
+            </Button>
           </div>
         </div>
 

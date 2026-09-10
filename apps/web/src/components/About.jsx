@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiCheckCircle, FiArrowRight } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { FiCheckCircle } from 'react-icons/fi';
+import Button from './ui/Button';
 
 export default function About() {
   const aboutImg1 = "https://assets-global.website-files.com/6175e5f51349efa3b3120baa/6181b49dad041b569acca334_about_1.jpg";
@@ -73,7 +73,7 @@ export default function About() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '36px' }}>
               {keyPoints.map((pt, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <FiCheckCircle style={{ color: 'var(--color-primary)', fontSize: '1.2rem', flexShrink: 0 }} />
+                  <FiCheckCircle style={{ color: 'var(--color-primary-300)', fontSize: '1.2rem', flexShrink: 0 }} />
                   <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-main)' }}>
                     {pt}
                   </span>
@@ -81,10 +81,9 @@ export default function About() {
               ))}
             </div>
 
-            <Link to="/tentang-kami" className="btn-primary">
-              <span>More About Us</span>
-              <FiArrowRight />
-            </Link>
+            <Button to="/tentang-kami" variant="primary">
+              More About Us
+            </Button>
           </motion.div>
 
           {/* Right Column: Visual Composite Grid */}
@@ -143,7 +142,7 @@ export default function About() {
                 position: 'absolute',
                 top: '30px',
                 right: '-20px',
-                backgroundColor: 'var(--color-primary)',
+                backgroundColor: 'var(--color-primary-300)',
                 color: '#ffffff',
                 padding: '20px 24px',
                 borderRadius: '6px',
