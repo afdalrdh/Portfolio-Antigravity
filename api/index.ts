@@ -71,4 +71,9 @@ app.get('/api/debug/migrate-labs', async (_req, res) => {
     }
 });
 
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error('Unhandled API Error:', err);
+    res.status(500).json({ error: err?.message || 'Internal Server Error', details: String(err) });
+});
+
 export default app;
