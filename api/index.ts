@@ -2,15 +2,13 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import publicRoutes from '../apps/api/src/routes/publicRoutes.js';
+import publicRoutes from './src/routes/publicRoutes.js';
 
 const app = express();
 
 // CORS
-const corsOrigin = process.env.CORS_ORIGIN || '*';
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow all origins or match production domain
         callback(null, true);
     },
     credentials: true,
@@ -18,11 +16,11 @@ app.use(cors({
     exposedHeaders: ['set-auth-token'],
 }));
 
-// Better Auth handler - lazy import to prevent module load crashes
+// Better Auth handler
 app.all('/api/auth/*', async (req, res) => {
     try {
         const { toNodeHandler } = await import('better-auth/node');
-        const { auth } = await import('../apps/api/src/lib/auth.js');
+        const { auth } = await import('./src/lib/auth.js');
         return toNodeHandler(auth)(req, res);
     } catch (error: any) {
         console.error('Better Auth error:', error);
@@ -37,11 +35,11 @@ app.use(cookieParser());
 app.use('/api', publicRoutes);
 app.use('/', publicRoutes);
 
-// Mount admin routes with lazy requireAuth
+// Mount admin routes
 app.use('/api/admin', async (req, res, next) => {
     try {
-        const { requireAuth } = await import('../apps/api/src/middleware/requireAuth.js');
-        const { default: adminRoutes } = await import('../apps/api/src/routes/adminRoutes.js');
+        const { requireAuth } = await import('./src/middleware/requireAuth.js');
+        const { default: adminRoutes } = await import('./src/routes/adminRoutes.js');
         return requireAuth(req, res, () => adminRoutes(req, res, next));
     } catch (error: any) {
         console.error('Admin route error:', error);

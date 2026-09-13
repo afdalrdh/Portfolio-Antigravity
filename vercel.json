@@ -2,11 +2,6 @@
     "buildCommand": "npm run build:web",
     "outputDirectory": "apps/web/dist",
     "installCommand": "npm install",
-    "functions": {
-        "api/index.ts": {
-            "includeFiles": "apps/api/src/**"
-        }
-    },
     "rewrites": [
         {
             "source": "/api/:path*",

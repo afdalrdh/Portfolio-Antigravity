@@ -1,0 +1,304 @@
+import { db } from '../db/index.js';
+import { aiChatSettings, aiChatLogs } from '../db/schema/aiChat.js';
+import { eq, sql, inArray } from 'drizzle-orm';
+import type { Response } from 'express';
+
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+let isDbSetup = false;
+
+export const aiChatService = {
+    async setupDatabase() {
+        if (isDbSetup) return;
+        try {
+            await db.execute(sql`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS persona_prompt_id text DEFAULT 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'`);
+            await db.execute(sql`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS knowledge_base_id text DEFAULT 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'`);
+            isDbSetup = true;
+        } catch (e) {
+            console.error("Setup DB error (might already exist):", e);
+        }
+    },
+
+    async getSettings() {
+        await this.setupDatabase();
+        let settings;
+        try {
+            const result = await db.select().from(aiChatSettings).limit(1);
+            settings = result[0];
+        } catch (error) {
+            console.log("AI Chat table might not exist yet, returning defaults.");
+        }
+        
+        if (!settings) {
+            // Return defaults if not found
+            return {
+                groqApiKey: process.env.GROQ_API_KEY || '',
+                groqModels: '["groq/compound-mini","openai/gpt-oss-120b","openai/gpt-oss-20b","qwen/qwen3.8-27b","groq/compound"]',
+                systemPrompt: '',
+                personaPrompt: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan...',
+                personaPromptId: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.',
+                knowledgeBase: 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.',
+                knowledgeBaseId: 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.',
+                temperature: 0.7,
+                maxTokens: 1024,
+                assistantName: 'Bodal AI',
+                assistantAvatarUrl: '/images/bodal-avatar.png',
+                welcomeTitle: 'Ask Anything About Afdal',
+                welcomeSubtitle: 'Hey, I\'m Bodal AI Assistant',
+                suggestions: '[{"icon":"👤","label":"Me","prompt":"Tell me about Afdal Ramdan"},{"icon":"💼","label":"Project","prompt":"What projects has Afdal worked on?"},{"icon":"🛠","label":"Skills","prompt":"What are Afdal\'s skills?"},{"icon":"📋","label":"Experience","prompt":"Tell me about Afdal\'s work experience"},{"icon":"📬","label":"Contact","prompt":"How can I contact Afdal?"}]',
+                isEnabled: true,
+            };
+        }
+        return settings;
+    },
+
+    async getPublicSettings() {
+        const settings = await this.getSettings();
+        return {
+            assistantName: settings.assistantName,
+            assistantAvatarUrl: settings.assistantAvatarUrl,
+            welcomeTitle: settings.welcomeTitle,
+            welcomeSubtitle: settings.welcomeSubtitle,
+            suggestions: JSON.parse(settings.suggestions || '[]'),
+            isEnabled: settings.isEnabled,
+        };
+    },
+
+    async updateSettings(data: any) {
+        let existing;
+        try {
+            const result = await db.select().from(aiChatSettings).limit(1);
+            existing = result[0];
+        } catch (e) {}
+
+        const modelsStr = Array.isArray(data.groqModels) ? JSON.stringify(data.groqModels) : data.groqModels;
+        const suggestionsStr = Array.isArray(data.suggestions) ? JSON.stringify(data.suggestions) : data.suggestions;
+
+        const payload = {
+            groqApiKey: data.groqApiKey,
+            groqModels: modelsStr,
+            systemPrompt: data.systemPrompt,
+            personaPrompt: data.personaPrompt,
+            personaPromptId: data.personaPromptId,
+            knowledgeBase: data.knowledgeBase,
+            knowledgeBaseId: data.knowledgeBaseId,
+            temperature: data.temperature,
+            maxTokens: data.maxTokens,
+            assistantName: data.assistantName,
+            assistantAvatarUrl: data.assistantAvatarUrl,
+            welcomeTitle: data.welcomeTitle,
+            welcomeSubtitle: data.welcomeSubtitle,
+            suggestions: suggestionsStr,
+            isEnabled: data.isEnabled,
+            updatedAt: new Date(),
+        };
+
+        if (existing) {
+            await db.update(aiChatSettings).set(payload).where(eq(aiChatSettings.id, existing.id));
+        } else {
+            await db.insert(aiChatSettings).values(payload);
+        }
+        return this.getSettings();
+    },
+
+    async getLogs() {
+        try {
+            // Get logs ordered by newest. Limit to 200 for performance (prevents massive payload)
+            const logsPromise = db.select().from(aiChatLogs).orderBy(sql`${aiChatLogs.createdAt} DESC`).limit(200);
+            
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            const oneWeekAgo = new Date(now);
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            const oneMonthAgo = new Date(now);
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+            // Execute parallel count queries for unique sessions
+            const allLogsCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs`);
+            const todayCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${today.toISOString()}`);
+            const weekCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneWeekAgo.toISOString()}`);
+            const monthCountPromise = db.execute(sql`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneMonthAgo.toISOString()}`);
+
+            const [logs, allLogsResult, todayResult, weekResult, monthResult] = await Promise.all([
+                logsPromise, 
+                allLogsCountPromise, 
+                todayCountPromise, 
+                weekCountPromise,
+                monthCountPromise
+            ]);
+
+            return {
+                logs,
+                stats: {
+                    // In neon-serverless, the result rows are directly an array in the output or under .rows
+                    todayChats: todayResult?.[0]?.count || (todayResult as any)?.rows?.[0]?.count || 0,
+                    weekChats: weekResult?.[0]?.count || (weekResult as any)?.rows?.[0]?.count || 0,
+                    monthChats: monthResult?.[0]?.count || (monthResult as any)?.rows?.[0]?.count || 0,
+                    totalChats: allLogsResult?.[0]?.count || (allLogsResult as any)?.rows?.[0]?.count || 0
+                }
+            };
+        } catch (e) {
+            console.error('Error fetching logs:', e);
+            return { logs: [], stats: { todayChats: 0, weekChats: 0, monthChats: 0, totalChats: 0 } };
+        }
+    },
+
+    async deleteSession(sessionId: string) {
+        if (!sessionId) return false;
+        try {
+            await db.delete(aiChatLogs).where(eq(aiChatLogs.sessionId, sessionId));
+            return true;
+        } catch (e) {
+            console.error('Error deleting session:', e);
+            return false;
+        }
+    },
+
+    async deleteSessionsBulk(sessionIds: string[]) {
+        if (!sessionIds || sessionIds.length === 0) return false;
+        try {
+            await db.delete(aiChatLogs).where(inArray(aiChatLogs.sessionId, sessionIds));
+            return true;
+        } catch (e) {
+            console.error('Error deleting bulk sessions:', e);
+            return false;
+        }
+    },
+
+    async chatCompletion(messages: any[], location: string, res: Response, sessionId?: string, language: string = 'en') {
+        const settings = await this.getSettings();
+        if (!settings.isEnabled) {
+            res.write('data: {"error": "AI Chat is currently disabled"}\n\n');
+            res.end();
+            return;
+        }
+
+        const apiKey = settings.groqApiKey || process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            res.write('data: {"error": "Groq API Key not configured"}\n\n');
+            res.end();
+            return;
+        }
+
+        let models = [];
+        try {
+            models = JSON.parse(settings.groqModels || '[]');
+        } catch (e) {
+            models = ["groq/compound-mini"];
+        }
+
+        if (models.length === 0) models = ["groq/compound-mini"];
+
+        const emojiInstruction = `\n\n[CRITICAL INSTRUCTIONS]
+1. LANGUAGE MATCHING: YOU MUST RESPOND IN THE EXACT SAME LANGUAGE AS THE USER'S INPUT. If the user asks in English, you MUST respond entirely in English. Jika user bertanya dalam bahasa Indonesia, kamu WAJIB menjawab dalam bahasa Indonesia.
+2. EMOJIS: Use real emojis (like 😊, 😂, 😎) SPARINGLY (e.g., 1 or 2 at the end of sentences) so it's not overwhelming. NEVER use action text in asterisks (like *smiles*, *laughs*, etc).
+3. LIST FORMATTING: When providing lists (e.g., projects, experience), DO NOT use long paragraphs. Always use clean bullet points for readability.
+4. PROJECT LINKS: When mentioning a project, PRIORITIZE projects that have a website link and include the link in Markdown format (e.g., [Project Name](https://afdalrdh.com/project/name)).`;
+        
+        const activePersona = language === 'id' ? (settings.personaPromptId || settings.personaPrompt) : (settings.personaPrompt || '');
+        const activeKnowledgeBase = language === 'id' ? (settings.knowledgeBaseId || settings.knowledgeBase) : (settings.knowledgeBase || '');
+
+        const combinedSystemPrompt = `[AI ROLE & PERSONA]\n${activePersona}\n\n[KNOWLEDGE BASE & FACTS]\n${activeKnowledgeBase}\n\n${settings.systemPrompt || ''}${emojiInstruction}`;
+
+        const systemMessage = {
+            role: 'system',
+            content: combinedSystemPrompt.trim()
+        };
+
+        const apiMessages = [systemMessage, ...messages];
+
+        let success = false;
+        let fullResponse = "";
+        
+        // Setup SSE headers
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        
+        for (const model of models) {
+            try {
+                const response = await fetch(GROQ_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: apiMessages,
+                        temperature: settings.temperature || 0.7,
+                        max_tokens: settings.maxTokens || 1024,
+                        stream: true,
+                    }),
+                });
+
+                if (response.status === 429) {
+                    console.log(`Model ${model} rate limited, trying next...`);
+                    continue; 
+                }
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    console.error(`Groq API error for ${model}:`, error);
+                    continue; 
+                }
+
+                // Success! Stream the response
+                success = true;
+                
+                if (response.body) {
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        const chunk = decoder.decode(value, { stream: true });
+                        res.write(chunk);
+
+                        // Accumulate full response for logging
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data: ') && line.trim() !== 'data: [DONE]') {
+                                try {
+                                    const parsed = JSON.parse(line.substring(6));
+                                    const content = parsed.choices?.[0]?.delta?.content;
+                                    if (content) fullResponse += content;
+                                } catch (e) {}
+                            }
+                        }
+                    }
+                }
+                
+                res.end();
+
+                // Save to database
+                try {
+                    const userMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || '';
+                    if (userMessage && fullResponse) {
+                        await db.insert(aiChatLogs).values({
+                            sessionId: sessionId || null,
+                            prompt: userMessage,
+                            response: fullResponse,
+                            location: location || 'Unknown',
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error saving chat log:', e);
+                }
+
+                break; // Break out of the fallback loop
+            } catch (error) {
+                console.error(`Fetch error for ${model}:`, error);
+                continue;
+            }
+        }
+
+        if (!success) {
+            res.write('data: {"error": "Bodal AI sedang istirahat sebentar karena traffic penuh, coba lagi dalam 1 menit ya! ☕"}\n\n');
+            res.end();
+        }
+    }
+};
