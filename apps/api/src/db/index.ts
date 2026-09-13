@@ -7,8 +7,9 @@ const defaultDbUrl = 'postgresql://neondb_owner:npg_bG2KeJ8uhkQC@ep-withered-cel
 const rawUrl = process.env.DATABASE_URL;
 
 // Ensure we use the active production branch URL ep-withered-cell-aogfre95 and sanitize -pooler
-let connectionString = (rawUrl && rawUrl.includes('neon.tech')) ? rawUrl : defaultDbUrl;
+let connectionString = (rawUrl && rawUrl.includes('ep-withered-cell-aogfre95')) ? rawUrl : defaultDbUrl;
 connectionString = connectionString.replace('-pooler.', '.');
+
 
 const sql = neon(connectionString);
 export const db = drizzle(sql, { schema });

@@ -288,7 +288,7 @@ var init_db = __esm({
     init_schema();
     defaultDbUrl = "postgresql://neondb_owner:npg_bG2KeJ8uhkQC@ep-withered-cell-aogfre95.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
     rawUrl = process.env.DATABASE_URL;
-    connectionString = rawUrl && rawUrl.includes("neon.tech") ? rawUrl : defaultDbUrl;
+    connectionString = rawUrl && rawUrl.includes("ep-withered-cell-aogfre95") ? rawUrl : defaultDbUrl;
     connectionString = connectionString.replace("-pooler.", ".");
     sql = neon(connectionString);
     db = drizzle(sql, { schema: schema_exports });
