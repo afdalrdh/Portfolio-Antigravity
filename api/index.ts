@@ -26,9 +26,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', publicRoutes);
-app.use('/api/admin', requireAuth, adminRoutes);
+app.use('/', publicRoutes);
 
-app.get('/api/health', (_req, res) => {
+app.use('/api/admin', requireAuth, adminRoutes);
+app.use('/admin', requireAuth, adminRoutes);
+
+app.get(['/api/health', '/health'], (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
