@@ -1,4 +1,15 @@
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api';
+const getApiBase = () => {
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL + '/api';
+    }
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        return '/api';
+    }
+    return 'http://localhost:3001/api';
+};
+
+const API_BASE = getApiBase();
+
 
 export async function api(path, options = {}) {
     const token = localStorage.getItem('auth_token');
