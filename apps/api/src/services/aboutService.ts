@@ -4,17 +4,40 @@ import { eq, sql } from 'drizzle-orm';
 
 export const aboutService = {
     async getAboutPage() {
-        const [page] = await db.select().from(aboutPage).limit(1);
-        const tools = await db.select().from(aboutTools).orderBy(aboutTools.sortOrder);
-        const exps = await db.select().from(experiences).orderBy(experiences.sortOrder);
-        const certs = await db.select().from(certifications).orderBy(certifications.sortOrder);
-        const gallery = await db.select().from(galleryImages).orderBy(galleryImages.sortOrder);
+        try {
+            const [page] = await db.select().from(aboutPage).limit(1);
+            const tools = await db.select().from(aboutTools).orderBy(aboutTools.sortOrder);
+            const exps = await db.select().from(experiences).orderBy(experiences.sortOrder);
+            const certs = await db.select().from(certifications).orderBy(certifications.sortOrder);
+            const gallery = await db.select().from(galleryImages).orderBy(galleryImages.sortOrder);
+            if (page) {
+                return { page, tools, experiences: exps, certifications: certs, galleryImages: gallery };
+            }
+        } catch (err) {
+            console.warn('DB query failed, using fallback about page:', (err as any)?.message);
+        }
+
         return {
-            page: page || null,
-            tools,
-            experiences: exps,
-            certifications: certs,
-            galleryImages: gallery,
+            page: {
+                id: 1,
+                bioDescription: `<h1 class="font-script about-greeting text-accent">Hey, I'm Afdal! 🤠</h1>
+<p>I research user behaviors and design intuitive digital experiences as a UI/UX Designer with 4 years of experience. I graduated from Politeknik Negeri Bandung and currently work at Padepokan Tujuh Sembilan.</p>`,
+            },
+            tools: [
+                { id: 1, name: 'Figma', iconCode: 'FiFigma', sortOrder: 0 },
+                { id: 2, name: 'Photoshop', iconCode: 'SiAdobephotoshop', sortOrder: 1 },
+                { id: 3, name: 'Illustrator', iconCode: 'SiAdobeillustrator', sortOrder: 2 },
+            ],
+            experiences: [
+                { id: 1, logoUrl: '', title: 'UI/UX Designer', company: 'eDOT', dateStart: 'Jan 2024', dateEnd: 'Present', contractType: 'Contract', sortOrder: 0 },
+                { id: 2, logoUrl: '', title: 'UI/UX Designer', company: 'Padepokan Tujuh Sembilan', dateStart: 'Dec 2023', dateEnd: 'Present', contractType: 'Contract', sortOrder: 1 },
+            ],
+            certifications: [
+                { id: 1, logoUrl: '', title: 'Google UX Design', issuer: 'Google', dateStart: 'Jul 2024', dateEnd: '', sortOrder: 0 },
+            ],
+            galleryImages: [
+                { id: 1, imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=600', sortOrder: 0 },
+            ]
         };
     },
 

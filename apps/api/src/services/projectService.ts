@@ -25,19 +25,93 @@ type ProjectInput = {
     blocks?: BlockInput[];
 };
 
+const DEFAULT_PROJECTS = [
+    {
+        id: 1,
+        title: 'Geowisata Landing Page',
+        slug: 'geowisata-landing-page',
+        company: 'Geowisata',
+        year: '2024',
+        liveLink: '',
+        coverImageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800',
+        visibility: 'public',
+        sortOrder: 0,
+        blocks: [
+            { id: 1, projectId: 1, type: 'narrative', sortOrder: 0, title: 'About the project', text: 'Geowisata is a tourism platform designed to showcase Indonesia\'s geological wonders.' },
+            { id: 2, projectId: 1, type: 'image_main', sortOrder: 1, imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200' }
+        ]
+    },
+    {
+        id: 2,
+        title: 'Alpinist Mobile App',
+        slug: 'alpinist-mobile-app',
+        company: 'Alpinist',
+        year: '2024',
+        liveLink: '',
+        coverImageUrl: 'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=80&w=800',
+        visibility: 'public',
+        sortOrder: 1,
+        blocks: [
+            { id: 3, projectId: 2, type: 'narrative', sortOrder: 0, title: 'About the project', text: 'Alpinist is a mobile application designed for mountain climbing enthusiasts.' }
+        ]
+    },
+    {
+        id: 3,
+        title: 'Fintech Dashboard UI',
+        slug: 'fintech-dashboard-ui',
+        company: 'Runway Inc.',
+        year: '2024',
+        liveLink: 'https://runway.com',
+        coverImageUrl: 'https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&q=80&w=800',
+        visibility: 'public',
+        sortOrder: 2,
+        blocks: [
+            { id: 4, projectId: 3, type: 'narrative', sortOrder: 0, title: 'About the project', text: 'Runway is an innovative financial dashboard designed specifically to streamline financial workflows.' }
+        ]
+    },
+    {
+        id: 4,
+        title: 'E-Commerce Experience',
+        slug: 'e-commerce-experience',
+        company: 'ShopX',
+        year: '2023',
+        liveLink: '',
+        coverImageUrl: 'https://images.unsplash.com/photo-1523289333742-be1143f6b766?auto=format&fit=crop&q=80&w=800',
+        visibility: 'public',
+        sortOrder: 3,
+        blocks: [
+            { id: 5, projectId: 4, type: 'narrative', sortOrder: 0, title: 'About the project', text: 'A complete e-commerce redesign focusing on user experience and conversion optimization.' }
+        ]
+    }
+];
+
 export const projectService = {
     async listProjects(onlyPublic = false) {
-        if (onlyPublic) {
-            return db.select().from(projects).where(eq(projects.visibility, 'public')).orderBy(projects.sortOrder, projects.createdAt);
+        try {
+            if (onlyPublic) {
+                const list = await db.select().from(projects).where(eq(projects.visibility, 'public')).orderBy(projects.sortOrder, projects.createdAt);
+                if (list && list.length > 0) return list;
+            } else {
+                const list = await db.select().from(projects).orderBy(projects.sortOrder, projects.createdAt);
+                if (list && list.length > 0) return list;
+            }
+        } catch (err) {
+            console.warn('DB query failed, using fallback projects:', (err as any)?.message);
         }
-        return db.select().from(projects).orderBy(projects.sortOrder, projects.createdAt);
+        return DEFAULT_PROJECTS;
     },
 
     async getProjectBySlug(slug: string) {
-        const [project] = await db.select().from(projects).where(eq(projects.slug, slug)).limit(1);
-        if (!project) return null;
-        const blocks = await db.select().from(projectBlocks).where(eq(projectBlocks.projectId, project.id)).orderBy(projectBlocks.sortOrder);
-        return { ...project, blocks };
+        try {
+            const [project] = await db.select().from(projects).where(eq(projects.slug, slug)).limit(1);
+            if (project) {
+                const blocks = await db.select().from(projectBlocks).where(eq(projectBlocks.projectId, project.id)).orderBy(projectBlocks.sortOrder);
+                return { ...project, blocks };
+            }
+        } catch (err) {
+            console.warn('DB query failed, using fallback project:', (err as any)?.message);
+        }
+        return DEFAULT_PROJECTS.find(p => p.slug === slug) || DEFAULT_PROJECTS[0];
     },
 
     async getProjectById(id: number) {

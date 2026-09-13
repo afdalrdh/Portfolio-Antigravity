@@ -33,7 +33,7 @@ export const aiChatService = {
             // Return defaults if not found
             return {
                 groqApiKey: process.env.GROQ_API_KEY || '',
-                groqModels: '["llama-3.3-70b-versatile","llama-3.1-8b-instant","gemma2-9b-it","mixtral-8x7b-32768","meta-llama/llama-4-scout-17b-16e-instruct"]',
+                groqModels: '["groq/compound-mini","openai/gpt-oss-120b","openai/gpt-oss-20b","qwen/qwen3.8-27b","groq/compound"]',
                 systemPrompt: '',
                 personaPrompt: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan...',
                 personaPromptId: 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.',
@@ -186,10 +186,10 @@ export const aiChatService = {
         try {
             models = JSON.parse(settings.groqModels || '[]');
         } catch (e) {
-            models = ["llama-3.3-70b-versatile"];
+            models = ["groq/compound-mini"];
         }
 
-        if (models.length === 0) models = ["llama-3.3-70b-versatile"];
+        if (models.length === 0) models = ["groq/compound-mini"];
 
         const emojiInstruction = `\n\n[CRITICAL INSTRUCTIONS]
 1. LANGUAGE MATCHING: YOU MUST RESPOND IN THE EXACT SAME LANGUAGE AS THE USER'S INPUT. If the user asks in English, you MUST respond entirely in English. Jika user bertanya dalam bahasa Indonesia, kamu WAJIB menjawab dalam bahasa Indonesia.
