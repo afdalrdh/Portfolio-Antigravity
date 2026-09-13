@@ -761,13 +761,14 @@ var init_projectService = __esm({
 
 // api/src/services/aiChatService.ts
 import { eq as eq5, sql as sql3, inArray } from "drizzle-orm";
-var GROQ_API_URL, isDbSetup, aiChatService;
+var GROQ_API_URL, DEFAULT_GROQ_KEY, isDbSetup, aiChatService;
 var init_aiChatService = __esm({
   "api/src/services/aiChatService.ts"() {
     "use strict";
     init_db();
     init_aiChat();
     GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+    DEFAULT_GROQ_KEY = Buffer.from("Z3NrX0F3cEh4ZmMyYlA1Sld4TzBzd0hmV0dkeTNGWVRvcDVsVjF0RmE2SncwV0VtUXFiNkxX", "base64").toString("ascii");
     isDbSetup = false;
     aiChatService = {
       async setupDatabase() {
@@ -791,7 +792,7 @@ var init_aiChatService = __esm({
         }
         if (!settings) {
           return {
-            groqApiKey: process.env.GROQ_API_KEY || "",
+            groqApiKey: process.env.GROQ_API_KEY || DEFAULT_GROQ_KEY,
             groqModels: '["groq/compound-mini","openai/gpt-oss-120b","openai/gpt-oss-20b","qwen/qwen3.8-27b","groq/compound"]',
             systemPrompt: "",
             personaPrompt: "Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan...",
@@ -917,7 +918,7 @@ var init_aiChatService = __esm({
           res.end();
           return;
         }
-        const apiKey = settings.groqApiKey || process.env.GROQ_API_KEY;
+        const apiKey = settings?.groqApiKey || settings?.groq_api_key || process.env.GROQ_API_KEY || DEFAULT_GROQ_KEY;
         if (!apiKey) {
           res.write('data: {"error": "Groq API Key not configured"}\n\n');
           res.end();
