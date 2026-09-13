@@ -8,7 +8,8 @@
     "scripts": {
         "dev:web": "npm run dev --workspace=web",
         "dev:api": "npm run dev --workspace=api",
-        "build:api": "npx esbuild api/index.ts --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=api/index.js",
+        "build:api": "npx esbuild apps/api/src/app.ts --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=api/index.js",
+
         "build:web": "npm run build --workspace=web",
         "build": "npm run build:api && npm run build:web",
         "db:push": "npx drizzle-kit push --config=apps/api/drizzle.config.ts",
