@@ -279,24 +279,19 @@ var init_schema = __esm({
 
 // api/src/db/index.ts
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-var defaultDbUrl, rawUrl, connectionString, client, db;
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+var defaultDbUrl, rawUrl, connectionString, sql, db;
 var init_db = __esm({
   "api/src/db/index.ts"() {
     "use strict";
     init_schema();
-    defaultDbUrl = "postgresql://neondb_owner:npg_bG2KeJ8uhkQC@ep-withered-cell-aogfre95-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
+    defaultDbUrl = "postgresql://neondb_owner:npg_bG2KeJ8uhkQC@ep-withered-cell-aogfre95.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
     rawUrl = process.env.DATABASE_URL;
     connectionString = rawUrl && rawUrl.includes("neon.tech") ? rawUrl : defaultDbUrl;
-    client = postgres(connectionString, {
-      ssl: connectionString.includes("localhost") ? false : "require",
-      max: 1,
-      idle_timeout: 20,
-      connect_timeout: 15,
-      prepare: false
-    });
-    db = drizzle(client, { schema: schema_exports });
+    connectionString = connectionString.replace("-pooler.", ".");
+    sql = neon(connectionString);
+    db = drizzle(sql, { schema: schema_exports });
   }
 });
 
@@ -765,7 +760,7 @@ var init_projectService = __esm({
 });
 
 // api/src/services/aiChatService.ts
-import { eq as eq5, sql as sql2, inArray } from "drizzle-orm";
+import { eq as eq5, sql as sql3, inArray } from "drizzle-orm";
 var GROQ_API_URL, isDbSetup, aiChatService;
 var init_aiChatService = __esm({
   "api/src/services/aiChatService.ts"() {
@@ -778,8 +773,8 @@ var init_aiChatService = __esm({
       async setupDatabase() {
         if (isDbSetup) return;
         try {
-          await db.execute(sql2`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS persona_prompt_id text DEFAULT 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'`);
-          await db.execute(sql2`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS knowledge_base_id text DEFAULT 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'`);
+          await db.execute(sql3`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS persona_prompt_id text DEFAULT 'Kamu adalah asisten virtual yang sangat setia dari bosmu, Afdal Ramdan. Sifatmu sangat antusias, loyal, dan selalu memuji-muji Afdal. Jika ada pengunjung yang bertanya tentang kehidupan pribadi bosmu atau pacarnya, kamu harus selalu bilang bahwa pacar bosmu itu sangat cantik dan bosmu itu sangat keren karena kamu takut dipecat. Gunakan bahasa yang santai, sopan, sedikit menjilat (tapi lucu), dan asyik.'`);
+          await db.execute(sql3`ALTER TABLE ai_chat_settings ADD COLUMN IF NOT EXISTS knowledge_base_id text DEFAULT 'Berikut adalah data tentang bosmu: Nama: Afdal Ramdan, Pekerjaan: UI/UX Designer dengan pengalaman lebih dari 4 tahun.'`);
           isDbSetup = true;
         } catch (e) {
           console.error("Setup DB error (might already exist):", e);
@@ -862,17 +857,17 @@ var init_aiChatService = __esm({
       },
       async getLogs() {
         try {
-          const logsPromise = db.select().from(aiChatLogs).orderBy(sql2`${aiChatLogs.createdAt} DESC`).limit(200);
+          const logsPromise = db.select().from(aiChatLogs).orderBy(sql3`${aiChatLogs.createdAt} DESC`).limit(200);
           const now = /* @__PURE__ */ new Date();
           const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
           const oneWeekAgo = new Date(now);
           oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
           const oneMonthAgo = new Date(now);
           oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-          const allLogsCountPromise = db.execute(sql2`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs`);
-          const todayCountPromise = db.execute(sql2`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${today.toISOString()}`);
-          const weekCountPromise = db.execute(sql2`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneWeekAgo.toISOString()}`);
-          const monthCountPromise = db.execute(sql2`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneMonthAgo.toISOString()}`);
+          const allLogsCountPromise = db.execute(sql3`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs`);
+          const todayCountPromise = db.execute(sql3`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${today.toISOString()}`);
+          const weekCountPromise = db.execute(sql3`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneWeekAgo.toISOString()}`);
+          const monthCountPromise = db.execute(sql3`SELECT count(DISTINCT session_id)::int FROM ai_chat_logs WHERE created_at >= ${oneMonthAgo.toISOString()}`);
           const [logs, allLogsResult, todayResult, weekResult, monthResult] = await Promise.all([
             logsPromise,
             allLogsCountPromise,
@@ -1038,7 +1033,7 @@ ${settings.systemPrompt || ""}${emojiInstruction}`;
 });
 
 // api/src/services/labsService.ts
-import { eq as eq6, desc, ilike, and, sql as sql3 } from "drizzle-orm";
+import { eq as eq6, desc, ilike, and, sql as sql4 } from "drizzle-orm";
 var labsService;
 var init_labsService = __esm({
   "api/src/services/labsService.ts"() {
@@ -1061,7 +1056,7 @@ var init_labsService = __esm({
         return await query;
       },
       async getCategories() {
-        const result = await db.selectDistinct({ category: creations.category }).from(creations).where(sql3`${creations.category} != ''`);
+        const result = await db.selectDistinct({ category: creations.category }).from(creations).where(sql4`${creations.category} != ''`);
         const allCategories = /* @__PURE__ */ new Set();
         result.forEach((r) => {
           const parts = r.category.split(",");
