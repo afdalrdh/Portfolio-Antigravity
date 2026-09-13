@@ -4,9 +4,8 @@ import postgres from 'postgres';
 import * as schema from './schema/index.js';
 
 const defaultDbUrl = 'postgresql://neondb_owner:npg_bG2KeJ8uhkQC@ep-withered-cell-aogfre95-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require';
-const connectionString = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres') 
-    ? process.env.DATABASE_URL 
-    : defaultDbUrl;
+const rawUrl = process.env.DATABASE_URL;
+const connectionString = (rawUrl && rawUrl.includes('neon.tech')) ? rawUrl : defaultDbUrl;
 
 const client = postgres(connectionString, {
     ssl: connectionString.includes('localhost') ? false : 'require',
