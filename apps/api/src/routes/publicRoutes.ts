@@ -15,7 +15,7 @@ router.get('/home', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching home page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -26,7 +26,7 @@ router.get('/about', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching about page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -37,7 +37,7 @@ router.get('/contact', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching contact page:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -59,7 +59,7 @@ router.get('/projects', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching projects:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -74,7 +74,7 @@ router.get('/projects/:slug', async (req, res) => {
         res.json(project);
     } catch (error) {
         console.error('Error fetching project:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -85,7 +85,7 @@ router.get('/ai-chat/settings', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching AI chat settings:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -112,7 +112,7 @@ router.post('/ai-chat', async (req, res) => {
     } catch (error) {
         console.error('Error in AI chat completion:', error);
         if (!res.headersSent) {
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
         } else {
             res.end();
         }
@@ -127,7 +127,7 @@ router.get('/labs/creations', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching creations:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
@@ -137,7 +137,7 @@ router.get('/labs/categories', async (_req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching categories:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: (error as any)?.message || 'Internal server error', details: String(error) });
     }
 });
 
