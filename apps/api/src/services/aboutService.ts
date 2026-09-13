@@ -1,4 +1,4 @@
-import { db } from '../db/index.js';
+import { db } from '../db/index';
 import { aboutPage, aboutTools, experiences, certifications, galleryImages } from '../db/schema/about.js';
 import { eq, sql } from 'drizzle-orm';
 

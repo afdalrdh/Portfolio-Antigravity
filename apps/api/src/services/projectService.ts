@@ -1,4 +1,4 @@
-import { db } from '../db/index.js';
+import { db } from '../db/index';
 import { projects, projectBlocks } from '../db/schema/project.js';
 import { eq } from 'drizzle-orm';
 

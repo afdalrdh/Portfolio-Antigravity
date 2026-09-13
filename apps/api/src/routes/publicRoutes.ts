@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { homeService } from '../services/homeService.js';
-import { aboutService } from '../services/aboutService.js';
-import { contactService } from '../services/contactService.js';
-import { projectService } from '../services/projectService.js';
-import { aiChatService } from '../services/aiChatService.js';
-import { labsService } from '../services/labsService.js';
+import { homeService } from '../services/homeService';
+import { aboutService } from '../services/aboutService';
+import { contactService } from '../services/contactService';
+import { projectService } from '../services/projectService';
+import { aiChatService } from '../services/aiChatService';
+import { labsService } from '../services/labsService';
 
 const router = Router();
 

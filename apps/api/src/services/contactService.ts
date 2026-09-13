@@ -1,4 +1,4 @@
-import { db } from '../db/index.js';
+import { db } from '../db/index';
 import { contactPage } from '../db/schema/contact.js';
 import { eq } from 'drizzle-orm';
 import nodemailer from 'nodemailer';

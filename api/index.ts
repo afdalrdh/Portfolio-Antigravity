@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import publicRoutes from './src/routes/publicRoutes.js';
+import publicRoutes from './src/routes/publicRoutes';
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(cors({
 app.all('/api/auth/*', async (req, res) => {
     try {
         const { toNodeHandler } = await import('better-auth/node');
-        const { auth } = await import('./src/lib/auth.js');
+        const { auth } = await import('./src/lib/auth');
         return toNodeHandler(auth)(req, res);
     } catch (error: any) {
         console.error('Better Auth error:', error);
@@ -38,8 +38,8 @@ app.use('/', publicRoutes);
 // Mount admin routes
 app.use('/api/admin', async (req, res, next) => {
     try {
-        const { requireAuth } = await import('./src/middleware/requireAuth.js');
-        const { default: adminRoutes } = await import('./src/routes/adminRoutes.js');
+        const { requireAuth } = await import('./src/middleware/requireAuth');
+        const { default: adminRoutes } = await import('./src/routes/adminRoutes');
         return requireAuth(req, res, () => adminRoutes(req, res, next));
     } catch (error: any) {
         console.error('Admin route error:', error);

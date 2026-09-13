@@ -1,4 +1,4 @@
-import { db } from '../db/index.js';
+import { db } from '../db/index';
 import { homePage, socialLinks } from '../db/schema/home.js';
 import { eq } from 'drizzle-orm';
 
